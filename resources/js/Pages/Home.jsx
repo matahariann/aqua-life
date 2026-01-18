@@ -486,7 +486,7 @@ export default function AquaLife() {
             <footer className="bg-blue-900 text-white py-8 px-4">
                 <div className="max-w-7xl mx-auto text-center">
                     <div className="flex items-center justify-center space-x-2 mb-4">
-                        <Fish className="w-8 h-8" />
+                        <img src="Logo.png" alt="Logo" className="w-14 h-14" />
                         <span className="text-2xl font-bold">AquaLife</span>
                     </div>
                     <p className="text-blue-200 mb-4">
