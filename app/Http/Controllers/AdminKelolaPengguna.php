@@ -38,12 +38,21 @@ class AdminKelolaPengguna extends Controller
             'password' => 'required|string|min:8',
             'role' => 'required|in:member,operator,admin',
             'is_membership' => 'boolean',
+        ], [
+            'name.required' => 'Nama tidak boleh kosong',
+            'name.max' => 'Nama maksimal 255 karakter',
+            'email.required' => 'Email tidak boleh kosong',
+            'email.email' => 'Format email tidak valid',
+            'email.unique' => 'Email sudah terdaftar',
+            'email.max' => 'Email maksimal 255 karakter',
+            'password.required' => 'Password tidak boleh kosong',
+            'password.min' => 'Password minimal 8 karakter',
         ]);
-
+    
         $validated['password'] = Hash::make($validated['password']);
-
+    
         User::create($validated);
-
+    
         return redirect()->back()->with('success', 'Pengguna berhasil ditambahkan');
     }
 

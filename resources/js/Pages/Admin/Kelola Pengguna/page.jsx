@@ -14,6 +14,7 @@ export default function AdminKelolaPengguna({ users }) {
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [addErrors, setAddErrors] = useState({});
     const [editErrors, setEditErrors] = useState({});
 
     const { delete: destroy, processing } = useForm();
@@ -36,7 +37,35 @@ export default function AdminKelolaPengguna({ users }) {
 
     const handleAddSubmit = (e) => {
         e.preventDefault();
-        console.log("Add user:", addForm);
+
+        router.post("/admin/kelola-pengguna", addForm, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setShowAddModal(false);
+                setAddForm({
+                    name: "",
+                    email: "",
+                    password: "",
+                    role: "member",
+                    is_membership: false,
+                });
+                setAddErrors({});
+                toast.success("Berhasil!", {
+                    description: "Pengguna berhasil ditambahkan",
+                    duration: 3000,
+                });
+            },
+            onError: (errors) => {
+                setAddErrors(errors);
+                toast.error("Gagal Menambahkan", {
+                    description: "Mohon periksa kembali form Anda.",
+                    duration: 3000,
+                });
+            },
+        });
+    };
+
+    const handleCloseAddModal = () => {
         setShowAddModal(false);
         setAddForm({
             name: "",
@@ -45,6 +74,7 @@ export default function AdminKelolaPengguna({ users }) {
             role: "member",
             is_membership: false,
         });
+        setAddErrors({});
     };
 
     const handleEditClick = (user) => {
@@ -116,9 +146,6 @@ export default function AdminKelolaPengguna({ users }) {
                         description: "Gagal menghapus pengguna",
                         duration: 3000,
                     });
-                },
-                onFinish: () => {
-                    console.log("Request finished");
                 },
             });
         }
@@ -305,10 +332,11 @@ export default function AdminKelolaPengguna({ users }) {
                 {/* Modals */}
                 <AddUserModal
                     isOpen={showAddModal}
-                    onClose={() => setShowAddModal(false)}
+                    onClose={handleCloseAddModal}
                     form={addForm}
                     setForm={setAddForm}
                     onSubmit={handleAddSubmit}
+                    serverErrors={addErrors}
                 />
 
                 <EditUserModal

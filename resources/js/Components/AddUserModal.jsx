@@ -1,14 +1,142 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, X } from "lucide-react";
 
-export default function AddUserModal({ isOpen, onClose, form, setForm, onSubmit }) {
+export default function AddUserModal({
+    isOpen,
+    onClose,
+    form,
+    setForm,
+    onSubmit,
+    serverErrors = {},
+}) {
+    const [errors, setErrors] = useState({});
+    const [touched, setTouched] = useState({});
+
+    // Sync serverErrors ke local errors state
+    useEffect(() => {
+        if (serverErrors && Object.keys(serverErrors).length > 0) {
+            setErrors(serverErrors);
+        }
+    }, [serverErrors]);
+
     if (!isOpen) return null;
+
+    const validateField = (name, value) => {
+        let error = "";
+
+        switch (name) {
+            case "name":
+                if (!value || value.trim() === "") {
+                    error = "Nama tidak boleh kosong";
+                } else if (value.length < 3) {
+                    error = "Nama minimal 3 karakter";
+                } else if (value.length > 255) {
+                    error = "Nama maksimal 255 karakter";
+                }
+                break;
+
+            case "email":
+                if (!value || value.trim() === "") {
+                    error = "Email tidak boleh kosong";
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                    error = "Format email tidak valid";
+                } else if (value.length > 255) {
+                    error = "Email maksimal 255 karakter";
+                }
+                break;
+
+            case "password":
+                if (!value || value.trim() === "") {
+                    error = "Password tidak boleh kosong";
+                } else if (value.length < 8) {
+                    error = "Password minimal 8 karakter";
+                }
+                break;
+
+            default:
+                break;
+        }
+
+        return error;
+    };
+
+    const handleFieldChange = (name, value) => {
+        setForm({
+            ...form,
+            [name]: value,
+        });
+
+        // Clear error saat user mulai mengetik
+        if (errors[name]) {
+            setErrors((prev) => {
+                const newErrors = { ...prev };
+                delete newErrors[name];
+                return newErrors;
+            });
+        }
+
+        // Validate on change if field has been touched
+        if (touched[name]) {
+            const error = validateField(name, value);
+            setErrors((prev) => ({
+                ...prev,
+                [name]: error,
+            }));
+        }
+    };
+
+    const handleBlur = (name) => {
+        setTouched((prev) => ({
+            ...prev,
+            [name]: true,
+        }));
+
+        const error = validateField(name, form[name]);
+        setErrors((prev) => ({
+            ...prev,
+            [name]: error,
+        }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        // Validate all fields
+        const newErrors = {};
+        ["name", "email", "password"].forEach((field) => {
+            const error = validateField(field, form[field]);
+            if (error) {
+                newErrors[field] = error;
+            }
+        });
+
+        // Mark all fields as touched
+        setTouched({
+            name: true,
+            email: true,
+            password: true,
+        });
+
+        // If there are errors, don't submit
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        onSubmit(e);
+    };
+
+    const handleClose = () => {
+        setErrors({});
+        setTouched({});
+        onClose();
+    };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
             <div
                 className="absolute inset-0 bg-black/50 transition-all duration-500"
-                onClick={onClose}
+                onClick={handleClose}
             >
                 <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-400/30 rounded-full blur-3xl animate-float"></div>
                 <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-400/30 rounded-full blur-3xl animate-float-delayed"></div>
@@ -18,7 +146,7 @@ export default function AddUserModal({ isOpen, onClose, form, setForm, onSubmit 
                 <div className="h-1.5 bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 shadow-lg"></div>
 
                 <button
-                    onClick={onClose}
+                    onClick={handleClose}
                     className="absolute top-6 right-6 p-2.5 rounded-xl bg-white/20 hover:bg-white/30 backdrop-blur-md transition-all duration-300 group z-10 border border-white/40 hover:border-white/60 shadow-lg"
                 >
                     <X className="text-xl text-white group-hover:rotate-90 transition-all duration-300 drop-shadow-lg" />
@@ -34,7 +162,7 @@ export default function AddUserModal({ isOpen, onClose, form, setForm, onSubmit 
                         </h3>
                     </div>
 
-                    <form onSubmit={onSubmit} className="space-y-3">
+                    <form onSubmit={handleSubmit} className="space-y-3">
                         <div>
                             <label className="block text-sm font-semibold text-white mb-1.5 drop-shadow-md">
                                 Nama
@@ -43,15 +171,32 @@ export default function AddUserModal({ isOpen, onClose, form, setForm, onSubmit 
                                 type="text"
                                 value={form.name}
                                 onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        name: e.target.value,
-                                    })
+                                    handleFieldChange("name", e.target.value)
                                 }
-                                className="w-full px-4 py-2 bg-white/20 backdrop-blur-md border-2 border-white/40 rounded-lg text-white placeholder-white/60 focus:bg-white/30 focus:border-white/60 focus:outline-none transition-all"
+                                onBlur={() => handleBlur("name")}
+                                className={`w-full px-4 py-2 bg-white/20 backdrop-blur-md border-2 rounded-lg text-white placeholder-white/60 focus:bg-white/30 focus:outline-none transition-all ${
+                                    errors.name
+                                        ? "border-red-400 focus:border-red-500"
+                                        : "border-white/40 focus:border-white/60"
+                                }`}
                                 placeholder="Masukkan nama"
-                                required
                             />
+                            {errors.name && (
+                                <p className="mt-2 text-sm text-red-100 flex items-center drop-shadow-lg bg-red-500/20 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-red-300/30">
+                                    <svg
+                                        className="w-4 h-4 mr-1.5 flex-shrink-0"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                            clipRule="evenodd"
+                                        />
+                                    </svg>
+                                    {errors.name}
+                                </p>
+                            )}
                         </div>
 
                         <div>
@@ -62,15 +207,32 @@ export default function AddUserModal({ isOpen, onClose, form, setForm, onSubmit 
                                 type="email"
                                 value={form.email}
                                 onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        email: e.target.value,
-                                    })
+                                    handleFieldChange("email", e.target.value)
                                 }
-                                className="w-full px-4 py-2 bg-white/20 backdrop-blur-md border-2 border-white/40 rounded-lg text-white placeholder-white/60 focus:bg-white/30 focus:border-white/60 focus:outline-none transition-all"
+                                onBlur={() => handleBlur("email")}
+                                className={`w-full px-4 py-2 bg-white/20 backdrop-blur-md border-2 rounded-lg text-white placeholder-white/60 focus:bg-white/30 focus:outline-none transition-all ${
+                                    errors.email
+                                        ? "border-red-400 focus:border-red-500"
+                                        : "border-white/40 focus:border-white/60"
+                                }`}
                                 placeholder="email@example.com"
-                                required
                             />
+                            {errors.email && (
+                                <p className="mt-2 text-sm text-red-100 flex items-center drop-shadow-lg bg-red-500/20 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-red-300/30">
+                                    <svg
+                                        className="w-4 h-4 mr-1.5 flex-shrink-0"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                            clipRule="evenodd"
+                                        />
+                                    </svg>
+                                    {errors.email}
+                                </p>
+                            )}
                         </div>
 
                         <div>
@@ -81,15 +243,35 @@ export default function AddUserModal({ isOpen, onClose, form, setForm, onSubmit 
                                 type="password"
                                 value={form.password}
                                 onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        password: e.target.value,
-                                    })
+                                    handleFieldChange(
+                                        "password",
+                                        e.target.value
+                                    )
                                 }
-                                className="w-full px-4 py-2 bg-white/20 backdrop-blur-md border-2 border-white/40 rounded-lg text-white placeholder-white/60 focus:bg-white/30 focus:border-white/60 focus:outline-none transition-all"
+                                onBlur={() => handleBlur("password")}
+                                className={`w-full px-4 py-2 bg-white/20 backdrop-blur-md border-2 rounded-lg text-white placeholder-white/60 focus:bg-white/30 focus:outline-none transition-all ${
+                                    errors.password
+                                        ? "border-red-400 focus:border-red-500"
+                                        : "border-white/40 focus:border-white/60"
+                                }`}
                                 placeholder="••••••••"
-                                required
                             />
+                            {errors.password && (
+                                <p className="mt-2 text-sm text-red-100 flex items-center drop-shadow-lg bg-red-500/20 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-red-300/30">
+                                    <svg
+                                        className="w-4 h-4 mr-1.5 flex-shrink-0"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                            clipRule="evenodd"
+                                        />
+                                    </svg>
+                                    {errors.password}
+                                </p>
+                            )}
                         </div>
 
                         <div>
@@ -99,18 +281,21 @@ export default function AddUserModal({ isOpen, onClose, form, setForm, onSubmit 
                             <select
                                 value={form.role}
                                 onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        role: e.target.value,
-                                    })
+                                    handleFieldChange("role", e.target.value)
                                 }
                                 className="w-full px-4 py-2 bg-white/20 backdrop-blur-md border-2 border-white/40 rounded-lg text-white focus:bg-white/30 focus:border-white/60 focus:outline-none transition-all"
                                 required
                             >
-                                <option value="member" className="text-gray-900">
+                                <option
+                                    value="member"
+                                    className="text-gray-900"
+                                >
                                     Member
                                 </option>
-                                <option value="operator" className="text-gray-900">
+                                <option
+                                    value="operator"
+                                    className="text-gray-900"
+                                >
                                     Operator
                                 </option>
                                 <option value="admin" className="text-gray-900">
@@ -143,7 +328,7 @@ export default function AddUserModal({ isOpen, onClose, form, setForm, onSubmit 
                         <div className="flex gap-3 pt-2">
                             <button
                                 type="button"
-                                onClick={onClose}
+                                onClick={handleClose}
                                 className="flex-1 bg-white/20 backdrop-blur-md border-2 border-white/40 text-white font-semibold py-2 px-4 rounded-lg hover:bg-white/30 hover:border-white/60 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg"
                             >
                                 Batal
