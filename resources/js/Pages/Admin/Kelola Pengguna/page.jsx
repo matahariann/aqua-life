@@ -170,70 +170,91 @@ export default function AdminKelolaPengguna({ users }) {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
-                                    {users.data.map((user, index) => (
-                                        <tr
-                                            key={user.id}
-                                            className="hover:bg-blue-50 transition-colors"
-                                        >
-                                            <td className="px-6 py-4 text-sm text-gray-700">
-                                                {users.from + index}
-                                            </td>
-                                            <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                                                {user.name}
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-gray-700">
-                                                {user.email}
-                                            </td>
-                                            <td className="px-6 py-4 text-sm">
-                                                <span
-                                                    className={`px-3 py-1 rounded-full text-xs font-semibold ${getRoleBadgeColor(
-                                                        user.role
-                                                    )}`}
-                                                >
-                                                    {user.role.toUpperCase()}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-sm">
-                                                <span
-                                                    className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                                                        user.is_membership
-                                                            ? "bg-green-100 text-green-800"
-                                                            : "bg-red-100 text-red-800"
-                                                    }`}
-                                                >
-                                                    {user.is_membership
-                                                        ? "Aktif"
-                                                        : "Tidak Aktif"}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-sm">
-                                                <div className="flex items-center justify-center gap-2">
-                                                    <button
-                                                        onClick={() =>
-                                                            handleEditClick(
-                                                                user
-                                                            )
-                                                        }
-                                                        className="p-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-colors"
-                                                        title="Edit"
+                                    {users.data
+                                        .sort((a, b) => {
+                                            const roleOrder = {
+                                                admin: 1,
+                                                operator: 2,
+                                                member: 3,
+                                            };
+                                            const roleA =
+                                                roleOrder[a.role] || 4;
+                                            const roleB =
+                                                roleOrder[b.role] || 4;
+
+                                            if (roleA !== roleB) {
+                                                return roleA - roleB;
+                                            }
+
+                                            return a.name.localeCompare(b.name);
+                                        })
+                                        .map((user, index) => (
+                                            <tr
+                                                key={user.id}
+                                                className="hover:bg-blue-50 transition-colors"
+                                            >
+                                                <td className="px-6 py-4 text-sm text-gray-700">
+                                                    {users.from + index}
+                                                </td>
+                                                <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                                                    {user.name}
+                                                </td>
+                                                <td className="px-6 py-4 text-sm text-gray-700">
+                                                    {user.email}
+                                                </td>
+                                                <td className="px-6 py-4 text-sm">
+                                                    <span
+                                                        className={`px-3 py-1 rounded-full text-xs font-semibold ${getRoleBadgeColor(
+                                                            user.role
+                                                        )}`}
                                                     >
-                                                        <Edit className="w-4 h-4" />
-                                                    </button>
-                                                    <button
-                                                        onClick={() =>
-                                                            handleDeleteClick(
-                                                                user
-                                                            )
-                                                        }
-                                                        className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
-                                                        title="Hapus"
+                                                        {user.role.toUpperCase()}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 text-sm">
+                                                    <span
+                                                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                                            user.is_membership
+                                                                ? "bg-green-100 text-green-800"
+                                                                : "bg-red-100 text-red-800"
+                                                        }`}
                                                     >
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                                        {user.is_membership
+                                                            ? "Aktif"
+                                                            : "Tidak Aktif"}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 text-sm">
+                                                    <div className="flex items-center justify-center gap-2">
+                                                        <button
+                                                            onClick={() =>
+                                                                handleEditClick(
+                                                                    user
+                                                                )
+                                                            }
+                                                            className="p-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-colors"
+                                                            title="Edit"
+                                                        >
+                                                            <Edit className="w-4 h-4" />
+                                                        </button>
+                                                        {user.role !==
+                                                            "admin" && (
+                                                            <button
+                                                                onClick={() =>
+                                                                    handleDeleteClick(
+                                                                        user
+                                                                    )
+                                                                }
+                                                                className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                                                                title="Hapus"
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
                                 </tbody>
                             </table>
                         </div>
