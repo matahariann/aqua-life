@@ -45,7 +45,12 @@ Route::get('/', function () {
 
 Route::middleware('guest')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
+    
+    // Registrasi Routes
     Route::get('/registrasi', [AuthController::class, 'register'])->name('register');
+    Route::post('/actionRegister', [AuthController::class, 'actionRegister'])->name('actionRegister');
+    
+    // Login Routes
     Route::get('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/actionLogin', [AuthController::class, 'actionLogin'])->name('actionLogin');
 });
