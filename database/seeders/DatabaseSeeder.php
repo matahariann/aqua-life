@@ -12,11 +12,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        $this->call([
+            UserSeeder::class,
+            GeoZoneSeeder::class,
+            WaterTypeSeeder::class,
+            StationSeeder::class,
+            PaymentSeeder::class,
+            StationMainAbioticSeeder::class,
+            StationIndexAdditionalSeeder::class,
+            BioticFamiliesSeeder::class,
+            SpeciesSeeder::class,
+            MainAbioticParameterSeeder::class,
+            AdditionalAbioticParameterSeeder::class,
+            BioticIndexParameterSeeder::class,
+            ResultSeeder::class,
+        ]);
     }
 }

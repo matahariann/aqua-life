@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use LDAP\Result;
 
 class User extends Authenticatable
 {
@@ -21,6 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'is_membership',
     ];
 
     /**
@@ -41,4 +44,34 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function stations()
+    {
+        return $this->hasMany(Station::class, 'id_user', 'id');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'id_user', 'id');
+    }
+
+    public function species()
+    {
+        return $this->hasMany(Species::class, 'id_user', 'id');
+    }
+
+    public function stationMainAbiotics()
+    {
+        return $this->hasMany(StationMainAbiotic::class, 'id_user', 'id');
+    }
+
+    public function stationIndexAdditionals()
+    {
+        return $this->hasMany(StationIndexAdditional::class, 'id_user', 'id');
+    }
+
+    public function results()
+    {
+        return $this->hasMany(Result::class, 'id_user', 'id');
+    }
 }
