@@ -80,6 +80,9 @@ Route::middleware('auth')->group(function () {
 
         // Kelola Station
         Route::get('/kelola-station', [AdminKelolaStation::class, 'index'])->name('kelola-station');
+        Route::post('/kelola-station', [AdminKelolaStation::class, 'store'])->name('kelola-station.store');
+        Route::put('/kelola-station/{station}', [AdminKelolaStation::class, 'update'])->name('kelola-station.update');
+        Route::delete('/kelola-station/{station}', [AdminKelolaStation::class, 'destroy'])->name('kelola-station.destroy');
     });
 
     // Operator routes

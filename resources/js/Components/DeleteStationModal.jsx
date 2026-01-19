@@ -4,7 +4,7 @@ import { Trash2, X } from "lucide-react";
 export default function DeleteStationModal({
     isOpen,
     onClose,
-    user,
+    station,
     onConfirm,
     processing,
 }) {
@@ -47,10 +47,10 @@ export default function DeleteStationModal({
                     </h3>
 
                     <p className="text-white/90 text-base leading-relaxed mb-2 px-4 drop-shadow-md">
-                        Apakah Anda yakin ingin menghapus pengguna
+                        Apakah Anda yakin ingin menghapus station
                     </p>
                     <p className="text-white font-bold text-lg mb-6 drop-shadow-lg">
-                        {user?.name}?
+                        {station.geo_zone?.name}
                     </p>
                     <p className="text-white/80 text-sm mb-10 drop-shadow-md">
                         Tindakan ini tidak dapat dibatalkan.

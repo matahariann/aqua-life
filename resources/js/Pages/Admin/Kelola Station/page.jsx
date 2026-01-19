@@ -14,6 +14,7 @@ export default function AdminKelolaStation({ users, stations }) {
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [selectedStation, setSelectedStation  ] = useState(null);
     const [addErrors, setAddErrors] = useState({});
     const [editErrors, setEditErrors] = useState({});
     const [perPage, setPerPage] = useState(users.per_page || 10);
@@ -132,20 +133,20 @@ export default function AdminKelolaStation({ users, stations }) {
         }
     };
 
-    const handleDeleteClick = (user) => {
-        setSelectedUser(user);
+    const handleDeleteClick = (station) => {
+        setSelectedStation(station);
         setShowDeleteModal(true);
     };
 
     const handleDeleteConfirm = () => {
-        if (selectedUser) {
-            destroy(`/admin/kelola-pengguna/${selectedUser.id}`, {
+        if (selectedStation) {
+            destroy(`/admin/kelola-station/${selectedStation.id}`, {
                 preserveScroll: true,
                 onSuccess: () => {
                     setShowDeleteModal(false);
                     setSelectedUser(null);
                     toast.success("Berhasil!", {
-                        description: "Pengguna berhasil dihapus",
+                        description: "Station berhasil dihapus",
                         duration: 3000,
                     });
                 },
@@ -521,7 +522,7 @@ export default function AdminKelolaStation({ users, stations }) {
                 <DeleteStationModal
                     isOpen={showDeleteModal}
                     onClose={() => setShowDeleteModal(false)}
-                    user={selectedUser}
+                    station={selectedStation}
                     onConfirm={handleDeleteConfirm}
                     processing={processing}
                 />
