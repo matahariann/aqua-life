@@ -178,6 +178,130 @@ function MainAbioticModal({
     );
 }
 
+function AdditionalAbioticModal({
+    isOpen,
+    onClose,
+    onSubmit,
+    form,
+    setForm,
+    errors,
+    title,
+}) {
+    if (!isOpen) return null;
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+            <div
+                className="absolute inset-0 bg-black/50 transition-all duration-500"
+                onClick={onClose}
+            ></div>
+            <div className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 animate-modal-appear">
+                <h3 className="text-xl font-bold mb-4">{title}</h3>
+                <form onSubmit={onSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Nama
+                        </label>
+                        <input
+                            type="text"
+                            name="name"
+                            value={form.name}
+                            onChange={handleChange}
+                            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        {errors.name && (
+                            <p className="text-xs text-red-600 mt-1">
+                                {errors.name}
+                            </p>
+                        )}
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Nilai Awal
+                            </label>
+                            <input
+                                type="number"
+                                step="any"
+                                name="initial_value"
+                                value={form.initial_value}
+                                onChange={handleChange}
+                                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            {errors.initial_value && (
+                                <p className="text-xs text-red-600 mt-1">
+                                    {errors.initial_value}
+                                </p>
+                            )}
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Nilai Akhir
+                            </label>
+                            <input
+                                type="number"
+                                step="any"
+                                name="final_value"
+                                value={form.final_value}
+                                onChange={handleChange}
+                                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            {errors.final_value && (
+                                <p className="text-xs text-red-600 mt-1">
+                                    {errors.final_value}
+                                </p>
+                            )}
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Bobot
+                            </label>
+                            <input
+                                type="number"
+                                step="any"
+                                name="weight"
+                                value={form.weight}
+                                onChange={handleChange}
+                                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            {errors.weight && (
+                                <p className="text-xs text-red-600 mt-1">
+                                    {errors.weight}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="flex justify-end gap-3 pt-4">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                        >
+                            Batal
+                        </button>
+                        <button
+                            type="submit"
+                            className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700"
+                        >
+                            Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+}
+
 function DeleteMainAbioticModal({ isOpen, onClose, onConfirm, processing, parameter }) {
     if (!isOpen) return null;
 
@@ -224,6 +348,7 @@ function DeleteMainAbioticModal({ isOpen, onClose, onConfirm, processing, parame
 
 export default function AdminKelolaBobot({
     mainAbioticParameters,
+    additionalAbioticParameters,
     geoZones,
     waterTypes,
 }) {
@@ -264,7 +389,7 @@ export default function AdminKelolaBobot({
         }
     }, [tab]);
 
-    const [perPage, setPerPage] = useState(
+    const [perPageMain, setPerPageMain] = useState(
         mainAbioticParameters?.per_page || 10
     );
     const [showAddModal, setShowAddModal] = useState(false);
@@ -273,6 +398,14 @@ export default function AdminKelolaBobot({
     const [selectedParam, setSelectedParam] = useState(null);
     const [addErrors, setAddErrors] = useState({});
     const [editErrors, setEditErrors] = useState({});
+
+    // Additional Abiotic state (CRUD)
+    const [showAddAdditionalModal, setShowAddAdditionalModal] = useState(false);
+    const [showEditAdditionalModal, setShowEditAdditionalModal] = useState(false);
+    const [showDeleteAdditionalModal, setShowDeleteAdditionalModal] = useState(false);
+    const [selectedAdditionalParam, setSelectedAdditionalParam] = useState(null);
+    const [addAdditionalErrors, setAddAdditionalErrors] = useState({});
+    const [editAdditionalErrors, setEditAdditionalErrors] = useState({});
 
     const { delete: destroy, processing } = useForm();
 
@@ -294,15 +427,39 @@ export default function AdminKelolaBobot({
         weight: "",
     });
 
+    const [addAdditionalForm, setAddAdditionalForm] = useState({
+        name: "",
+        initial_value: "",
+        final_value: "",
+        weight: "",
+    });
+
+    const [editAdditionalForm, setEditAdditionalForm] = useState({
+        name: "",
+        initial_value: "",
+        final_value: "",
+        weight: "",
+    });
+
+    const [perPageAdditional, setPerPageAdditional] = useState(
+        additionalAbioticParameters?.per_page || 10
+    );
+
     useEffect(() => {
         if (mainAbioticParameters?.per_page) {
-            setPerPage(mainAbioticParameters.per_page);
+            setPerPageMain(mainAbioticParameters.per_page);
         }
     }, [mainAbioticParameters?.per_page]);
 
-    const handlePerPageChange = (value) => {
+    useEffect(() => {
+        if (additionalAbioticParameters?.per_page) {
+            setPerPageAdditional(additionalAbioticParameters.per_page);
+        }
+    }, [additionalAbioticParameters?.per_page]);
+
+    const handlePerPageChangeMain = (value) => {
         const newPerPage = Number(value);
-        setPerPage(newPerPage);
+        setPerPageMain(newPerPage);
         router.get(
             "/admin/kelola-bobot",
             { per_page: newPerPage, tab: "main-abiotic" },
@@ -314,11 +471,37 @@ export default function AdminKelolaBobot({
         );
     };
 
-    const handlePageChange = (pageUrl) => {
+    const handlePerPageChangeAdditional = (value) => {
+        const newPerPage = Number(value);
+        setPerPageAdditional(newPerPage);
+        router.get(
+            "/admin/kelola-bobot",
+            { per_page: newPerPage, tab: "additional-abiotic" },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            }
+        );
+    };
+
+    const handlePageChangeMain = (pageUrl) => {
         if (!pageUrl) return;
         const urlObj = new URL(pageUrl, window.location.origin);
-        urlObj.searchParams.set("per_page", perPage);
+        urlObj.searchParams.set("per_page", perPageMain);
         urlObj.searchParams.set("tab", "main-abiotic");
+        router.get(urlObj.pathname + urlObj.search, {}, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        });
+    };
+
+    const handlePageChangeAdditional = (pageUrl) => {
+        if (!pageUrl) return;
+        const urlObj = new URL(pageUrl, window.location.origin);
+        urlObj.searchParams.set("per_page", perPageAdditional);
+        urlObj.searchParams.set("tab", "additional-abiotic");
         router.get(urlObj.pathname + urlObj.search, {}, {
             preserveState: true,
             preserveScroll: true,
@@ -445,10 +628,153 @@ export default function AdminKelolaBobot({
         );
     };
 
-    const renderPageNumbers = () => {
+    // Additional Abiotic handlers
+    const handleAddAdditionalSubmit = (e) => {
+        e.preventDefault();
+        router.post(
+            "/admin/kelola-bobot/additional-abiotic?tab=additional-abiotic",
+            addAdditionalForm,
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setShowAddAdditionalModal(false);
+                    setAddAdditionalForm({
+                        name: "",
+                        initial_value: "",
+                        final_value: "",
+                        weight: "",
+                    });
+                    setAddAdditionalErrors({});
+                    toast.success("Berhasil!", {
+                        description:
+                            "Parameter additional abiotic berhasil ditambahkan",
+                        duration: 3000,
+                    });
+                },
+                onError: (errors) => {
+                    setAddAdditionalErrors(errors);
+                    toast.error("Gagal Menambahkan", {
+                        description: "Mohon periksa kembali form Anda.",
+                        duration: 3000,
+                    });
+                },
+            }
+        );
+    };
+
+    const handleEditAdditionalClick = (parameter) => {
+        setSelectedAdditionalParam(parameter);
+        setEditAdditionalForm({
+            name: parameter?.name || "",
+            initial_value: parameter?.initial_value ?? "",
+            final_value: parameter?.final_value ?? "",
+            weight: parameter?.weight ?? "",
+        });
+        setEditAdditionalErrors({});
+        setShowEditAdditionalModal(true);
+    };
+
+    const handleEditAdditionalSubmit = (e) => {
+        e.preventDefault();
+        if (!selectedAdditionalParam) return;
+
+        router.put(
+            `/admin/kelola-bobot/additional-abiotic/${selectedAdditionalParam.id}?tab=additional-abiotic`,
+            editAdditionalForm,
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setShowEditAdditionalModal(false);
+                    setEditAdditionalForm({
+                        name: "",
+                        initial_value: "",
+                        final_value: "",
+                        weight: "",
+                    });
+                    setEditAdditionalErrors({});
+                    setSelectedAdditionalParam(null);
+                    toast.success("Berhasil!", {
+                        description:
+                            "Parameter additional abiotic berhasil diupdate",
+                        duration: 3000,
+                    });
+                },
+                onError: (errors) => {
+                    setEditAdditionalErrors(errors);
+                    toast.error("Gagal Update", {
+                        description: "Mohon periksa kembali form Anda.",
+                        duration: 3000,
+                    });
+                },
+            }
+        );
+    };
+
+    const handleDeleteAdditionalClick = (parameter) => {
+        setSelectedAdditionalParam(parameter);
+        setShowDeleteAdditionalModal(true);
+    };
+
+    const handleDeleteAdditionalConfirm = () => {
+        if (!selectedAdditionalParam) return;
+
+        destroy(
+            `/admin/kelola-bobot/additional-abiotic/${selectedAdditionalParam.id}?tab=additional-abiotic`,
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setShowDeleteAdditionalModal(false);
+                    setSelectedAdditionalParam(null);
+                    toast.success("Berhasil!", {
+                        description:
+                            "Parameter additional abiotic berhasil dihapus",
+                        duration: 3000,
+                    });
+                },
+                onError: () => {
+                    toast.error("Gagal!", {
+                        description: "Gagal menghapus parameter",
+                        duration: 3000,
+                    });
+                },
+            }
+        );
+    };
+
+    const renderPageNumbersMain = () => {
         const pages = [];
         const currentPage = mainAbioticParameters?.current_page || 1;
         const lastPage = mainAbioticParameters?.last_page || 1;
+
+        if (lastPage <= 7) {
+            for (let i = 1; i <= lastPage; i++) pages.push(i);
+        } else {
+            if (currentPage > 3) {
+                pages.push(1);
+                if (currentPage > 4) pages.push("...");
+            }
+
+            for (
+                let i = Math.max(1, currentPage - 2);
+                i <= Math.min(lastPage, currentPage + 2);
+                i++
+            ) {
+                pages.push(i);
+            }
+
+            if (currentPage < lastPage - 2) {
+                if (currentPage < lastPage - 3) pages.push("...");
+                pages.push(lastPage);
+            }
+        }
+
+        return pages;
+    };
+
+    const renderPageNumbersAdditional = () => {
+        const pages = [];
+        const currentPage = additionalAbioticParameters?.current_page || 1;
+        const lastPage = additionalAbioticParameters?.last_page || 1;
 
         if (lastPage <= 7) {
             for (let i = 1; i <= lastPage; i++) pages.push(i);
@@ -515,9 +841,11 @@ export default function AdminKelolaBobot({
                                         Tampilkan:
                                     </label>
                                     <select
-                                        value={perPage}
+                                        value={perPageMain}
                                         onChange={(e) =>
-                                            handlePerPageChange(e.target.value)
+                                            handlePerPageChangeMain(
+                                                e.target.value
+                                            )
                                         }
                                         className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     >
@@ -676,7 +1004,7 @@ export default function AdminKelolaBobot({
                                     <div className="flex items-center gap-2">
                                         <button
                                             onClick={() =>
-                                                handlePageChange(
+                                                handlePageChangeMain(
                                                     mainAbioticParameters.prev_page_url
                                                 )
                                             }
@@ -694,7 +1022,7 @@ export default function AdminKelolaBobot({
                                         </button>
 
                                         <div className="flex items-center gap-1">
-                                            {renderPageNumbers().map(
+                                            {renderPageNumbersMain().map(
                                                 (page, index) => {
                                                     if (page === "...") {
                                                         return (
@@ -707,13 +1035,13 @@ export default function AdminKelolaBobot({
                                                         );
                                                     }
 
-                                                    const pageUrl = `/admin/kelola-bobot?page=${page}&per_page=${perPage}&tab=main-abiotic`;
+                                                    const pageUrl = `/admin/kelola-bobot?page=${page}&per_page=${perPageMain}&tab=main-abiotic`;
 
                                                     return (
                                                         <button
                                                             key={page}
                                                             onClick={() =>
-                                                                handlePageChange(
+                                                                handlePageChangeMain(
                                                                     pageUrl
                                                                 )
                                                             }
@@ -733,7 +1061,7 @@ export default function AdminKelolaBobot({
 
                                         <button
                                             onClick={() =>
-                                                handlePageChange(
+                                                handlePageChangeMain(
                                                     mainAbioticParameters.next_page_url
                                                 )
                                             }
@@ -758,18 +1086,260 @@ export default function AdminKelolaBobot({
                             <div
                                 className={`h-2 bg-gradient-to-r ${content.color}`}
                             ></div>
-                            <div className="p-8">
-                                <h2 className="text-2xl font-extrabold text-gray-900 mb-2">
-                                    {content.title}
-                                </h2>
-                                <p className="text-gray-700 mb-6">
-                                    {content.desc}
-                                </p>
 
-                                <div className="rounded-2xl border border-gray-200 p-5 bg-gradient-to-br from-gray-50 to-white text-gray-700 text-sm">
-                                    Konten detail untuk tab ini belum dibuat.
-                                </div>
-                            </div>
+                            {tab === "additional-abiotic" && (
+                                <>
+                                    <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <label className="text-sm text-gray-700 font-medium">
+                                                Tampilkan:
+                                            </label>
+                                            <select
+                                                value={perPageAdditional}
+                                                onChange={(e) =>
+                                                    handlePerPageChangeAdditional(
+                                                        e.target.value
+                                                    )
+                                                }
+                                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            >
+                                                <option value={5}>5</option>
+                                                <option value={10}>10</option>
+                                                <option value={25}>25</option>
+                                                <option value={50}>50</option>
+                                                <option value={100}>100</option>
+                                            </select>
+                                            <span className="text-sm text-gray-700">
+                                                data per halaman
+                                            </span>
+                                        </div>
+                                        <div className="text-sm text-gray-600">
+                                            Menampilkan{" "}
+                                            {additionalAbioticParameters?.from ||
+                                                0}{" "}
+                                            -{" "}
+                                            {additionalAbioticParameters?.to ||
+                                                0}{" "}
+                                            dari{" "}
+                                            {additionalAbioticParameters?.total ||
+                                                0}{" "}
+                                            data
+                                        </div>
+                                    </div>
+
+                                    <div className="px-6 py-4 flex justify-between items-center">
+                                        <h2 className="text-lg font-semibold text-gray-800">
+                                            Tabel Bobot Additional Abiotic
+                                        </h2>
+                                        <button
+                                            onClick={() => {
+                                                setShowAddAdditionalModal(true);
+                                                setAddAdditionalErrors({});
+                                            }}
+                                            className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-5 py-2.5 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105"
+                                        >
+                                            <Plus className="w-4 h-4" />
+                                            Add
+                                        </button>
+                                    </div>
+
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full">
+                                            <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white">
+                                                <tr>
+                                                    <th className="px-6 py-3 text-left text-xs font-semibold">
+                                                        ID
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-semibold">
+                                                        Nama
+                                                    </th>
+                                                    <th className="px-6 py-3 text-right text-xs font-semibold">
+                                                        Nilai Awal
+                                                    </th>
+                                                    <th className="px-6 py-3 text-right text-xs font-semibold">
+                                                        Nilai Akhir
+                                                    </th>
+                                                    <th className="px-6 py-3 text-right text-xs font-semibold">
+                                                        Bobot
+                                                    </th>
+                                                    <th className="px-6 py-3 text-center text-xs font-semibold">
+                                                        Aksi
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-200">
+                                                {additionalAbioticParameters?.data &&
+                                                additionalAbioticParameters.data
+                                                    .length > 0 ? (
+                                                    additionalAbioticParameters.data.map(
+                                                        (param) => (
+                                                            <tr
+                                                                key={param.id}
+                                                                className="hover:bg-blue-50 transition-colors"
+                                                            >
+                                                                <td className="px-6 py-3 text-sm text-gray-700">
+                                                                    {param.id}
+                                                                </td>
+                                                                <td className="px-6 py-3 text-sm font-medium text-gray-900">
+                                                                    {param.name}
+                                                                </td>
+                                                                <td className="px-6 py-3 text-sm text-right text-gray-800">
+                                                                    {
+                                                                        param.initial_value
+                                                                    }
+                                                                </td>
+                                                                <td className="px-6 py-3 text-sm text-right text-gray-800">
+                                                                    {
+                                                                        param.final_value
+                                                                    }
+                                                                </td>
+                                                                <td className="px-6 py-3 text-sm text-right text-gray-800">
+                                                                    {
+                                                                        param.weight
+                                                                    }
+                                                                </td>
+                                                                <td className="px-6 py-3 text-sm">
+                                                                    <div className="flex items-center justify-center gap-2">
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                handleEditAdditionalClick(
+                                                                                    param
+                                                                                )
+                                                                            }
+                                                                            className="p-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-colors"
+                                                                            title="Edit"
+                                                                        >
+                                                                            <Edit className="w-4 h-4" />
+                                                                        </button>
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                handleDeleteAdditionalClick(
+                                                                                    param
+                                                                                )
+                                                                            }
+                                                                            className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                                                                            title="Hapus"
+                                                                        >
+                                                                            <Trash2 className="w-4 h-4" />
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    )
+                                                ) : (
+                                                    <tr>
+                                                        <td
+                                                            colSpan="6"
+                                                            className="px-6 py-8 text-center text-gray-500"
+                                                        >
+                                                            Tidak ada data
+                                                            parameter
+                                                            additional abiotic
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    {additionalAbioticParameters?.last_page >
+                                        1 && (
+                                        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                                            <div className="text-sm text-gray-600">
+                                                Halaman{" "}
+                                                {
+                                                    additionalAbioticParameters.current_page
+                                                }{" "}
+                                                dari{" "}
+                                                {
+                                                    additionalAbioticParameters.last_page
+                                                }
+                                            </div>
+
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    onClick={() =>
+                                                        handlePageChangeAdditional(
+                                                            additionalAbioticParameters.prev_page_url
+                                                        )
+                                                    }
+                                                    disabled={
+                                                        !additionalAbioticParameters.prev_page_url
+                                                    }
+                                                    className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                                        additionalAbioticParameters.prev_page_url
+                                                            ? "bg-blue-500 text-white hover:bg-blue-600"
+                                                            : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                    }`}
+                                                >
+                                                    <ChevronLeft className="w-4 h-4" />
+                                                    Prev
+                                                </button>
+
+                                                <div className="flex items-center gap-1">
+                                                    {renderPageNumbersAdditional().map(
+                                                        (page, index) => {
+                                                            if (
+                                                                page === "..."
+                                                            ) {
+                                                                return (
+                                                                    <span
+                                                                        key={`ellipsis-${index}`}
+                                                                        className="px-3 py-2 text-gray-500"
+                                                                    >
+                                                                        ...
+                                                                    </span>
+                                                                );
+                                                            }
+
+                                                            const pageUrl = `/admin/kelola-bobot?page=${page}&per_page=${perPageAdditional}&tab=additional-abiotic`;
+
+                                                            return (
+                                                                <button
+                                                                    key={page}
+                                                                    onClick={() =>
+                                                                        handlePageChangeAdditional(
+                                                                            pageUrl
+                                                                        )
+                                                                    }
+                                                                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                                                        page ===
+                                                                        additionalAbioticParameters.current_page
+                                                                            ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white"
+                                                                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                                                    }`}
+                                                                >
+                                                                    {page}
+                                                                </button>
+                                                            );
+                                                        }
+                                                    )}
+                                                </div>
+
+                                                <button
+                                                    onClick={() =>
+                                                        handlePageChangeAdditional(
+                                                            additionalAbioticParameters.next_page_url
+                                                        )
+                                                    }
+                                                    disabled={
+                                                        !additionalAbioticParameters.next_page_url
+                                                    }
+                                                    className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                                        additionalAbioticParameters.next_page_url
+                                                            ? "bg-blue-500 text-white hover:bg-blue-600"
+                                                            : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                    }`}
+                                                >
+                                                    Next
+                                                    <ChevronRight className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
+                            )}
                         </div>
                     )}
                 </div>
@@ -812,6 +1382,41 @@ export default function AdminKelolaBobot({
                 onConfirm={handleDeleteConfirm}
                 processing={processing}
                 parameter={selectedParam}
+            />
+
+            <AdditionalAbioticModal
+                isOpen={showAddAdditionalModal}
+                onClose={() => {
+                    setShowAddAdditionalModal(false);
+                    setAddAdditionalErrors({});
+                }}
+                onSubmit={handleAddAdditionalSubmit}
+                form={addAdditionalForm}
+                setForm={setAddAdditionalForm}
+                errors={addAdditionalErrors}
+                title="Tambah Parameter Additional Abiotic"
+            />
+
+            <AdditionalAbioticModal
+                isOpen={showEditAdditionalModal}
+                onClose={() => {
+                    setShowEditAdditionalModal(false);
+                    setEditAdditionalErrors({});
+                    setSelectedAdditionalParam(null);
+                }}
+                onSubmit={handleEditAdditionalSubmit}
+                form={editAdditionalForm}
+                setForm={setEditAdditionalForm}
+                errors={editAdditionalErrors}
+                title="Edit Parameter Additional Abiotic"
+            />
+
+            <DeleteMainAbioticModal
+                isOpen={showDeleteAdditionalModal}
+                onClose={() => setShowDeleteAdditionalModal(false)}
+                onConfirm={handleDeleteAdditionalConfirm}
+                processing={processing}
+                parameter={selectedAdditionalParam}
             />
 
             <ModalStyles />

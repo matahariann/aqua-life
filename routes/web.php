@@ -71,6 +71,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/kelola-bobot/main-abiotic', [AdminKelolaBobot::class, 'storeMainAbiotic'])->name('kelola-bobot.main-abiotic.store');
         Route::put('/kelola-bobot/main-abiotic/{parameter}', [AdminKelolaBobot::class, 'updateMainAbiotic'])->name('kelola-bobot.main-abiotic.update');
         Route::delete('/kelola-bobot/main-abiotic/{parameter}', [AdminKelolaBobot::class, 'destroyMainAbiotic'])->name('kelola-bobot.main-abiotic.destroy');
+        Route::post('/kelola-bobot/additional-abiotic', [AdminKelolaBobot::class, 'storeAdditionalAbiotic'])->name('kelola-bobot.additional-abiotic.store');
+        Route::put('/kelola-bobot/additional-abiotic/{parameter}', [AdminKelolaBobot::class, 'updateAdditionalAbiotic'])->name('kelola-bobot.additional-abiotic.update');
+        Route::delete('/kelola-bobot/additional-abiotic/{parameter}', [AdminKelolaBobot::class, 'destroyAdditionalAbiotic'])->name('kelola-bobot.additional-abiotic.destroy');
 
         // Kelola Pembayaran
         Route::get('/kelola-pembayaran', [AdminKelolaPembayaran::class, 'index'])->name('kelola-pembayaran');

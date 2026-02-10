@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\GeoZone;
 use App\Models\MainAbioticParameter;
+use App\Models\AdditionalAbioticParameter;
 use App\Models\WaterType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +30,10 @@ class AdminKelolaBobot extends Controller
             ->paginate($perPage)
             ->withQueryString();
 
+        $additionalAbioticParameters = AdditionalAbioticParameter::orderBy('id')
+            ->paginate($perPage)
+            ->withQueryString();
+
         $geoZones = GeoZone::orderBy('name')->get(['id', 'name']);
         $waterTypes = WaterType::orderBy('name')->get(['id', 'name']);
 
@@ -43,6 +48,7 @@ class AdminKelolaBobot extends Controller
                 ]
             ],
             'mainAbioticParameters' => $mainAbioticParameters,
+            'additionalAbioticParameters' => $additionalAbioticParameters,
             'geoZones' => $geoZones,
             'waterTypes' => $waterTypes,
         ]);
@@ -102,5 +108,49 @@ class AdminKelolaBobot extends Controller
     {
         $parameter->delete();
         return redirect()->back()->with('success', 'Parameter main abiotic berhasil dihapus');
+    }
+
+    public function storeAdditionalAbiotic(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'initial_value' => 'required|numeric',
+            'final_value' => 'required|numeric',
+            'weight' => 'required|numeric',
+        ], [
+            'name.required' => 'Nama parameter harus diisi',
+            'initial_value.required' => 'Nilai awal harus diisi',
+            'final_value.required' => 'Nilai akhir harus diisi',
+            'weight.required' => 'Bobot harus diisi',
+        ]);
+
+        AdditionalAbioticParameter::create($validated);
+
+        return redirect()->back()->with('success', 'Parameter additional abiotic berhasil ditambahkan');
+    }
+
+    public function updateAdditionalAbiotic(Request $request, AdditionalAbioticParameter $parameter)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'initial_value' => 'required|numeric',
+            'final_value' => 'required|numeric',
+            'weight' => 'required|numeric',
+        ], [
+            'name.required' => 'Nama parameter harus diisi',
+            'initial_value.required' => 'Nilai awal harus diisi',
+            'final_value.required' => 'Nilai akhir harus diisi',
+            'weight.required' => 'Bobot harus diisi',
+        ]);
+
+        $parameter->update($validated);
+
+        return redirect()->back()->with('success', 'Parameter additional abiotic berhasil diupdate');
+    }
+
+    public function destroyAdditionalAbiotic(AdditionalAbioticParameter $parameter)
+    {
+        $parameter->delete();
+        return redirect()->back()->with('success', 'Parameter additional abiotic berhasil dihapus');
     }
 }
