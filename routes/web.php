@@ -68,6 +68,9 @@ Route::middleware('auth')->group(function () {
 
         // Kelola Bobot
         Route::get('/kelola-bobot', [AdminKelolaBobot::class, 'index'])->name('kelola-bobot');
+        Route::post('/kelola-bobot/main-abiotic', [AdminKelolaBobot::class, 'storeMainAbiotic'])->name('kelola-bobot.main-abiotic.store');
+        Route::put('/kelola-bobot/main-abiotic/{parameter}', [AdminKelolaBobot::class, 'updateMainAbiotic'])->name('kelola-bobot.main-abiotic.update');
+        Route::delete('/kelola-bobot/main-abiotic/{parameter}', [AdminKelolaBobot::class, 'destroyMainAbiotic'])->name('kelola-bobot.main-abiotic.destroy');
 
         // Kelola Pembayaran
         Route::get('/kelola-pembayaran', [AdminKelolaPembayaran::class, 'index'])->name('kelola-pembayaran');
