@@ -1,13 +1,26 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { usePage } from "@inertiajs/react";
 import { IoPeopleOutline, IoWaterOutline } from "react-icons/io5";
 import { MdPayment, MdOutlinePinDrop, MdOutlineHistory } from "react-icons/md";
 import { AiOutlineExperiment } from "react-icons/ai";
 import { TbLogout } from "react-icons/tb";
+import { ChevronDown } from "lucide-react";
 
 const AdminSidebar = ({ handleLogout }) => {
     const { auth } = usePage().props;
     const { url } = usePage();
+
+    const activeBobotTab = useMemo(() => {
+        const qs = url.split("?")[1] || "";
+        return new URLSearchParams(qs).get("tab");
+    }, [url]);
+
+    const isBobotSection = url.startsWith("/admin/kelola-bobot");
+    const [isBobotOpen, setIsBobotOpen] = useState(isBobotSection);
+
+    useEffect(() => {
+        if (isBobotSection) setIsBobotOpen(true);
+    }, [isBobotSection]);
 
     const menuItems = [
         {
@@ -19,11 +32,6 @@ const AdminSidebar = ({ handleLogout }) => {
             href: "/admin/kelola-pembayaran",
             icon: MdPayment,
             label: "Kelola Pembayaran",
-        },
-        {
-            href: "/admin/kelola-bobot",
-            icon: AiOutlineExperiment,
-            label: "Kelola Bobot",
         },
         {
             href: "/admin/kelola-station",
@@ -100,37 +108,142 @@ const AdminSidebar = ({ handleLogout }) => {
                             const isActive = url.startsWith(item.href);
 
                             return (
-                                <a
-                                    key={index}
-                                    href={item.href}
-                                    className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 ${
-                                        isActive
-                                            ? "bg-white text-blue-600 shadow-lg scale-105"
-                                            : "text-white/90 hover:bg-white/20 hover:backdrop-blur-sm hover:scale-102"
-                                    }`}
-                                >
-                                    <div
-                                        className={`flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
+                                <React.Fragment key={item.href || index}>
+                                    <a
+                                        href={item.href}
+                                        className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 ${
                                             isActive
-                                                ? "bg-gradient-to-br from-blue-500 to-emerald-500 text-white shadow-md"
-                                                : "bg-white/20 text-white group-hover:bg-white/30"
+                                                ? "bg-white text-blue-600 shadow-lg scale-105"
+                                                : "text-white/90 hover:bg-white/20 hover:backdrop-blur-sm hover:scale-102"
                                         }`}
                                     >
-                                        <IconComponent className="text-base" />
-                                    </div>
-                                    <span
-                                        className={`font-semibold text-sm transition-colors duration-300 ${
-                                            isActive
-                                                ? "text-gray-900"
-                                                : "text-white group-hover:text-white"
-                                        }`}
-                                    >
-                                        {item.label}
-                                    </span>
-                                    {isActive && (
-                                        <div className="ml-auto w-2 h-2 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-full shadow-lg animate-pulse"></div>
+                                        <div
+                                            className={`flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
+                                                isActive
+                                                    ? "bg-gradient-to-br from-blue-500 to-emerald-500 text-white shadow-md"
+                                                    : "bg-white/20 text-white group-hover:bg-white/30"
+                                            }`}
+                                        >
+                                            <IconComponent className="text-base" />
+                                        </div>
+                                        <span
+                                            className={`font-semibold text-sm transition-colors duration-300 ${
+                                                isActive
+                                                    ? "text-gray-900"
+                                                    : "text-white group-hover:text-white"
+                                            }`}
+                                        >
+                                            {item.label}
+                                        </span>
+                                        {isActive && (
+                                            <div className="ml-auto w-2 h-2 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-full shadow-lg animate-pulse"></div>
+                                        )}
+                                    </a>
+
+                                    {/* Kelola Bobot Dropdown: letakkan tepat setelah Kelola Station */}
+                                    {item.href === "/admin/kelola-station" && (
+                                        <div className="space-y-1">
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    setIsBobotOpen((v) => !v)
+                                                }
+                                                className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 w-full ${
+                                                    isBobotSection
+                                                        ? "bg-white text-blue-600 shadow-lg scale-105"
+                                                        : "text-white/90 hover:bg-white/20 hover:backdrop-blur-sm hover:scale-102"
+                                                }`}
+                                                aria-expanded={isBobotOpen}
+                                            >
+                                                <div
+                                                    className={`flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ${
+                                                        isBobotSection
+                                                            ? "bg-gradient-to-br from-blue-500 to-emerald-500 text-white shadow-md"
+                                                            : "bg-white/20 text-white group-hover:bg-white/30"
+                                                    }`}
+                                                >
+                                                    <AiOutlineExperiment className="text-base" />
+                                                </div>
+
+                                                <span
+                                                    className={`font-semibold text-sm transition-colors duration-300 ${
+                                                        isBobotSection
+                                                            ? "text-gray-900"
+                                                            : "text-white group-hover:text-white"
+                                                    }`}
+                                                >
+                                                    Kelola Bobot
+                                                </span>
+
+                                                <div className="ml-auto flex items-center gap-2">
+                                                    {isBobotSection && (
+                                                        <div className="w-2 h-2 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-full shadow-lg animate-pulse"></div>
+                                                    )}
+                                                    <ChevronDown
+                                                        className={`w-4 h-4 transition-transform ${
+                                                            isBobotOpen
+                                                                ? "rotate-180"
+                                                                : ""
+                                                        } ${
+                                                            isBobotSection
+                                                                ? "text-gray-900"
+                                                                : "text-white"
+                                                        }`}
+                                                    />
+                                                </div>
+                                            </button>
+
+                                            {isBobotOpen && (
+                                                <div className="pl-11 pr-3 pb-1 space-y-1">
+                                                    {[
+                                                        {
+                                                            href: "/admin/kelola-bobot?tab=main-abiotic",
+                                                            label: "Main Abiotic",
+                                                            tab: "main-abiotic",
+                                                        },
+                                                        {
+                                                            href: "/admin/kelola-bobot?tab=additional-abiotic",
+                                                            label: "Additional Abiotic",
+                                                            tab: "additional-abiotic",
+                                                        },
+                                                        {
+                                                            href: "/admin/kelola-bobot?tab=index-biotic",
+                                                            label: "Index Biotic",
+                                                            tab: "index-biotic",
+                                                        },
+                                                        {
+                                                            href: "/admin/kelola-bobot?tab=family-biotic",
+                                                            label: "Family Biotic",
+                                                            tab: "family-biotic",
+                                                        },
+                                                    ].map((sub) => {
+                                                        const isSubActive =
+                                                            isBobotSection &&
+                                                            (activeBobotTab
+                                                                ? activeBobotTab ===
+                                                                  sub.tab
+                                                                : sub.tab ===
+                                                                  "main-abiotic");
+
+                                                        return (
+                                                            <a
+                                                                key={sub.tab}
+                                                                href={sub.href}
+                                                                className={`block px-3 py-2 rounded-xl text-sm font-semibold transition-all ${
+                                                                    isSubActive
+                                                                        ? "bg-white/90 text-gray-900 shadow"
+                                                                        : "text-white/90 hover:bg-white/20 hover:text-white"
+                                                                }`}
+                                                            >
+                                                                {sub.label}
+                                                            </a>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
+                                        </div>
                                     )}
-                                </a>
+                                </React.Fragment>
                             );
                         })}
                     </nav>
