@@ -7,8 +7,11 @@ export default function EditStationModal({
     form,
     setForm,
     onSubmit,
-    selectedUser,
+    selectedStation,
     serverErrors = {},
+    waterTypes = [],
+    geoZones = [],
+    users = [],
 }) {
     const [errors, setErrors] = useState({});
     const [touched, setTouched] = useState({});
@@ -22,35 +25,25 @@ export default function EditStationModal({
 
     if (!isOpen) return null;
 
-    const isAdmin = selectedUser && selectedUser.role === "admin";
-    const isOperator = selectedUser && selectedUser.role === "operator";
-    const isMember = selectedUser && selectedUser.role === "member";
-
     const validateField = (name, value) => {
         let error = "";
 
         switch (name) {
-            case "name":
-                if (!value || value.trim() === "") {
-                    error = "Nama tidak boleh kosong";
-                } else if (value.length > 255) {
-                    error = "Nama maksimal 255 karakter";
+            case "id_type_water":
+                if (!value || value === "") {
+                    error = "Tipe air harus dipilih";
                 }
                 break;
 
-            case "email":
-                if (!value || value.trim() === "") {
-                    error = "Email tidak boleh kosong";
-                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                    error = "Format email tidak valid";
-                } else if (value.length > 255) {
-                    error = "Email maksimal 255 karakter";
+            case "id_geo_zone":
+                if (!value || value === "") {
+                    error = "Zona geografis harus dipilih";
                 }
                 break;
 
-            case "password":
-                if (value && value.length < 8) {
-                    error = "Password minimal 8 karakter";
+            case "id_user":
+                if (!value || value === "") {
+                    error = "Pengguna harus dipilih";
                 }
                 break;
 
@@ -97,7 +90,7 @@ export default function EditStationModal({
 
         // Validate all fields
         const newErrors = {};
-        ["name", "email", "password"].forEach((field) => {
+        ["id_type_water", "id_geo_zone", "id_user"].forEach((field) => {
             const error = validateField(field, form[field]);
             if (error) {
                 newErrors[field] = error;
@@ -106,9 +99,9 @@ export default function EditStationModal({
 
         // Mark all fields as touched
         setTouched({
-            name: true,
-            email: true,
-            password: true,
+            id_type_water: true,
+            id_geo_zone: true,
+            id_user: true,
         });
 
         // If there are errors, don't submit
@@ -159,191 +152,144 @@ export default function EditStationModal({
                     <form onSubmit={handleSubmit} className="space-y-3">
                         <div>
                             <label className="block text-sm font-semibold text-white mb-1.5 drop-shadow-md">
-                                Nama
-                            </label>
-                            <input
-                                type="text"
-                                value={form.name}
-                                onChange={(e) =>
-                                    handleFieldChange("name", e.target.value)
-                                }
-                                onBlur={() => handleBlur("name")}
-                                className={`w-full px-4 py-2 bg-white/20 backdrop-blur-md border-2 rounded-lg text-white placeholder-white/60 focus:bg-white/30 focus:outline-none transition-all ${
-                                    errors.name
-                                        ? "border-red-400 focus:border-red-500"
-                                        : "border-white/40 focus:border-white/60"
-                                }`}
-                                required
-                            />
-                            {errors.name && (
-                                <p className="mt-2 text-sm text-red-100 flex items-center drop-shadow-lg bg-red-500/20 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-red-300/30">
-                                    <svg
-                                        className="w-4 h-4 mr-1.5 flex-shrink-0"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path
-                                            fillRule="evenodd"
-                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                            clipRule="evenodd"
-                                        />
-                                    </svg>
-                                    {errors.name}
-                                </p>
-                            )}
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-semibold text-white mb-1.5 drop-shadow-md">
-                                Email
-                            </label>
-                            <input
-                                type="email"
-                                value={form.email}
-                                onChange={(e) =>
-                                    handleFieldChange("email", e.target.value)
-                                }
-                                onBlur={() => handleBlur("email")}
-                                className={`w-full px-4 py-2 bg-white/20 backdrop-blur-md border-2 rounded-lg text-white placeholder-white/60 focus:bg-white/30 focus:outline-none transition-all ${
-                                    errors.email
-                                        ? "border-red-400 focus:border-red-500"
-                                        : "border-white/40 focus:border-white/60"
-                                }`}
-                                required
-                            />
-                            {errors.email && (
-                                <p className="mt-2 text-sm text-red-100 flex items-center drop-shadow-lg bg-red-500/20 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-red-300/30">
-                                    <svg
-                                        className="w-4 h-4 mr-1.5 flex-shrink-0"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path
-                                            fillRule="evenodd"
-                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                            clipRule="evenodd"
-                                        />
-                                    </svg>
-                                    {errors.email}
-                                </p>
-                            )}
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-semibold text-white mb-1.5 drop-shadow-md">
-                                Password
-                                <span className="text-xs text-white/70 ml-2">
-                                    (Kosongkan jika tidak ingin mengubah)
-                                </span>
-                            </label>
-                            <input
-                                type="password"
-                                value={form.password}
-                                onChange={(e) =>
-                                    handleFieldChange(
-                                        "password",
-                                        e.target.value
-                                    )
-                                }
-                                onBlur={() => handleBlur("password")}
-                                className={`w-full px-4 py-2 bg-white/20 backdrop-blur-md border-2 rounded-lg text-white placeholder-white/60 focus:bg-white/30 focus:outline-none transition-all ${
-                                    errors.password
-                                        ? "border-red-400 focus:border-red-500"
-                                        : "border-white/40 focus:border-white/60"
-                                }`}
-                                placeholder="••••••••"
-                            />
-                            {errors.password && (
-                                <p className="mt-2 text-sm text-red-100 flex items-center drop-shadow-lg bg-red-500/20 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-red-300/30">
-                                    <svg
-                                        className="w-4 h-4 mr-1.5 flex-shrink-0"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path
-                                            fillRule="evenodd"
-                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                            clipRule="evenodd"
-                                        />
-                                    </svg>
-                                    {errors.password}
-                                </p>
-                            )}
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-semibold text-white mb-1.5 drop-shadow-md">
-                                Role
+                                Tipe Air
                             </label>
                             <select
-                                value={form.role}
+                                value={form.id_type_water || ""}
                                 onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        role: e.target.value,
-                                    })
+                                    handleFieldChange("id_type_water", e.target.value)
                                 }
-                                className="w-full px-4 py-2 bg-white/20 backdrop-blur-md border-2 border-white/40 rounded-lg text-white focus:bg-white/30 focus:border-white/60 focus:outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                                required
-                                disabled={isAdmin || isMember}
+                                onBlur={() => handleBlur("id_type_water")}
+                                className={`w-full px-4 py-2 bg-white/20 backdrop-blur-md border-2 rounded-lg text-white focus:bg-white/30 focus:outline-none transition-all ${
+                                    errors.id_type_water
+                                        ? "border-red-400 focus:border-red-500"
+                                        : "border-white/40 focus:border-white/60"
+                                }`}
                             >
-                                {!isOperator && (
+                                <option value="" className="text-gray-900">
+                                    Pilih Tipe Air
+                                </option>
+                                {waterTypes.map((waterType) => (
                                     <option
-                                        value="member"
+                                        key={waterType.id}
+                                        value={waterType.id}
                                         className="text-gray-900"
                                     >
-                                        Member
+                                        {waterType.name}
                                     </option>
-                                )}
-                                <option
-                                    value="operator"
-                                    className="text-gray-900"
-                                >
-                                    Operator
-                                </option>
-                                <option value="admin" className="text-gray-900">
-                                    Admin
-                                </option>
+                                ))}
                             </select>
-                            {isAdmin && (
-                                <p className="text-xs text-white/70 mt-1">
-                                    Role tidak dapat diubah
-                                </p>
-                            )}
-                            {isMember && (
-                                <p className="text-xs text-white/70 mt-1">
-                                    Role tidak dapat diubah
-                                </p>
-                            )}
-                            {isOperator && (
-                                <p className="text-xs text-white/70 mt-1">
-                                    Operator hanya dapat diubah menjadi Admin
+                            {errors.id_type_water && (
+                                <p className="mt-2 text-sm text-red-100 flex items-center drop-shadow-lg bg-red-500/20 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-red-300/30">
+                                    <svg
+                                        className="w-4 h-4 mr-1.5 flex-shrink-0"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                            clipRule="evenodd"
+                                        />
+                                    </svg>
+                                    {errors.id_type_water}
                                 </p>
                             )}
                         </div>
 
-                        {isMember && (
-                            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md p-3 rounded-lg border border-white/30">
-                                <input
-                                    type="checkbox"
-                                    id="edit_membership"
-                                    checked={form.is_membership}
-                                    onChange={(e) =>
-                                        setForm({
-                                            ...form,
-                                            is_membership: e.target.checked,
-                                        })
-                                    }
-                                    className="w-4 h-4 rounded bg-white/20 border-2 border-white/40"
-                                />
-                                <label
-                                    htmlFor="edit_membership"
-                                    className="text-sm font-semibold text-white drop-shadow-md cursor-pointer"
-                                >
-                                    Membership Aktif
-                                </label>
-                            </div>
-                        )}
+                        <div>
+                            <label className="block text-sm font-semibold text-white mb-1.5 drop-shadow-md">
+                                Zona Geografis
+                            </label>
+                            <select
+                                value={form.id_geo_zone || ""}
+                                onChange={(e) =>
+                                    handleFieldChange("id_geo_zone", e.target.value)
+                                }
+                                onBlur={() => handleBlur("id_geo_zone")}
+                                className={`w-full px-4 py-2 bg-white/20 backdrop-blur-md border-2 rounded-lg text-white focus:bg-white/30 focus:outline-none transition-all ${
+                                    errors.id_geo_zone
+                                        ? "border-red-400 focus:border-red-500"
+                                        : "border-white/40 focus:border-white/60"
+                                }`}
+                            >
+                                <option value="" className="text-gray-900">
+                                    Pilih Zona Geografis
+                                </option>
+                                {geoZones.map((geoZone) => (
+                                    <option
+                                        key={geoZone.id}
+                                        value={geoZone.id}
+                                        className="text-gray-900"
+                                    >
+                                        {geoZone.name}
+                                    </option>
+                                ))}
+                            </select>
+                            {errors.id_geo_zone && (
+                                <p className="mt-2 text-sm text-red-100 flex items-center drop-shadow-lg bg-red-500/20 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-red-300/30">
+                                    <svg
+                                        className="w-4 h-4 mr-1.5 flex-shrink-0"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                            clipRule="evenodd"
+                                        />
+                                    </svg>
+                                    {errors.id_geo_zone}
+                                </p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-semibold text-white mb-1.5 drop-shadow-md">
+                                Pengguna
+                            </label>
+                            <select
+                                value={form.id_user || ""}
+                                onChange={(e) =>
+                                    handleFieldChange("id_user", e.target.value)
+                                }
+                                onBlur={() => handleBlur("id_user")}
+                                className={`w-full px-4 py-2 bg-white/20 backdrop-blur-md border-2 rounded-lg text-white focus:bg-white/30 focus:outline-none transition-all ${
+                                    errors.id_user
+                                        ? "border-red-400 focus:border-red-500"
+                                        : "border-white/40 focus:border-white/60"
+                                }`}
+                            >
+                                <option value="" className="text-gray-900">
+                                    Pilih Pengguna
+                                </option>
+                                {users.map((user) => (
+                                    <option
+                                        key={user.id}
+                                        value={user.id}
+                                        className="text-gray-900"
+                                    >
+                                        {user.name} ({user.email})
+                                    </option>
+                                ))}
+                            </select>
+                            {errors.id_user && (
+                                <p className="mt-2 text-sm text-red-100 flex items-center drop-shadow-lg bg-red-500/20 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-red-300/30">
+                                    <svg
+                                        className="w-4 h-4 mr-1.5 flex-shrink-0"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                            clipRule="evenodd"
+                                        />
+                                    </svg>
+                                    {errors.id_user}
+                                </p>
+                            )}
+                        </div>
 
                         <div className="flex gap-3 pt-2">
                             <button

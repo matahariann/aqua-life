@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Station;
 use App\Models\User;
+use App\Models\WaterType;
+use App\Models\GeoZone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
@@ -35,7 +36,11 @@ class AdminKelolaStation extends Controller
         ->paginate($perPage)
         ->withQueryString();
     
-        $users = User::orderBy('created_at', 'desc')->paginate($perPage);
+        // Ambil data untuk dropdown
+        $waterTypes = WaterType::orderBy('name')->get(['id', 'name']);
+        $geoZones = GeoZone::orderBy('name')->get(['id', 'name']);
+        $users = User::orderBy('name')->get(['id', 'name', 'email']);
+        
         // Kirim data ke view
         return Inertia::render("Admin/Kelola Station/page", [
             'auth' => [
@@ -48,6 +53,8 @@ class AdminKelolaStation extends Controller
                 ]
             ],
             'stations' => $stations,
+            'waterTypes' => $waterTypes,
+            'geoZones' => $geoZones,
             'users' => $users
         ]);
     }
@@ -55,62 +62,46 @@ class AdminKelolaStation extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'role' => 'required|in:member,operator,admin',
-            'is_membership' => 'boolean',
+            'id_type_water' => 'required|exists:water_types,id',
+            'id_geo_zone' => 'required|exists:geo_zones,id',
+            'id_user' => 'required|exists:users,id',
         ], [
-            'name.required' => 'Nama tidak boleh kosong',
-            'name.max' => 'Nama maksimal 255 karakter',
-            'email.required' => 'Email tidak boleh kosong',
-            'email.email' => 'Format email tidak valid',
-            'email.unique' => 'Email sudah terdaftar',
-            'email.max' => 'Email maksimal 255 karakter',
-            'password.required' => 'Password tidak boleh kosong',
-            'password.min' => 'Password minimal 8 karakter',
+            'id_type_water.required' => 'Tipe air harus dipilih',
+            'id_type_water.exists' => 'Tipe air tidak valid',
+            'id_geo_zone.required' => 'Zona geografis harus dipilih',
+            'id_geo_zone.exists' => 'Zona geografis tidak valid',
+            'id_user.required' => 'Pengguna harus dipilih',
+            'id_user.exists' => 'Pengguna tidak valid',
         ]);
     
-        $validated['password'] = Hash::make($validated['password']);
+        Station::create($validated);
     
-        User::create($validated);
-    
-        return redirect()->back()->with('success', 'Pengguna berhasil ditambahkan');
+        return redirect()->back()->with('success', 'Station berhasil ditambahkan');
     }
 
-    public function update(Request $request, User $user)
+    public function update(Request $request, Station $station)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'password' => 'nullable|string|min:8',
-            'role' => 'required|in:member,operator,admin',
-            'is_membership' => 'boolean',
+            'id_type_water' => 'required|exists:water_types,id',
+            'id_geo_zone' => 'required|exists:geo_zones,id',
+            'id_user' => 'required|exists:users,id',
         ], [
-            'name.required' => 'Nama tidak boleh kosong',
-            'name.min' => 'Nama minimal 3 karakter',
-            'email.required' => 'Email tidak boleh kosong',
-            'email.email' => 'Format email tidak valid',
-            'email.unique' => 'Email sudah terdaftar',
-            'password.required' => 'Password tidak boleh kosong',
-            'password.min' => 'Password minimal 8 karakter',
-            'password.confirmed' => 'Password tidak sama',
+            'id_type_water.required' => 'Tipe air harus dipilih',
+            'id_type_water.exists' => 'Tipe air tidak valid',
+            'id_geo_zone.required' => 'Zona geografis harus dipilih',
+            'id_geo_zone.exists' => 'Zona geografis tidak valid',
+            'id_user.required' => 'Pengguna harus dipilih',
+            'id_user.exists' => 'Pengguna tidak valid',
         ]);
 
-        if (!empty($validated['password'])) {
-            $validated['password'] = Hash::make($validated['password']);
-        } else {
-            unset($validated['password']);
-        }
+        $station->update($validated);
 
-        $user->update($validated);
-
-        return redirect()->back()->with('success', 'Pengguna berhasil diupdate');
+        return redirect()->back()->with('success', 'Station berhasil diupdate');
     }
 
     public function destroy(Station $station)
     {
         $station->delete();
-        return redirect()->back()->with('success', 'Pengguna berhasil dihapus');
+        return redirect()->back()->with('success', 'Station berhasil dihapus');
     }
 }

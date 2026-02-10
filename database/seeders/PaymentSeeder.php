@@ -16,7 +16,7 @@ class PaymentSeeder extends Seeder
         DB::table('payments')->insert([
             [
                 'id' => 1,
-                'proof' => 'pay_001.jpg',
+                'proof' => 'contoh_bukti_pembayaran.jpeg',
                 'status' => 'approved',
                 'id_user' => 3,
                 'created_at' => now(),
@@ -24,7 +24,7 @@ class PaymentSeeder extends Seeder
             ],
             [
                 'id' => 2,
-                'proof' => 'pay_002.jpg',
+                'proof' => 'contoh_bukti_pembayaran.jpeg',
                 'status' => 'pending',
                 'id_user' => 4,
                 'created_at' => now(),
@@ -32,7 +32,7 @@ class PaymentSeeder extends Seeder
             ],
             [
                 'id' => 3,
-                'proof' => 'pay_003.jpg',
+                'proof' => 'contoh_bukti_pembayaran.jpeg',
                 'status' => 'rejected',
                 'id_user' => 5,
                 'created_at' => now(),

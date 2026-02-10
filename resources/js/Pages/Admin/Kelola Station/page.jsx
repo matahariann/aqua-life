@@ -9,11 +9,10 @@ import EditStationModal from "@/Components/EditStationModal";
 import DeleteStationModal from "@/Components/DeleteStationModal";
 import ModalStyles from "@/Components/ModalStyles";
 
-export default function AdminKelolaStation({ users, stations }) {
+export default function AdminKelolaStation({ users, stations, waterTypes, geoZones }) {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [selectedUser, setSelectedUser] = useState(null);
     const [selectedStation, setSelectedStation  ] = useState(null);
     const [addErrors, setAddErrors] = useState({});
     const [editErrors, setEditErrors] = useState({});
@@ -22,19 +21,15 @@ export default function AdminKelolaStation({ users, stations }) {
     const { delete: destroy, processing } = useForm();
 
     const [addForm, setAddForm] = useState({
-        name: "",
-        email: "",
-        password: "",
-        role: "member",
-        is_membership: false,
+        id_type_water: "",
+        id_geo_zone: "",
+        id_user: "",
     });
 
     const [editForm, setEditForm] = useState({
-        name: "",
-        email: "",
-        password: "",
-        role: "member",
-        is_membership: false,
+        id_type_water: "",
+        id_geo_zone: "",
+        id_user: "",
     });
 
     // Sync perPage dengan users.per_page dari backend
@@ -47,21 +42,19 @@ export default function AdminKelolaStation({ users, stations }) {
     const handleAddSubmit = (e) => {
         e.preventDefault();
 
-        router.post("/admin/kelola-pengguna", addForm, {
+        router.post("/admin/kelola-station", addForm, {
             preserveScroll: true,
             data: { per_page: perPage },
             onSuccess: () => {
                 setShowAddModal(false);
                 setAddForm({
-                    name: "",
-                    email: "",
-                    password: "",
-                    role: "member",
-                    is_membership: false,
+                    id_type_water: "",
+                    id_geo_zone: "",
+                    id_user: "",
                 });
                 setAddErrors({});
                 toast.success("Berhasil!", {
-                    description: "Pengguna berhasil ditambahkan",
+                    description: "Station berhasil ditambahkan",
                     duration: 3000,
                 });
             },
@@ -78,23 +71,19 @@ export default function AdminKelolaStation({ users, stations }) {
     const handleCloseAddModal = () => {
         setShowAddModal(false);
         setAddForm({
-            name: "",
-            email: "",
-            password: "",
-            role: "member",
-            is_membership: false,
+            id_type_water: "",
+            id_geo_zone: "",
+            id_user: "",
         });
         setAddErrors({});
     };
 
-    const handleEditClick = (user) => {
-        setSelectedUser(user);
+    const handleEditClick = (station) => {
+        setSelectedStation(station);
         setEditForm({
-            name: user.name,
-            email: user.email,
-            password: "",
-            role: user.role,
-            is_membership: user.is_membership,
+            id_type_water: station.id_type_water || station.water_type?.id || "",
+            id_geo_zone: station.id_geo_zone || station.geo_zone?.id || "",
+            id_user: station.id_user || station.user?.id || "",
         });
         setEditErrors({});
         setShowEditModal(true);
@@ -103,22 +92,20 @@ export default function AdminKelolaStation({ users, stations }) {
     const handleEditSubmit = (e) => {
         e.preventDefault();
 
-        if (selectedUser) {
-            router.put(`/admin/kelola-pengguna/${selectedUser.id}`, editForm, {
+        if (selectedStation) {
+            router.put(`/admin/kelola-station/${selectedStation.id}`, editForm, {
                 preserveScroll: true,
                 onSuccess: () => {
                     setShowEditModal(false);
                     setEditForm({
-                        name: "",
-                        email: "",
-                        password: "",
-                        role: "member",
-                        is_membership: false,
+                        id_type_water: "",
+                        id_geo_zone: "",
+                        id_user: "",
                     });
                     setEditErrors({});
-                    setSelectedUser(null);
+                    setSelectedStation(null);
                     toast.success("Berhasil!", {
-                        description: "Pengguna berhasil diupdate",
+                        description: "Station berhasil diupdate",
                         duration: 3000,
                     });
                 },
@@ -144,16 +131,16 @@ export default function AdminKelolaStation({ users, stations }) {
                 preserveScroll: true,
                 onSuccess: () => {
                     setShowDeleteModal(false);
-                    setSelectedUser(null);
+                    setSelectedStation(null);
                     toast.success("Berhasil!", {
                         description: "Station berhasil dihapus",
                         duration: 3000,
                     });
                 },
                 onError: (errors) => {
-                    console.error("Error deleting user:", errors);
+                    console.error("Error deleting station:", errors);
                     toast.error("Gagal!", {
-                        description: "Gagal menghapus pengguna",
+                        description: "Gagal menghapus station",
                         duration: 3000,
                     });
                 },
@@ -164,14 +151,12 @@ export default function AdminKelolaStation({ users, stations }) {
     const handleCloseEditModal = () => {
         setShowEditModal(false);
         setEditForm({
-            name: "",
-            email: "",
-            password: "",
-            role: "member",
-            is_membership: false,
+            id_type_water: "",
+            id_geo_zone: "",
+            id_user: "",
         });
         setEditErrors({});
-        setSelectedUser(null);
+        setSelectedStation(null);
     };
 
     const handlePerPageChange = (value) => {
@@ -507,6 +492,9 @@ export default function AdminKelolaStation({ users, stations }) {
                     setForm={setAddForm}
                     onSubmit={handleAddSubmit}
                     serverErrors={addErrors}
+                    waterTypes={waterTypes || []}
+                    geoZones={geoZones || []}
+                    users={users || []}
                 />
 
                 <EditStationModal
@@ -515,8 +503,11 @@ export default function AdminKelolaStation({ users, stations }) {
                     form={editForm}
                     setForm={setEditForm}
                     onSubmit={handleEditSubmit}
-                    selectedUser={selectedUser}
+                    selectedStation={selectedStation}
                     serverErrors={editErrors}
+                    waterTypes={waterTypes || []}
+                    geoZones={geoZones || []}
+                    users={users || []}
                 />
 
                 <DeleteStationModal
