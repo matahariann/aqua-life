@@ -269,6 +269,7 @@ export default function AdminKelolaStation({ users, stations, waterTypes, geoZon
 
                     {/* Table */}
                     <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div className={"bg-gradient-to-r from-cyan-500 to-emerald-500 p-1 rounded-xl shadow-lg ring-4 ring-white/30"}></div>
                         {/* Per Page Selector */}
                         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                             <div className="flex items-center gap-2">

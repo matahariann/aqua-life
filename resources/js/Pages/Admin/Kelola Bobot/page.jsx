@@ -23,20 +23,20 @@ export default function AdminKelolaBobot() {
                 return {
                     title: "Bobot Index Biotic",
                     desc: "Konten khusus untuk bobot perhitungan index biotic.",
-                    color: "from-indigo-500 to-blue-500",
+                    color: "from-cyan-500 to-emerald-500",
                 };
             case "family-biotic":
                 return {
                     title: "Bobot Family Biotic",
                     desc: "Konten khusus untuk bobot family biotic.",
-                    color: "from-rose-500 to-orange-500",
+                    color: "from-cyan-500 to-emerald-500",
                 };
             case "main-abiotic":
             default:
                 return {
                     title: "Bobot Main Abiotic",
                     desc: "Konten khusus untuk bobot parameter main abiotic.",
-                    color: "from-blue-500 to-cyan-500",
+                    color: "from-cyan-500 to-emerald-500",
                 };
         }
     }, [tab]);
@@ -44,7 +44,7 @@ export default function AdminKelolaBobot() {
     return (
         <AdminLayout>
             <main className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-100 p-6">
-                <div className="max-w-5xl mx-auto">
+                <div className="max-w-7xl mx-auto">
                     <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
                         <div className="flex items-center gap-3">
                             <div className={`bg-gradient-to-br ${content.color} p-3 rounded-xl shadow-lg ring-4 ring-white/30`}>
@@ -60,7 +60,6 @@ export default function AdminKelolaBobot() {
                             </div>
                         </div>
                     </div>
-
                     <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
                         <div className={`h-2 bg-gradient-to-r ${content.color}`}></div>
                         <div className="p-8">
