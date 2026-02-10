@@ -34,6 +34,10 @@ class AdminKelolaBobot extends Controller
             ->paginate($perPage)
             ->withQueryString();
 
+        $bioticIndexParameters = \App\Models\BioticIndexParameter::orderBy('id')
+            ->paginate($perPage)
+            ->withQueryString();
+
         $geoZones = GeoZone::orderBy('name')->get(['id', 'name']);
         $waterTypes = WaterType::orderBy('name')->get(['id', 'name']);
 
@@ -49,6 +53,7 @@ class AdminKelolaBobot extends Controller
             ],
             'mainAbioticParameters' => $mainAbioticParameters,
             'additionalAbioticParameters' => $additionalAbioticParameters,
+            'bioticIndexParameters' => $bioticIndexParameters,
             'geoZones' => $geoZones,
             'waterTypes' => $waterTypes,
         ]);
@@ -152,5 +157,49 @@ class AdminKelolaBobot extends Controller
     {
         $parameter->delete();
         return redirect()->back()->with('success', 'Parameter additional abiotic berhasil dihapus');
+    }
+
+    public function storeBioticIndex(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'initial_value' => 'required|numeric',
+            'final_value' => 'required|numeric',
+            'weight' => 'required|numeric',
+        ], [
+            'name.required' => 'Nama parameter harus diisi',
+            'initial_value.required' => 'Nilai awal harus diisi',
+            'final_value.required' => 'Nilai akhir harus diisi',
+            'weight.required' => 'Bobot harus diisi',
+        ]);
+
+        \App\Models\BioticIndexParameter::create($validated);
+
+        return redirect()->back()->with('success', 'Parameter biotic index berhasil ditambahkan');
+    }
+
+    public function updateBioticIndex(Request $request, \App\Models\BioticIndexParameter $parameter)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'initial_value' => 'required|numeric',
+            'final_value' => 'required|numeric',
+            'weight' => 'required|numeric',
+        ], [
+            'name.required' => 'Nama parameter harus diisi',
+            'initial_value.required' => 'Nilai awal harus diisi',
+            'final_value.required' => 'Nilai akhir harus diisi',
+            'weight.required' => 'Bobot harus diisi',
+        ]);
+
+        $parameter->update($validated);
+
+        return redirect()->back()->with('success', 'Parameter biotic index berhasil diupdate');
+    }
+
+    public function destroyBioticIndex(\App\Models\BioticIndexParameter $parameter)
+    {
+        $parameter->delete();
+        return redirect()->back()->with('success', 'Parameter biotic index berhasil dihapus');
     }
 }

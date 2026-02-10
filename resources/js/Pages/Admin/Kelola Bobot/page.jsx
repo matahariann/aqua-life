@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { router, usePage, useForm } from "@inertiajs/react";
+import { router, usePage, useForm, Link } from "@inertiajs/react";
 import { AiOutlineExperiment } from "react-icons/ai";
 import { Trash2, Edit, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast, Toaster } from "sonner";
@@ -349,6 +349,7 @@ function DeleteMainAbioticModal({ isOpen, onClose, onConfirm, processing, parame
 export default function AdminKelolaBobot({
     mainAbioticParameters,
     additionalAbioticParameters,
+    bioticIndexParameters,
     geoZones,
     waterTypes,
 }) {
@@ -445,6 +446,32 @@ export default function AdminKelolaBobot({
         additionalAbioticParameters?.per_page || 10
     );
 
+    // Biotic Index state (CRUD)
+    const [showAddBioticModal, setShowAddBioticModal] = useState(false);
+    const [showEditBioticModal, setShowEditBioticModal] = useState(false);
+    const [showDeleteBioticModal, setShowDeleteBioticModal] = useState(false);
+    const [selectedBioticParam, setSelectedBioticParam] = useState(null);
+    const [addBioticErrors, setAddBioticErrors] = useState({});
+    const [editBioticErrors, setEditBioticErrors] = useState({});
+
+    const [addBioticForm, setAddBioticForm] = useState({
+        name: "",
+        initial_value: "",
+        final_value: "",
+        weight: "",
+    });
+
+    const [editBioticForm, setEditBioticForm] = useState({
+        name: "",
+        initial_value: "",
+        final_value: "",
+        weight: "",
+    });
+
+    const [perPageBiotic, setPerPageBiotic] = useState(
+        bioticIndexParameters?.per_page || 10
+    );
+
     useEffect(() => {
         if (mainAbioticParameters?.per_page) {
             setPerPageMain(mainAbioticParameters.per_page);
@@ -456,6 +483,12 @@ export default function AdminKelolaBobot({
             setPerPageAdditional(additionalAbioticParameters.per_page);
         }
     }, [additionalAbioticParameters?.per_page]);
+
+    useEffect(() => {
+        if (bioticIndexParameters?.per_page) {
+            setPerPageBiotic(bioticIndexParameters.per_page);
+        }
+    }, [bioticIndexParameters?.per_page]);
 
     const handlePerPageChangeMain = (value) => {
         const newPerPage = Number(value);
@@ -485,6 +518,20 @@ export default function AdminKelolaBobot({
         );
     };
 
+    const handlePerPageChangeBiotic = (value) => {
+        const newPerPage = Number(value);
+        setPerPageBiotic(newPerPage);
+        router.get(
+            "/admin/kelola-bobot",
+            { per_page: newPerPage, tab: "index-biotic" },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            }
+        );
+    };
+
     const handlePageChangeMain = (pageUrl) => {
         if (!pageUrl) return;
         const urlObj = new URL(pageUrl, window.location.origin);
@@ -502,6 +549,18 @@ export default function AdminKelolaBobot({
         const urlObj = new URL(pageUrl, window.location.origin);
         urlObj.searchParams.set("per_page", perPageAdditional);
         urlObj.searchParams.set("tab", "additional-abiotic");
+        router.get(urlObj.pathname + urlObj.search, {}, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        });
+    };
+
+    const handlePageChangeBiotic = (pageUrl) => {
+        if (!pageUrl) return;
+        const urlObj = new URL(pageUrl, window.location.origin);
+        urlObj.searchParams.set("per_page", perPageBiotic);
+        urlObj.searchParams.set("tab", "index-biotic");
         router.get(urlObj.pathname + urlObj.search, {}, {
             preserveState: true,
             preserveScroll: true,
@@ -741,6 +800,119 @@ export default function AdminKelolaBobot({
         );
     };
 
+    // Biotic Index handlers
+    const handleAddBioticSubmit = (e) => {
+        e.preventDefault();
+        router.post(
+            "/admin/kelola-bobot/biotic-index?tab=index-biotic",
+            addBioticForm,
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setShowAddBioticModal(false);
+                    setAddBioticForm({
+                        name: "",
+                        initial_value: "",
+                        final_value: "",
+                        weight: "",
+                    });
+                    setAddBioticErrors({});
+                    toast.success("Berhasil!", {
+                        description:
+                            "Parameter biotic index berhasil ditambahkan",
+                        duration: 3000,
+                    });
+                },
+                onError: (errors) => {
+                    setAddBioticErrors(errors);
+                    toast.error("Gagal Menambahkan", {
+                        description: "Mohon periksa kembali form Anda.",
+                        duration: 3000,
+                    });
+                },
+            }
+        );
+    };
+
+    const handleEditBioticClick = (parameter) => {
+        setSelectedBioticParam(parameter);
+        setEditBioticForm({
+            name: parameter?.name || "",
+            initial_value: parameter?.initial_value ?? "",
+            final_value: parameter?.final_value ?? "",
+            weight: parameter?.weight ?? "",
+        });
+        setEditBioticErrors({});
+        setShowEditBioticModal(true);
+    };
+
+    const handleEditBioticSubmit = (e) => {
+        e.preventDefault();
+        if (!selectedBioticParam) return;
+
+        router.put(
+            `/admin/kelola-bobot/biotic-index/${selectedBioticParam.id}?tab=index-biotic`,
+            editBioticForm,
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setShowEditBioticModal(false);
+                    setEditBioticForm({
+                        name: "",
+                        initial_value: "",
+                        final_value: "",
+                        weight: "",
+                    });
+                    setEditBioticErrors({});
+                    setSelectedBioticParam(null);
+                    toast.success("Berhasil!", {
+                        description:
+                            "Parameter biotic index berhasil diupdate",
+                        duration: 3000,
+                    });
+                },
+                onError: (errors) => {
+                    setEditBioticErrors(errors);
+                    toast.error("Gagal Update", {
+                        description: "Mohon periksa kembali form Anda.",
+                        duration: 3000,
+                    });
+                },
+            }
+        );
+    };
+
+    const handleDeleteBioticClick = (parameter) => {
+        setSelectedBioticParam(parameter);
+        setShowDeleteBioticModal(true);
+    };
+
+    const handleDeleteBioticConfirm = () => {
+        if (!selectedBioticParam) return;
+
+        destroy(
+            `/admin/kelola-bobot/biotic-index/${selectedBioticParam.id}?tab=index-biotic`,
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setShowDeleteBioticModal(false);
+                    setSelectedBioticParam(null);
+                    toast.success("Berhasil!", {
+                        description:
+                            "Parameter biotic index berhasil dihapus",
+                        duration: 3000,
+                    });
+                },
+                onError: () => {
+                    toast.error("Gagal!", {
+                        description: "Gagal menghapus parameter",
+                        duration: 3000,
+                    });
+                },
+            }
+        );
+    };
+
     const renderPageNumbersMain = () => {
         const pages = [];
         const currentPage = mainAbioticParameters?.current_page || 1;
@@ -801,6 +973,36 @@ export default function AdminKelolaBobot({
         return pages;
     };
 
+    const renderPageNumbersBiotic = () => {
+        const pages = [];
+        const currentPage = bioticIndexParameters?.current_page || 1;
+        const lastPage = bioticIndexParameters?.last_page || 1;
+
+        if (lastPage <= 7) {
+            for (let i = 1; i <= lastPage; i++) pages.push(i);
+        } else {
+            if (currentPage > 3) {
+                pages.push(1);
+                if (currentPage > 4) pages.push("...");
+            }
+
+            for (
+                let i = Math.max(1, currentPage - 2);
+                i <= Math.min(lastPage, currentPage + 2);
+                i++
+            ) {
+                pages.push(i);
+            }
+
+            if (currentPage < lastPage - 2) {
+                if (currentPage < lastPage - 3) pages.push("...");
+                pages.push(lastPage);
+            }
+        }
+
+        return pages;
+    };
+
     return (
         <AdminLayout>
             <Toaster
@@ -827,6 +1029,39 @@ export default function AdminKelolaBobot({
                                 </p>
                             </div>
                         </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 mb-6">
+                        <Link
+                            href="/admin/kelola-bobot?tab=main-abiotic"
+                            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                                tab === "main-abiotic"
+                                    ? "bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg"
+                                    : "bg-white text-gray-600 hover:bg-gray-50 shadow-sm"
+                            }`}
+                        >
+                            Main Abiotic
+                        </Link>
+                        <Link
+                            href="/admin/kelola-bobot?tab=additional-abiotic"
+                            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                                tab === "additional-abiotic"
+                                    ? "bg-gradient-to-r from-cyan-600 to-emerald-600 text-white shadow-lg"
+                                    : "bg-white text-gray-600 hover:bg-gray-50 shadow-sm"
+                            }`}
+                        >
+                            Additional Abiotic
+                        </Link>
+                        <Link
+                            href="/admin/kelola-bobot?tab=index-biotic"
+                            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                                tab === "index-biotic"
+                                    ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg"
+                                    : "bg-white text-gray-600 hover:bg-gray-50 shadow-sm"
+                            }`}
+                        >
+                            Biotic Index
+                        </Link>
                     </div>
 
                     {tab === "main-abiotic" ? (
@@ -1340,6 +1575,260 @@ export default function AdminKelolaBobot({
                                     )}
                                 </>
                             )}
+                            
+                            {tab === "index-biotic" && (
+                                <>
+                                    <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <label className="text-sm text-gray-700 font-medium">
+                                                Tampilkan:
+                                            </label>
+                                            <select
+                                                value={perPageBiotic}
+                                                onChange={(e) =>
+                                                    handlePerPageChangeBiotic(
+                                                        e.target.value
+                                                    )
+                                                }
+                                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            >
+                                                <option value={5}>5</option>
+                                                <option value={10}>10</option>
+                                                <option value={25}>25</option>
+                                                <option value={50}>50</option>
+                                                <option value={100}>100</option>
+                                            </select>
+                                            <span className="text-sm text-gray-700">
+                                                data per halaman
+                                            </span>
+                                        </div>
+                                        <div className="text-sm text-gray-600">
+                                            Menampilkan{" "}
+                                            {bioticIndexParameters?.from ||
+                                                0}{" "}
+                                            -{" "}
+                                            {bioticIndexParameters?.to ||
+                                                0}{" "}
+                                            dari{" "}
+                                            {bioticIndexParameters?.total ||
+                                                0}{" "}
+                                            data
+                                        </div>
+                                    </div>
+
+                                    <div className="px-6 py-4 flex justify-between items-center">
+                                        <h2 className="text-lg font-semibold text-gray-800">
+                                            Tabel Bobot Biotic Index
+                                        </h2>
+                                        <button
+                                            onClick={() => {
+                                                setShowAddBioticModal(true);
+                                                setAddBioticErrors({});
+                                            }}
+                                            className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-5 py-2.5 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105"
+                                        >
+                                            <Plus className="w-4 h-4" />
+                                            Add
+                                        </button>
+                                    </div>
+
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full">
+                                            <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white">
+                                                <tr>
+                                                    <th className="px-6 py-3 text-left text-xs font-semibold">
+                                                        ID
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-semibold">
+                                                        Nama
+                                                    </th>
+                                                    <th className="px-6 py-3 text-right text-xs font-semibold">
+                                                        Nilai Awal
+                                                    </th>
+                                                    <th className="px-6 py-3 text-right text-xs font-semibold">
+                                                        Nilai Akhir
+                                                    </th>
+                                                    <th className="px-6 py-3 text-right text-xs font-semibold">
+                                                        Bobot
+                                                    </th>
+                                                    <th className="px-6 py-3 text-center text-xs font-semibold">
+                                                        Aksi
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-200">
+                                                {bioticIndexParameters?.data &&
+                                                bioticIndexParameters.data
+                                                    .length > 0 ? (
+                                                    bioticIndexParameters.data.map(
+                                                        (param) => (
+                                                            <tr
+                                                                key={param.id}
+                                                                className="hover:bg-blue-50 transition-colors"
+                                                            >
+                                                                <td className="px-6 py-3 text-sm text-gray-700">
+                                                                    {param.id}
+                                                                </td>
+                                                                <td className="px-6 py-3 text-sm font-medium text-gray-900">
+                                                                    {param.name}
+                                                                </td>
+                                                                <td className="px-6 py-3 text-sm text-right text-gray-800">
+                                                                    {
+                                                                        param.initial_value
+                                                                    }
+                                                                </td>
+                                                                <td className="px-6 py-3 text-sm text-right text-gray-800">
+                                                                    {
+                                                                        param.final_value
+                                                                    }
+                                                                </td>
+                                                                <td className="px-6 py-3 text-sm text-right text-gray-800">
+                                                                    {
+                                                                        param.weight
+                                                                    }
+                                                                </td>
+                                                                <td className="px-6 py-3 text-sm">
+                                                                    <div className="flex items-center justify-center gap-2">
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                handleEditBioticClick(
+                                                                                    param
+                                                                                )
+                                                                            }
+                                                                            className="p-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-colors"
+                                                                            title="Edit"
+                                                                        >
+                                                                            <Edit className="w-4 h-4" />
+                                                                        </button>
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                handleDeleteBioticClick(
+                                                                                    param
+                                                                                )
+                                                                            }
+                                                                            className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                                                                            title="Hapus"
+                                                                        >
+                                                                            <Trash2 className="w-4 h-4" />
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    )
+                                                ) : (
+                                                    <tr>
+                                                        <td
+                                                            colSpan="6"
+                                                            className="px-6 py-8 text-center text-gray-500"
+                                                        >
+                                                            Tidak ada data
+                                                            parameter
+                                                            biotic index
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    {bioticIndexParameters?.last_page >
+                                        1 && (
+                                        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                                            <div className="text-sm text-gray-600">
+                                                Halaman{" "}
+                                                {
+                                                    bioticIndexParameters.current_page
+                                                }{" "}
+                                                dari{" "}
+                                                {
+                                                    bioticIndexParameters.last_page
+                                                }
+                                            </div>
+
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    onClick={() =>
+                                                        handlePageChangeBiotic(
+                                                            bioticIndexParameters.prev_page_url
+                                                        )
+                                                    }
+                                                    disabled={
+                                                        !bioticIndexParameters.prev_page_url
+                                                    }
+                                                    className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                                        bioticIndexParameters.prev_page_url
+                                                            ? "bg-blue-500 text-white hover:bg-blue-600"
+                                                            : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                    }`}
+                                                >
+                                                    <ChevronLeft className="w-4 h-4" />
+                                                    Prev
+                                                </button>
+
+                                                <div className="flex items-center gap-1">
+                                                    {renderPageNumbersBiotic().map(
+                                                        (page, index) => {
+                                                            if (
+                                                                page === "..."
+                                                            ) {
+                                                                return (
+                                                                    <span
+                                                                        key={`ellipsis-${index}`}
+                                                                        className="px-3 py-2 text-gray-500"
+                                                                    >
+                                                                        ...
+                                                                    </span>
+                                                                );
+                                                            }
+
+                                                            const pageUrl = `/admin/kelola-bobot?page=${page}&per_page=${perPageBiotic}&tab=index-biotic`;
+
+                                                            return (
+                                                                <button
+                                                                    key={page}
+                                                                    onClick={() =>
+                                                                        handlePageChangeBiotic(
+                                                                            pageUrl
+                                                                        )
+                                                                    }
+                                                                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                                                        page ===
+                                                                        bioticIndexParameters.current_page
+                                                                            ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white"
+                                                                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                                                    }`}
+                                                                >
+                                                                    {page}
+                                                                </button>
+                                                            );
+                                                        }
+                                                    )}
+                                                </div>
+
+                                                <button
+                                                    onClick={() =>
+                                                        handlePageChangeBiotic(
+                                                            bioticIndexParameters.next_page_url
+                                                        )
+                                                    }
+                                                    disabled={
+                                                        !bioticIndexParameters.next_page_url
+                                                    }
+                                                    className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                                        bioticIndexParameters.next_page_url
+                                                            ? "bg-blue-500 text-white hover:bg-blue-600"
+                                                            : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                    }`}
+                                                >
+                                                    Next
+                                                    <ChevronRight className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
+                            )}
                         </div>
                     )}
                 </div>
@@ -1417,6 +1906,41 @@ export default function AdminKelolaBobot({
                 onConfirm={handleDeleteAdditionalConfirm}
                 processing={processing}
                 parameter={selectedAdditionalParam}
+            />
+
+            <AdditionalAbioticModal
+                isOpen={showAddBioticModal}
+                onClose={() => {
+                    setShowAddBioticModal(false);
+                    setAddBioticErrors({});
+                }}
+                onSubmit={handleAddBioticSubmit}
+                form={addBioticForm}
+                setForm={setAddBioticForm}
+                errors={addBioticErrors}
+                title="Tambah Parameter Biotic Index"
+            />
+
+            <AdditionalAbioticModal
+                isOpen={showEditBioticModal}
+                onClose={() => {
+                    setShowEditBioticModal(false);
+                    setEditBioticErrors({});
+                    setSelectedBioticParam(null);
+                }}
+                onSubmit={handleEditBioticSubmit}
+                form={editBioticForm}
+                setForm={setEditBioticForm}
+                errors={editBioticErrors}
+                title="Edit Parameter Biotic Index"
+            />
+
+            <DeleteMainAbioticModal
+                isOpen={showDeleteBioticModal}
+                onClose={() => setShowDeleteBioticModal(false)}
+                onConfirm={handleDeleteBioticConfirm}
+                processing={processing}
+                parameter={selectedBioticParam}
             />
 
             <ModalStyles />
