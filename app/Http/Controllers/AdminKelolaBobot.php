@@ -6,6 +6,7 @@ use App\Models\GeoZone;
 use App\Models\MainAbioticParameter;
 use App\Models\AdditionalAbioticParameter;
 use App\Models\WaterType;
+use App\Models\BioticFamily;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -38,6 +39,10 @@ class AdminKelolaBobot extends Controller
             ->paginate($perPage)
             ->withQueryString();
 
+        $bioticFamilies = BioticFamily::orderBy('id')
+            ->paginate($perPage)
+            ->withQueryString();
+
         $geoZones = GeoZone::orderBy('name')->get(['id', 'name']);
         $waterTypes = WaterType::orderBy('name')->get(['id', 'name']);
 
@@ -54,6 +59,7 @@ class AdminKelolaBobot extends Controller
             'mainAbioticParameters' => $mainAbioticParameters,
             'additionalAbioticParameters' => $additionalAbioticParameters,
             'bioticIndexParameters' => $bioticIndexParameters,
+            'bioticFamilies' => $bioticFamilies,
             'geoZones' => $geoZones,
             'waterTypes' => $waterTypes,
         ]);
@@ -201,5 +207,41 @@ class AdminKelolaBobot extends Controller
     {
         $parameter->delete();
         return redirect()->back()->with('success', 'Parameter biotic index berhasil dihapus');
+    }
+
+    public function storeFamilyBiotic(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'weight' => 'required|numeric',
+        ], [
+            'name.required' => 'Nama family harus diisi',
+            'weight.required' => 'Bobot harus diisi',
+        ]);
+
+        \App\Models\BioticFamily::create($validated);
+
+        return redirect()->back()->with('success', 'Family biotic berhasil ditambahkan');
+    }
+
+    public function updateFamilyBiotic(Request $request, \App\Models\BioticFamily $parameter)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'weight' => 'required|numeric',
+        ], [
+            'name.required' => 'Nama family harus diisi',
+            'weight.required' => 'Bobot harus diisi',
+        ]);
+
+        $parameter->update($validated);
+
+        return redirect()->back()->with('success', 'Family biotic berhasil diupdate');
+    }
+
+    public function destroyFamilyBiotic(\App\Models\BioticFamily $parameter)
+    {
+        $parameter->delete();
+        return redirect()->back()->with('success', 'Family biotic berhasil dihapus');
     }
 }

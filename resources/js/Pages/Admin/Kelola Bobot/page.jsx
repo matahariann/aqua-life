@@ -302,6 +302,92 @@ function AdditionalAbioticModal({
     );
 }
 
+function FamilyBioticModal({
+    isOpen,
+    onClose,
+    onSubmit,
+    form,
+    setForm,
+    errors,
+    title,
+}) {
+    if (!isOpen) return null;
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+            <div
+                className="absolute inset-0 bg-black/50 transition-all duration-500"
+                onClick={onClose}
+            ></div>
+            <div className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 animate-modal-appear">
+                <h3 className="text-xl font-bold mb-4">{title}</h3>
+                <form onSubmit={onSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Nama Family
+                        </label>
+                        <input
+                            type="text"
+                            name="name"
+                            value={form.name}
+                            onChange={handleChange}
+                            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        {errors.name && (
+                            <p className="text-xs text-red-600 mt-1">
+                                {errors.name}
+                            </p>
+                        )}
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Bobot
+                        </label>
+                        <input
+                            type="number"
+                            step="any"
+                            name="weight"
+                            value={form.weight}
+                            onChange={handleChange}
+                            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        {errors.weight && (
+                            <p className="text-xs text-red-600 mt-1">
+                                {errors.weight}
+                            </p>
+                        )}
+                    </div>
+
+                    <div className="flex justify-end gap-3 pt-4">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                        >
+                            Batal
+                        </button>
+                        <button
+                            type="submit"
+                            className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700"
+                        >
+                            Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+}
+
 function DeleteMainAbioticModal({ isOpen, onClose, onConfirm, processing, parameter }) {
     if (!isOpen) return null;
 
@@ -350,6 +436,7 @@ export default function AdminKelolaBobot({
     mainAbioticParameters,
     additionalAbioticParameters,
     bioticIndexParameters,
+    bioticFamilies,
     geoZones,
     waterTypes,
 }) {
@@ -472,6 +559,28 @@ export default function AdminKelolaBobot({
         bioticIndexParameters?.per_page || 10
     );
 
+    // Family Biotic state (CRUD)
+    const [showAddFamilyModal, setShowAddFamilyModal] = useState(false);
+    const [showEditFamilyModal, setShowEditFamilyModal] = useState(false);
+    const [showDeleteFamilyModal, setShowDeleteFamilyModal] = useState(false);
+    const [selectedFamilyParam, setSelectedFamilyParam] = useState(null);
+    const [addFamilyErrors, setAddFamilyErrors] = useState({});
+    const [editFamilyErrors, setEditFamilyErrors] = useState({});
+
+    const [addFamilyForm, setAddFamilyForm] = useState({
+        name: "",
+        weight: "",
+    });
+
+    const [editFamilyForm, setEditFamilyForm] = useState({
+        name: "",
+        weight: "",
+    });
+
+    const [perPageFamily, setPerPageFamily] = useState(
+        bioticFamilies?.per_page || 10
+    );
+
     useEffect(() => {
         if (mainAbioticParameters?.per_page) {
             setPerPageMain(mainAbioticParameters.per_page);
@@ -489,6 +598,12 @@ export default function AdminKelolaBobot({
             setPerPageBiotic(bioticIndexParameters.per_page);
         }
     }, [bioticIndexParameters?.per_page]);
+
+    useEffect(() => {
+        if (bioticFamilies?.per_page) {
+            setPerPageFamily(bioticFamilies.per_page);
+        }
+    }, [bioticFamilies?.per_page]);
 
     const handlePerPageChangeMain = (value) => {
         const newPerPage = Number(value);
@@ -524,6 +639,20 @@ export default function AdminKelolaBobot({
         router.get(
             "/admin/kelola-bobot",
             { per_page: newPerPage, tab: "index-biotic" },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            }
+        );
+    };
+
+    const handlePerPageChangeFamily = (value) => {
+        const newPerPage = Number(value);
+        setPerPageFamily(newPerPage);
+        router.get(
+            "/admin/kelola-bobot",
+            { per_page: newPerPage, tab: "family-biotic" },
             {
                 preserveState: true,
                 preserveScroll: true,
@@ -913,6 +1042,110 @@ export default function AdminKelolaBobot({
         );
     };
 
+    // Family Biotic handlers
+    const handleAddFamilySubmit = (e) => {
+        e.preventDefault();
+        router.post(
+            "/admin/kelola-bobot/family-biotic?tab=family-biotic",
+            addFamilyForm,
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setShowAddFamilyModal(false);
+                    setAddFamilyForm({
+                        name: "",
+                        weight: "",
+                    });
+                    setAddFamilyErrors({});
+                    toast.success("Berhasil!", {
+                        description: "Family biotic berhasil ditambahkan",
+                        duration: 3000,
+                    });
+                },
+                onError: (errors) => {
+                    setAddFamilyErrors(errors);
+                    toast.error("Gagal Menambahkan", {
+                        description: "Mohon periksa kembali form Anda.",
+                        duration: 3000,
+                    });
+                },
+            }
+        );
+    };
+
+    const handleEditFamilyClick = (parameter) => {
+        setSelectedFamilyParam(parameter);
+        setEditFamilyForm({
+            name: parameter?.name || "",
+            weight: parameter?.weight ?? "",
+        });
+        setEditFamilyErrors({});
+        setShowEditFamilyModal(true);
+    };
+
+    const handleEditFamilySubmit = (e) => {
+        e.preventDefault();
+        if (!selectedFamilyParam) return;
+
+        router.put(
+            `/admin/kelola-bobot/family-biotic/${selectedFamilyParam.id}?tab=family-biotic`,
+            editFamilyForm,
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setShowEditFamilyModal(false);
+                    setEditFamilyForm({
+                        name: "",
+                        weight: "",
+                    });
+                    setEditFamilyErrors({});
+                    setSelectedFamilyParam(null);
+                    toast.success("Berhasil!", {
+                        description: "Family biotic berhasil diupdate",
+                        duration: 3000,
+                    });
+                },
+                onError: (errors) => {
+                    setEditFamilyErrors(errors);
+                    toast.error("Gagal Update", {
+                        description: "Mohon periksa kembali form Anda.",
+                        duration: 3000,
+                    });
+                },
+            }
+        );
+    };
+
+    const handleDeleteFamilyClick = (parameter) => {
+        setSelectedFamilyParam(parameter);
+        setShowDeleteFamilyModal(true);
+    };
+
+    const handleDeleteFamilyConfirm = () => {
+        if (!selectedFamilyParam) return;
+
+        destroy(
+            `/admin/kelola-bobot/family-biotic/${selectedFamilyParam.id}?tab=family-biotic`,
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setShowDeleteFamilyModal(false);
+                    setSelectedFamilyParam(null);
+                    toast.success("Berhasil!", {
+                        description: "Family biotic berhasil dihapus",
+                        duration: 3000,
+                    });
+                },
+                onError: () => {
+                    toast.error("Gagal!", {
+                        description: "Gagal menghapus parameter",
+                        duration: 3000,
+                    });
+                },
+            }
+        );
+    };
+
     const renderPageNumbersMain = () => {
         const pages = [];
         const currentPage = mainAbioticParameters?.current_page || 1;
@@ -1003,6 +1236,36 @@ export default function AdminKelolaBobot({
         return pages;
     };
 
+    const renderPageNumbersFamily = () => {
+        const pages = [];
+        const currentPage = bioticFamilies?.current_page || 1;
+        const lastPage = bioticFamilies?.last_page || 1;
+
+        if (lastPage <= 7) {
+            for (let i = 1; i <= lastPage; i++) pages.push(i);
+        } else {
+            if (currentPage > 3) {
+                pages.push(1);
+                if (currentPage > 4) pages.push("...");
+            }
+
+            for (
+                let i = Math.max(1, currentPage - 2);
+                i <= Math.min(lastPage, currentPage + 2);
+                i++
+            ) {
+                pages.push(i);
+            }
+
+            if (currentPage < lastPage - 2) {
+                if (currentPage < lastPage - 3) pages.push("...");
+                pages.push(lastPage);
+            }
+        }
+
+        return pages;
+    };
+
     return (
         <AdminLayout>
             <Toaster
@@ -1061,6 +1324,16 @@ export default function AdminKelolaBobot({
                             }`}
                         >
                             Biotic Index
+                        </Link>
+                        <Link
+                            href="/admin/kelola-bobot?tab=family-biotic"
+                            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                                tab === "family-biotic"
+                                    ? "bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-lg"
+                                    : "bg-white text-gray-600 hover:bg-gray-50 shadow-sm"
+                            }`}
+                        >
+                            Family Biotic
                         </Link>
                     </div>
 
@@ -1826,6 +2099,225 @@ export default function AdminKelolaBobot({
                                                 </button>
                                             </div>
                                         </div>
+                                            )}
+                                </>
+                            )}
+
+                            {tab === "family-biotic" && (
+                                <>
+                                    <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <label className="text-sm text-gray-700 font-medium">
+                                                Tampilkan:
+                                            </label>
+                                            <select
+                                                value={perPageFamily}
+                                                onChange={(e) =>
+                                                    handlePerPageChangeFamily(
+                                                        e.target.value
+                                                    )
+                                                }
+                                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            >
+                                                <option value={5}>5</option>
+                                                <option value={10}>10</option>
+                                                <option value={25}>25</option>
+                                                <option value={50}>50</option>
+                                                <option value={100}>100</option>
+                                            </select>
+                                            <span className="text-sm text-gray-700">
+                                                data per halaman
+                                            </span>
+                                        </div>
+                                        <div className="text-sm text-gray-600">
+                                            Menampilkan{" "}
+                                            {bioticFamilies?.from || 0} -{" "}
+                                            {bioticFamilies?.to || 0} dari{" "}
+                                            {bioticFamilies?.total || 0} data
+                                        </div>
+                                    </div>
+
+                                    <div className="px-6 py-4 flex justify-between items-center">
+                                        <h2 className="text-lg font-semibold text-gray-800">
+                                            Tabel Bobot Family Biotic
+                                        </h2>
+                                        <button
+                                            onClick={() => {
+                                                setShowAddFamilyModal(true);
+                                                setAddFamilyErrors({});
+                                            }}
+                                            className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-5 py-2.5 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105"
+                                        >
+                                            <Plus className="w-4 h-4" />
+                                            Add
+                                        </button>
+                                    </div>
+
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full">
+                                            <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white">
+                                                <tr>
+                                                    <th className="px-6 py-3 text-left text-xs font-semibold">
+                                                        ID
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-semibold">
+                                                        Family
+                                                    </th>
+                                                    <th className="px-6 py-3 text-right text-xs font-semibold">
+                                                        Bobot
+                                                    </th>
+                                                    <th className="px-6 py-3 text-center text-xs font-semibold">
+                                                        Aksi
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-200">
+                                                {bioticFamilies?.data &&
+                                                bioticFamilies.data.length > 0 ? (
+                                                    bioticFamilies.data.map(
+                                                        (param) => (
+                                                            <tr
+                                                                key={param.id}
+                                                                className="hover:bg-blue-50 transition-colors"
+                                                            >
+                                                                <td className="px-6 py-3 text-sm text-gray-700">
+                                                                    {param.id}
+                                                                </td>
+                                                                <td className="px-6 py-3 text-sm font-medium text-gray-900">
+                                                                    {param.name}
+                                                                </td>
+                                                                <td className="px-6 py-3 text-sm text-right text-gray-800">
+                                                                    {param.weight}
+                                                                </td>
+                                                                <td className="px-6 py-3 text-sm">
+                                                                    <div className="flex items-center justify-center gap-2">
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                handleEditFamilyClick(
+                                                                                    param
+                                                                                )
+                                                                            }
+                                                                            className="p-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-colors"
+                                                                            title="Edit"
+                                                                        >
+                                                                            <Edit className="w-4 h-4" />
+                                                                        </button>
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                handleDeleteFamilyClick(
+                                                                                    param
+                                                                                )
+                                                                            }
+                                                                            className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                                                                            title="Hapus"
+                                                                        >
+                                                                            <Trash2 className="w-4 h-4" />
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    )
+                                                ) : (
+                                                    <tr>
+                                                        <td
+                                                            colSpan="4"
+                                                            className="px-6 py-8 text-center text-gray-500"
+                                                        >
+                                                            Tidak ada data parameter family biotic
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    {bioticFamilies?.last_page > 1 && (
+                                        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                                            <div className="text-sm text-gray-600">
+                                                Halaman{" "}
+                                                {bioticFamilies.current_page}{" "}
+                                                dari {bioticFamilies.last_page}
+                                            </div>
+
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    onClick={() =>
+                                                        handlePageChangeFamily(
+                                                            bioticFamilies.prev_page_url
+                                                        )
+                                                    }
+                                                    disabled={
+                                                        !bioticFamilies.prev_page_url
+                                                    }
+                                                    className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                                        bioticFamilies.prev_page_url
+                                                            ? "bg-blue-500 text-white hover:bg-blue-600"
+                                                            : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                    }`}
+                                                >
+                                                    <ChevronLeft className="w-4 h-4" />
+                                                    Prev
+                                                </button>
+
+                                                <div className="flex items-center gap-1">
+                                                    {renderPageNumbersFamily().map(
+                                                        (page, index) => {
+                                                            if (page === "...") {
+                                                                return (
+                                                                    <span
+                                                                        key={`ellipsis-${index}`}
+                                                                        className="px-3 py-2 text-gray-500"
+                                                                    >
+                                                                        ...
+                                                                    </span>
+                                                                );
+                                                            }
+
+                                                            const pageUrl = `/admin/kelola-bobot?page=${page}&per_page=${perPageFamily}&tab=family-biotic`;
+
+                                                            return (
+                                                                <button
+                                                                    key={page}
+                                                                    onClick={() =>
+                                                                        handlePageChangeFamily(
+                                                                            pageUrl
+                                                                        )
+                                                                    }
+                                                                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                                                        page ===
+                                                                        bioticFamilies.current_page
+                                                                            ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white"
+                                                                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                                                    }`}
+                                                                >
+                                                                    {page}
+                                                                </button>
+                                                            );
+                                                        }
+                                                    )}
+                                                </div>
+
+                                                <button
+                                                    onClick={() =>
+                                                        handlePageChangeFamily(
+                                                            bioticFamilies.next_page_url
+                                                        )
+                                                    }
+                                                    disabled={
+                                                        !bioticFamilies.next_page_url
+                                                    }
+                                                    className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                                        bioticFamilies.next_page_url
+                                                            ? "bg-blue-500 text-white hover:bg-blue-600"
+                                                            : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                    }`}
+                                                >
+                                                    Next
+                                                    <ChevronRight className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </div>
                                     )}
                                 </>
                             )}
@@ -1941,6 +2433,41 @@ export default function AdminKelolaBobot({
                 onConfirm={handleDeleteBioticConfirm}
                 processing={processing}
                 parameter={selectedBioticParam}
+            />
+
+            <FamilyBioticModal
+                isOpen={showAddFamilyModal}
+                onClose={() => {
+                    setShowAddFamilyModal(false);
+                    setAddFamilyErrors({});
+                }}
+                onSubmit={handleAddFamilySubmit}
+                form={addFamilyForm}
+                setForm={setAddFamilyForm}
+                errors={addFamilyErrors}
+                title="Tambah Family Biotic"
+            />
+
+            <FamilyBioticModal
+                isOpen={showEditFamilyModal}
+                onClose={() => {
+                    setShowEditFamilyModal(false);
+                    setEditFamilyErrors({});
+                    setSelectedFamilyParam(null);
+                }}
+                onSubmit={handleEditFamilySubmit}
+                form={editFamilyForm}
+                setForm={setEditFamilyForm}
+                errors={editFamilyErrors}
+                title="Edit Family Biotic"
+            />
+
+            <DeleteMainAbioticModal
+                isOpen={showDeleteFamilyModal}
+                onClose={() => setShowDeleteFamilyModal(false)}
+                onConfirm={handleDeleteFamilyConfirm}
+                processing={processing}
+                parameter={selectedFamilyParam}
             />
 
             <ModalStyles />
