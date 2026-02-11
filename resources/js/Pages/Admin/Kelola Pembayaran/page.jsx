@@ -6,6 +6,26 @@ import { MdPayment } from "react-icons/md";
 import AdminLayout from "@/Layouts/AdminLayout";
 import ModalStyles from "@/Components/ModalStyles";
 
+
+function formatDate(dateString) {
+    if (!dateString) return "-";
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    }).format(date);
+}
+
+function formatTime(dateString) {
+    if (!dateString) return "-";
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+    }).format(date);
+}
+
 function StatusBadge({ status }) {
     const cfg = {
         pending: "bg-yellow-100 text-yellow-800",
@@ -200,6 +220,8 @@ export default function AdminKelolaPembayaran({ payments }) {
                                     <tr>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">No</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Email</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold">Tanggal</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold">Waktu</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Bukti</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Status</th>
                                         <th className="px-6 py-4 text-center text-sm font-semibold">Aksi</th>
@@ -211,6 +233,8 @@ export default function AdminKelolaPembayaran({ payments }) {
                                             <tr key={p.id} className="hover:bg-blue-50 transition-colors">
                                                 <td className="px-6 py-4 text-sm text-gray-700">{(payments.from || 1) + index}</td>
                                                 <td className="px-6 py-4 text-sm text-gray-800">{p.user?.email || "-"}</td>
+                                                <td className="px-6 py-4 text-sm text-gray-800">{formatDate(p.created_at)}</td>
+                                                <td className="px-6 py-4 text-sm text-gray-800">{formatTime(p.created_at)}</td>
                                                 <td className="px-6 py-4 text-sm">
                                                     {p.proof_url ? (
                                                         <button
