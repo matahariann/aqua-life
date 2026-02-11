@@ -5,178 +5,11 @@ import { Trash2, Edit, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast, Toaster } from "sonner";
 import AdminLayout from "@/Layouts/AdminLayout";
 import ModalStyles from "@/Components/ModalStyles";
+import AddMainAbioticModal from "@/Components/AdminAddMainAbioticModal";
+import EditMainAbioticModal from "@/Components/AdminEditMainAbioticModal";
+import DeleteMainAbioticModal from "@/Components/AdminDeleteMainAbioticModal";
 
-function MainAbioticModal({
-    isOpen,
-    onClose,
-    onSubmit,
-    form,
-    setForm,
-    errors,
-    title,
-    geoZones,
-    waterTypes,
-}) {
-    if (!isOpen) return null;
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
-
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-            <div
-                className="absolute inset-0 bg-black/50 transition-all duration-500"
-                onClick={onClose}
-            ></div>
-            <div className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 animate-modal-appear">
-                <h3 className="text-xl font-bold mb-4">{title}</h3>
-                <form onSubmit={onSubmit} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Nama
-                        </label>
-                        <input
-                            type="text"
-                            name="name"
-                            value={form.name}
-                            onChange={handleChange}
-                            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        {errors.name && (
-                            <p className="text-xs text-red-600 mt-1">
-                                {errors.name}
-                            </p>
-                        )}
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Geographical Zone
-                            </label>
-                            <select
-                                name="id_geo_zone"
-                                value={form.id_geo_zone}
-                                onChange={handleChange}
-                                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                                <option value="">Pilih Zona</option>
-                                {geoZones.map((z) => (
-                                    <option key={z.id} value={z.id}>
-                                        {z.name}
-                                    </option>
-                                ))}
-                            </select>
-                            {errors.id_geo_zone && (
-                                <p className="text-xs text-red-600 mt-1">
-                                    {errors.id_geo_zone}
-                                </p>
-                            )}
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Type of Water
-                            </label>
-                            <select
-                                name="id_type_water"
-                                value={form.id_type_water}
-                                onChange={handleChange}
-                                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                                <option value="">Pilih Tipe Air</option>
-                                {waterTypes.map((w) => (
-                                    <option key={w.id} value={w.id}>
-                                        {w.name}
-                                    </option>
-                                ))}
-                            </select>
-                            {errors.id_type_water && (
-                                <p className="text-xs text-red-600 mt-1">
-                                    {errors.id_type_water}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Nilai Awal
-                            </label>
-                            <input
-                                type="number"
-                                step="any"
-                                name="initial_value"
-                                value={form.initial_value}
-                                onChange={handleChange}
-                                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                            {errors.initial_value && (
-                                <p className="text-xs text-red-600 mt-1">
-                                    {errors.initial_value}
-                                </p>
-                            )}
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Nilai Akhir
-                            </label>
-                            <input
-                                type="number"
-                                step="any"
-                                name="final_value"
-                                value={form.final_value}
-                                onChange={handleChange}
-                                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                            {errors.final_value && (
-                                <p className="text-xs text-red-600 mt-1">
-                                    {errors.final_value}
-                                </p>
-                            )}
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Bobot
-                            </label>
-                            <input
-                                type="number"
-                                step="any"
-                                name="weight"
-                                value={form.weight}
-                                onChange={handleChange}
-                                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                            {errors.weight && (
-                                <p className="text-xs text-red-600 mt-1">
-                                    {errors.weight}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-                    <div className="flex justify-end gap-3 pt-4">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50"
-                        >
-                            Batal
-                        </button>
-                        <button
-                            type="submit"
-                            className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700"
-                        >
-                            Simpan
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    );
-}
 
 function AdditionalAbioticModal({
     isOpen,
@@ -388,49 +221,7 @@ function FamilyBioticModal({
     );
 }
 
-function DeleteMainAbioticModal({ isOpen, onClose, onConfirm, processing, parameter }) {
-    if (!isOpen) return null;
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-            <div
-                className="absolute inset-0 bg-black/50 transition-all duration-500"
-                onClick={onClose}
-            ></div>
-            <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-modal-appear">
-                <h3 className="text-xl font-bold mb-2 text-red-600">
-                    Hapus Parameter
-                </h3>
-                <p className="text-sm text-gray-700 mb-4">
-                    Apakah Anda yakin ingin menghapus parameter{" "}
-                    <span className="font-semibold">{parameter?.name}</span>?
-                </p>
-                <p className="text-xs text-gray-500 mb-6">
-                    Tindakan ini tidak dapat dibatalkan.
-                </p>
-                <div className="flex justify-end gap-3">
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        disabled={processing}
-                        className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                    >
-                        Batal
-                    </button>
-                    <button
-                        type="button"
-                        onClick={onConfirm}
-                        disabled={processing}
-                        className="px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 disabled:opacity-50 flex items-center gap-2"
-                    >
-                        {processing ? "Menghapus..." : "Ya, Hapus"}
-                        <Trash2 className="w-4 h-4" />
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-}
 
 export default function AdminKelolaBobot({
     mainAbioticParameters,
@@ -1381,10 +1172,10 @@ export default function AdminKelolaBobot({
                                 </h2>
                                 <button
                                     onClick={() => setShowAddModal(true)}
-                                    className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-5 py-2.5 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105"
+                                    className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105 ring-2 ring-white/30"
                                 >
-                                    <Plus className="w-4 h-4" />
-                                    Add
+                                    <Plus className="w-5 h-5" />
+                                    Tambah Data
                                 </button>
                             </div>
 
@@ -1392,28 +1183,28 @@ export default function AdminKelolaBobot({
                                 <table className="w-full">
                                     <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white">
                                         <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-semibold">
+                                            <th className="px-6 py-4 text-left text-sm font-semibold">
                                                 ID
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-semibold">
+                                            <th className="px-6 py-4 text-left text-sm font-semibold">
                                                 Nama
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-semibold">
+                                            <th className="px-6 py-4 text-left text-sm font-semibold">
                                                 Geographical Zone
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-semibold">
+                                            <th className="px-6 py-4 text-left text-sm font-semibold">
                                                 Type of Water
                                             </th>
-                                            <th className="px-6 py-3 text-right text-xs font-semibold">
+                                            <th className="px-6 py-4 text-right text-sm font-semibold">
                                                 Nilai Awal
                                             </th>
-                                            <th className="px-6 py-3 text-right text-xs font-semibold">
+                                            <th className="px-6 py-4 text-right text-sm font-semibold">
                                                 Nilai Akhir
                                             </th>
-                                            <th className="px-6 py-3 text-right text-xs font-semibold">
+                                            <th className="px-6 py-4 text-right text-sm font-semibold">
                                                 Bobot
                                             </th>
-                                            <th className="px-6 py-3 text-center text-xs font-semibold">
+                                            <th className="px-6 py-4 text-center text-sm font-semibold">
                                                 Aksi
                                             </th>
                                         </tr>
@@ -1428,34 +1219,34 @@ export default function AdminKelolaBobot({
                                                         key={param.id}
                                                         className="hover:bg-blue-50 transition-colors"
                                                     >
-                                                        <td className="px-6 py-3 text-sm text-gray-700">
+                                                        <td className="px-6 py-4 text-sm text-gray-700">
                                                             {param.id}
                                                         </td>
-                                                        <td className="px-6 py-3 text-sm font-medium text-gray-900">
+                                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
                                                             {param.name}
                                                         </td>
-                                                        <td className="px-6 py-3 text-sm text-gray-800">
+                                                        <td className="px-6 py-4 text-sm text-gray-800">
                                                             {param.geo_zone
                                                                 ?.name || "-"}
                                                         </td>
-                                                        <td className="px-6 py-3 text-sm text-gray-800">
+                                                        <td className="px-6 py-4 text-sm text-gray-800">
                                                             {param.water_type
                                                                 ?.name || "-"}
                                                         </td>
-                                                        <td className="px-6 py-3 text-sm text-right text-gray-800">
+                                                        <td className="px-6 py-4 text-sm text-right text-gray-800">
                                                             {
                                                                 param.initial_value
                                                             }
                                                         </td>
-                                                        <td className="px-6 py-3 text-sm text-right text-gray-800">
+                                                        <td className="px-6 py-4 text-sm text-right text-gray-800">
                                                             {
                                                                 param.final_value
                                                             }
                                                         </td>
-                                                        <td className="px-6 py-3 text-sm text-right text-gray-800">
+                                                        <td className="px-6 py-4 text-sm text-right text-gray-800">
                                                             {param.weight}
                                                         </td>
-                                                        <td className="px-6 py-3 text-sm">
+                                                        <td className="px-6 py-4 text-sm">
                                                             <div className="flex items-center justify-center gap-2">
                                                                 <button
                                                                     onClick={() =>
@@ -2326,7 +2117,7 @@ export default function AdminKelolaBobot({
                 </div>
             </main>
 
-            <MainAbioticModal
+            <AddMainAbioticModal
                 isOpen={showAddModal}
                 onClose={() => {
                     setShowAddModal(false);
@@ -2336,12 +2127,11 @@ export default function AdminKelolaBobot({
                 form={addForm}
                 setForm={setAddForm}
                 errors={addErrors}
-                title="Tambah Parameter Main Abiotic"
                 geoZones={geoZones || []}
                 waterTypes={waterTypes || []}
             />
 
-            <MainAbioticModal
+            <EditMainAbioticModal
                 isOpen={showEditModal}
                 onClose={() => {
                     setShowEditModal(false);
@@ -2352,7 +2142,7 @@ export default function AdminKelolaBobot({
                 form={editForm}
                 setForm={setEditForm}
                 errors={editErrors}
-                title="Edit Parameter Main Abiotic"
+                selectedParam={selectedParam}
                 geoZones={geoZones || []}
                 waterTypes={waterTypes || []}
             />
