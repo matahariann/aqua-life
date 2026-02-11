@@ -194,9 +194,9 @@ export default function AdminKelolaPembayaran({ payments }) {
                             </div>
                         </div>
 
-                        <div className="overflow-x-auto">
+                        <div className="overflow-x-auto max-h-[65vh] relative">
                             <table className="w-full">
-                                <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white relative">
+                                <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white relative sticky top-0 z-10">
                                     <tr>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">No</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Email</th>

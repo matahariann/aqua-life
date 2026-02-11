@@ -299,9 +299,9 @@ export default function AdminKelolaStation({ users, stations, waterTypes, geoZon
                             </div>
                         </div>
 
-                        <div className="overflow-x-auto">
+                        <div className="overflow-auto max-h-[65vh] relative">
                             <table className="w-full">
-                                <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white relative">
+                                <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white relative sticky top-0 z-10">
                                     <tr>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">
                                             No

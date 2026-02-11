@@ -981,9 +981,9 @@ export default function AdminKelolaBobot({
                                 </button>
                             </div>
 
-                            <div className="overflow-x-auto">
+                            <div className="overflow-auto max-h-[45vh] relative">
                                 <table className="w-full">
-                                    <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white">
+                                    <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white sticky top-0 z-10">
                                         <tr>
                                             <th className="px-6 py-4 text-left text-sm font-semibold">
                                                 ID
@@ -1244,9 +1244,9 @@ export default function AdminKelolaBobot({
                                         </button>
                                     </div>
 
-                                    <div className="overflow-x-auto">
+                                    <div className="overflow-auto max-h-[45vh] relative">
                                         <table className="w-full">
-                                            <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white">
+                                            <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white sticky top-0 z-10">
                                                 <tr>
                                                     <th className="px-6 py-4 text-left text-sm font-semibold">
                                                         ID
@@ -1498,9 +1498,9 @@ export default function AdminKelolaBobot({
                                         </button>
                                     </div>
 
-                                    <div className="overflow-x-auto">
+                                    <div className="overflow-auto max-h-[45vh] relative">
                                         <table className="w-full">
-                                            <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white">
+                                            <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white sticky top-0 z-10">
                                                 <tr>
                                                     <th className="px-6 py-4 text-left text-sm font-semibold">
                                                         ID
@@ -1746,9 +1746,9 @@ export default function AdminKelolaBobot({
                                         </button>
                                     </div>
 
-                                    <div className="overflow-x-auto">
+                                    <div className="overflow-auto max-h-[45vh] relative">
                                         <table className="w-full">
-                                            <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white">
+                                            <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white sticky top-0 z-10">
                                                 <tr>
                                                     <th className="px-6 py-4 text-left text-sm font-semibold">
                                                         ID
