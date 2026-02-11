@@ -65,6 +65,7 @@ Route::middleware('auth')->group(function () {
 
         // Hitung Kualitas Air
         Route::get('/hitung-kualitas-air', [AdminHitungKualitasAir::class, 'index'])->name('hitung-kualitas-air');
+        Route::post('/hitung-kualitas-air', [AdminHitungKualitasAir::class, 'store'])->name('hitung-kualitas-air.store');
 
         // Kelola Bobot
         Route::get('/kelola-bobot', [AdminKelolaBobot::class, 'index'])->name('kelola-bobot');

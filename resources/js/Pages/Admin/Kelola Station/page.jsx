@@ -388,7 +388,7 @@ export default function AdminKelolaStation({ users, stations, waterTypes, geoZon
                                                 colSpan="6"
                                                 className="px-6 py-8 text-center text-gray-500"
                                             >
-                                                Tidak ada data pengguna
+                                                Tidak ada data station
                                             </td>
                                         </tr>
                                     )}
