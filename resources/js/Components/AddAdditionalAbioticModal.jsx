@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Edit, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 
-export default function EditMainAbioticModal({
+export default function AddAdditionalAbioticModal({
     isOpen,
     onClose,
     form,
     setForm,
     onSubmit,
-    selectedParam,
     errors: serverErrors = {},
-    waterTypes = [],
-    geoZones = [],
 }) {
     const [errors, setErrors] = useState({});
     const [touched, setTouched] = useState({});
@@ -34,18 +31,6 @@ export default function EditMainAbioticModal({
                 }
                 break;
 
-            case "id_geo_zone":
-                if (!value || value === "") {
-                    error = "Zona geografis harus dipilih";
-                }
-                break;
-
-            case "id_type_water":
-                if (!value || value === "") {
-                    error = "Tipe air harus dipilih";
-                }
-                break;
-            
             case "initial_value":
                 if (value === "" || value === null || value === undefined) {
                     error = "Nilai awal harus diisi";
@@ -114,7 +99,7 @@ export default function EditMainAbioticModal({
 
         // Validate all fields
         const newErrors = {};
-        ["name", "id_geo_zone", "id_type_water", "initial_value", "final_value", "weight"].forEach((field) => {
+        ["name", "initial_value", "final_value", "weight"].forEach((field) => {
             const error = validateField(field, form[field]);
             if (error) {
                 newErrors[field] = error;
@@ -124,8 +109,6 @@ export default function EditMainAbioticModal({
         // Mark all fields as touched
         setTouched({
             name: true,
-            id_geo_zone: true,
-            id_type_water: true,
             initial_value: true,
             final_value: true,
             weight: true,
@@ -169,11 +152,14 @@ export default function EditMainAbioticModal({
                 <div className="p-6">
                     <div className="text-center mb-4">
                         <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 rounded-2xl mb-3 shadow-xl border-4 border-white/30">
-                            <Edit className="text-white text-xl drop-shadow-lg" />
+                            <Plus className="text-white text-2xl drop-shadow-lg" />
                         </div>
                         <h3 className="text-xl font-bold text-white drop-shadow-lg">
-                            Edit Parameter
+                            Tambah Parameter
                         </h3>
+                        <p className="text-white/80 text-sm mt-1">
+                            Additional Abiotic
+                        </p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-3">
@@ -202,64 +188,6 @@ export default function EditMainAbioticModal({
                                     {errors.name}
                                 </p>
                             )}
-                        </div>
-
-                        {/* Geo Zone & Water Type */}
-                        <div className="grid grid-cols-2 gap-3">
-                            <div>
-                                <label className="block text-sm font-semibold text-white mb-1.5 drop-shadow-md">
-                                    Zona Geografis
-                                </label>
-                                <select
-                                    value={form.id_geo_zone || ""}
-                                    onChange={(e) => handleFieldChange("id_geo_zone", e.target.value)}
-                                    onBlur={() => handleBlur("id_geo_zone")}
-                                    className={`w-full px-4 py-2 bg-white/20 backdrop-blur-md border-2 rounded-lg text-white focus:bg-white/30 focus:outline-none transition-all ${
-                                        errors.id_geo_zone
-                                            ? "border-red-400 focus:border-red-500"
-                                            : "border-white/40 focus:border-white/60"
-                                    }`}
-                                >
-                                    <option value="" className="text-gray-900">Pilih Zona</option>
-                                    {geoZones.map((geoZone) => (
-                                        <option key={geoZone.id} value={geoZone.id} className="text-gray-900">
-                                            {geoZone.name}
-                                        </option>
-                                    ))}
-                                </select>
-                                {errors.id_geo_zone && (
-                                    <p className="mt-2 text-xs text-red-100 drop-shadow-lg bg-red-500/20 px-2 py-1 rounded border border-red-300/30">
-                                        {errors.id_geo_zone}
-                                    </p>
-                                )}
-                            </div>
-                            <div>
-                                <label className="block text-sm font-semibold text-white mb-1.5 drop-shadow-md">
-                                    Tipe Air
-                                </label>
-                                <select
-                                    value={form.id_type_water || ""}
-                                    onChange={(e) => handleFieldChange("id_type_water", e.target.value)}
-                                    onBlur={() => handleBlur("id_type_water")}
-                                    className={`w-full px-4 py-2 bg-white/20 backdrop-blur-md border-2 rounded-lg text-white focus:bg-white/30 focus:outline-none transition-all ${
-                                        errors.id_type_water
-                                            ? "border-red-400 focus:border-red-500"
-                                            : "border-white/40 focus:border-white/60"
-                                    }`}
-                                >
-                                    <option value="" className="text-gray-900">Pilih Tipe</option>
-                                    {waterTypes.map((waterType) => (
-                                        <option key={waterType.id} value={waterType.id} className="text-gray-900">
-                                            {waterType.name}
-                                        </option>
-                                    ))}
-                                </select>
-                                {errors.id_type_water && (
-                                    <p className="mt-2 text-xs text-red-100 drop-shadow-lg bg-red-500/20 px-2 py-1 rounded border border-red-300/30">
-                                        {errors.id_type_water}
-                                    </p>
-                                )}
-                            </div>
                         </div>
 
                         {/* Initial & Final Value */}
@@ -352,7 +280,7 @@ export default function EditMainAbioticModal({
                                 type="submit"
                                 className="flex-1 bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white font-semibold py-2 px-4 rounded-lg hover:from-blue-700 hover:via-cyan-600 hover:to-emerald-600 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group border border-white/20"
                             >
-                                <span className="relative z-10">Update</span>
+                                <span className="relative z-10">Simpan</span>
                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
                             </button>
                         </div>

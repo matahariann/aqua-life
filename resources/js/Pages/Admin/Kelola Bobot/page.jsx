@@ -5,224 +5,23 @@ import { Trash2, Edit, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast, Toaster } from "sonner";
 import AdminLayout from "@/Layouts/AdminLayout";
 import ModalStyles from "@/Components/ModalStyles";
-import AddMainAbioticModal from "@/Components/AdminAddMainAbioticModal";
-import EditMainAbioticModal from "@/Components/AdminEditMainAbioticModal";
-import DeleteMainAbioticModal from "@/Components/AdminDeleteMainAbioticModal";
-import AdminAddAdditionalAbioticModal from "@/Components/AdminAddAdditionalAbioticModal";
-import AdminEditAdditionalAbioticModal from "@/Components/AdminEditAdditionalAbioticModal";
-import AdminDeleteAdditionalAbioticModal from "@/Components/AdminDeleteAdditionalAbioticModal";
+import AddMainAbioticModal from "@/Components/AddMainAbioticModal";
+import EditMainAbioticModal from "@/Components/EditMainAbioticModal";
+import DeleteMainAbioticModal from "@/Components/DeleteMainAbioticModal";
+import AddAdditionalAbioticModal from "@/Components/AddAdditionalAbioticModal";
+import EditAdditionalAbioticModal from "@/Components/EditAdditionalAbioticModal";
+import DeleteAdditionalAbioticModal from "@/Components/DeleteAdditionalAbioticModal";
+import AddBioticIndexModal from "@/Components/AddBioticIndexModal";
+import EditBioticIndexModal from "@/Components/EditBioticIndexModal";
+import DeleteBioticIndexModal from "@/Components/DeleteBioticIndexModal";
+import AddFamilyBioticModal from "@/Components/AddFamilyBioticModal";
+import EditFamilyBioticModal from "@/Components/EditFamilyBioticModal";
+import DeleteFamilyBioticModal from "@/Components/DeleteFamilyBioticModal";
 
 
 
-function AdditionalAbioticModal({
-    isOpen,
-    onClose,
-    onSubmit,
-    form,
-    setForm,
-    errors,
-    title,
-}) {
-    if (!isOpen) return null;
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-            <div
-                className="absolute inset-0 bg-black/50 transition-all duration-500"
-                onClick={onClose}
-            ></div>
-            <div className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 animate-modal-appear">
-                <h3 className="text-xl font-bold mb-4">{title}</h3>
-                <form onSubmit={onSubmit} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Nama
-                        </label>
-                        <input
-                            type="text"
-                            name="name"
-                            value={form.name}
-                            onChange={handleChange}
-                            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        {errors.name && (
-                            <p className="text-xs text-red-600 mt-1">
-                                {errors.name}
-                            </p>
-                        )}
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Nilai Awal
-                            </label>
-                            <input
-                                type="number"
-                                step="any"
-                                name="initial_value"
-                                value={form.initial_value}
-                                onChange={handleChange}
-                                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                            {errors.initial_value && (
-                                <p className="text-xs text-red-600 mt-1">
-                                    {errors.initial_value}
-                                </p>
-                            )}
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Nilai Akhir
-                            </label>
-                            <input
-                                type="number"
-                                step="any"
-                                name="final_value"
-                                value={form.final_value}
-                                onChange={handleChange}
-                                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                            {errors.final_value && (
-                                <p className="text-xs text-red-600 mt-1">
-                                    {errors.final_value}
-                                </p>
-                            )}
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Bobot
-                            </label>
-                            <input
-                                type="number"
-                                step="any"
-                                name="weight"
-                                value={form.weight}
-                                onChange={handleChange}
-                                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                            {errors.weight && (
-                                <p className="text-xs text-red-600 mt-1">
-                                    {errors.weight}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="flex justify-end gap-3 pt-4">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50"
-                        >
-                            Batal
-                        </button>
-                        <button
-                            type="submit"
-                            className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700"
-                        >
-                            Simpan
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    );
-}
-
-function FamilyBioticModal({
-    isOpen,
-    onClose,
-    onSubmit,
-    form,
-    setForm,
-    errors,
-    title,
-}) {
-    if (!isOpen) return null;
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
-
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-            <div
-                className="absolute inset-0 bg-black/50 transition-all duration-500"
-                onClick={onClose}
-            ></div>
-            <div className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 animate-modal-appear">
-                <h3 className="text-xl font-bold mb-4">{title}</h3>
-                <form onSubmit={onSubmit} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Nama Family
-                        </label>
-                        <input
-                            type="text"
-                            name="name"
-                            value={form.name}
-                            onChange={handleChange}
-                            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        {errors.name && (
-                            <p className="text-xs text-red-600 mt-1">
-                                {errors.name}
-                            </p>
-                        )}
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Bobot
-                        </label>
-                        <input
-                            type="number"
-                            step="any"
-                            name="weight"
-                            value={form.weight}
-                            onChange={handleChange}
-                            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        {errors.weight && (
-                            <p className="text-xs text-red-600 mt-1">
-                                {errors.weight}
-                            </p>
-                        )}
-                    </div>
-
-                    <div className="flex justify-end gap-3 pt-4">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50"
-                        >
-                            Batal
-                        </button>
-                        <button
-                            type="submit"
-                            className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700"
-                        >
-                            Simpan
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    );
-}
 
 
 
@@ -327,7 +126,7 @@ export default function AdminKelolaBobot({
         additionalAbioticParameters?.per_page || 10
     );
 
-    // Biotic Index state (CRUD)
+    // Index Biotic state (CRUD)
     const [showAddBioticModal, setShowAddBioticModal] = useState(false);
     const [showEditBioticModal, setShowEditBioticModal] = useState(false);
     const [showDeleteBioticModal, setShowDeleteBioticModal] = useState(false);
@@ -723,7 +522,7 @@ export default function AdminKelolaBobot({
         );
     };
 
-    // Biotic Index handlers
+    // Index Biotic handlers
     const handleAddBioticSubmit = (e) => {
         e.preventDefault();
         router.post(
@@ -742,7 +541,7 @@ export default function AdminKelolaBobot({
                     setAddBioticErrors({});
                     toast.success("Berhasil!", {
                         description:
-                            "Parameter biotic index berhasil ditambahkan",
+                            "Parameter Index Biotic berhasil ditambahkan",
                         duration: 3000,
                     });
                 },
@@ -790,7 +589,7 @@ export default function AdminKelolaBobot({
                     setSelectedBioticParam(null);
                     toast.success("Berhasil!", {
                         description:
-                            "Parameter biotic index berhasil diupdate",
+                            "Parameter Index Biotic berhasil diupdate",
                         duration: 3000,
                     });
                 },
@@ -822,7 +621,7 @@ export default function AdminKelolaBobot({
                     setSelectedBioticParam(null);
                     toast.success("Berhasil!", {
                         description:
-                            "Parameter biotic index berhasil dihapus",
+                            "Parameter Index Biotic berhasil dihapus",
                         duration: 3000,
                     });
                 },
@@ -1117,7 +916,7 @@ export default function AdminKelolaBobot({
                                     : "bg-white text-gray-600 hover:bg-gray-50 shadow-sm"
                             }`}
                         >
-                            Biotic Index
+                            Index Biotic
                         </Link>
                         <Link
                             href="/admin/kelola-bobot?tab=family-biotic"
@@ -1685,17 +1484,17 @@ export default function AdminKelolaBobot({
 
                                     <div className="px-6 py-4 flex justify-between items-center">
                                         <h2 className="text-lg font-semibold text-gray-800">
-                                            Tabel Bobot Biotic Index
+                                            Tabel Bobot Index Biotic
                                         </h2>
                                         <button
                                             onClick={() => {
                                                 setShowAddBioticModal(true);
                                                 setAddBioticErrors({});
                                             }}
-                                            className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-5 py-2.5 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105"
+                                            className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105 ring-2 ring-white/30"
                                         >
-                                            <Plus className="w-4 h-4" />
-                                            Add
+                                            <Plus className="w-5 h-5" />
+                                            Tambah Data
                                         </button>
                                     </div>
 
@@ -1703,22 +1502,22 @@ export default function AdminKelolaBobot({
                                         <table className="w-full">
                                             <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white">
                                                 <tr>
-                                                    <th className="px-6 py-3 text-left text-xs font-semibold">
+                                                    <th className="px-6 py-4 text-left text-sm font-semibold">
                                                         ID
                                                     </th>
-                                                    <th className="px-6 py-3 text-left text-xs font-semibold">
+                                                    <th className="px-6 py-4 text-left text-sm font-semibold">
                                                         Nama
                                                     </th>
-                                                    <th className="px-6 py-3 text-right text-xs font-semibold">
+                                                    <th className="px-6 py-4 text-right text-sm font-semibold">
                                                         Nilai Awal
                                                     </th>
-                                                    <th className="px-6 py-3 text-right text-xs font-semibold">
+                                                    <th className="px-6 py-4 text-right text-sm font-semibold">
                                                         Nilai Akhir
                                                     </th>
-                                                    <th className="px-6 py-3 text-right text-xs font-semibold">
+                                                    <th className="px-6 py-4 text-right text-sm font-semibold">
                                                         Bobot
                                                     </th>
-                                                    <th className="px-6 py-3 text-center text-xs font-semibold">
+                                                    <th className="px-6 py-4 text-center text-sm font-semibold">
                                                         Aksi
                                                     </th>
                                                 </tr>
@@ -1733,28 +1532,28 @@ export default function AdminKelolaBobot({
                                                                 key={param.id}
                                                                 className="hover:bg-blue-50 transition-colors"
                                                             >
-                                                                <td className="px-6 py-3 text-sm text-gray-700">
+                                                                <td className="px-6 py-4 text-sm text-gray-700">
                                                                     {param.id}
                                                                 </td>
-                                                                <td className="px-6 py-3 text-sm font-medium text-gray-900">
+                                                                <td className="px-6 py-4 text-sm font-medium text-gray-900">
                                                                     {param.name}
                                                                 </td>
-                                                                <td className="px-6 py-3 text-sm text-right text-gray-800">
+                                                                <td className="px-6 py-4 text-sm text-right text-gray-800">
                                                                     {
                                                                         param.initial_value
                                                                     }
                                                                 </td>
-                                                                <td className="px-6 py-3 text-sm text-right text-gray-800">
+                                                                <td className="px-6 py-4 text-sm text-right text-gray-800">
                                                                     {
                                                                         param.final_value
                                                                     }
                                                                 </td>
-                                                                <td className="px-6 py-3 text-sm text-right text-gray-800">
+                                                                <td className="px-6 py-4 text-sm text-right text-gray-800">
                                                                     {
                                                                         param.weight
                                                                     }
                                                                 </td>
-                                                                <td className="px-6 py-3 text-sm">
+                                                                <td className="px-6 py-4 text-sm">
                                                                     <div className="flex items-center justify-center gap-2">
                                                                         <button
                                                                             onClick={() =>
@@ -1791,7 +1590,7 @@ export default function AdminKelolaBobot({
                                                         >
                                                             Tidak ada data
                                                             parameter
-                                                            biotic index
+                                                            Index Biotic
                                                         </td>
                                                     </tr>
                                                 )}
@@ -1940,10 +1739,10 @@ export default function AdminKelolaBobot({
                                                 setShowAddFamilyModal(true);
                                                 setAddFamilyErrors({});
                                             }}
-                                            className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-5 py-2.5 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105"
+                                            className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105 ring-2 ring-white/30"
                                         >
-                                            <Plus className="w-4 h-4" />
-                                            Add
+                                            <Plus className="w-5 h-5" />
+                                            Tambah Data
                                         </button>
                                     </div>
 
@@ -1951,16 +1750,16 @@ export default function AdminKelolaBobot({
                                         <table className="w-full">
                                             <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white">
                                                 <tr>
-                                                    <th className="px-6 py-3 text-left text-xs font-semibold">
+                                                    <th className="px-6 py-4 text-left text-sm font-semibold">
                                                         ID
                                                     </th>
-                                                    <th className="px-6 py-3 text-left text-xs font-semibold">
+                                                    <th className="px-6 py-4 text-left text-sm font-semibold">
                                                         Family
                                                     </th>
-                                                    <th className="px-6 py-3 text-right text-xs font-semibold">
+                                                    <th className="px-6 py-4 text-right text-sm font-semibold">
                                                         Bobot
                                                     </th>
-                                                    <th className="px-6 py-3 text-center text-xs font-semibold">
+                                                    <th className="px-6 py-4 text-center text-sm font-semibold">
                                                         Aksi
                                                     </th>
                                                 </tr>
@@ -1974,16 +1773,16 @@ export default function AdminKelolaBobot({
                                                                 key={param.id}
                                                                 className="hover:bg-blue-50 transition-colors"
                                                             >
-                                                                <td className="px-6 py-3 text-sm text-gray-700">
+                                                                <td className="px-6 py-4 text-sm text-gray-700">
                                                                     {param.id}
                                                                 </td>
-                                                                <td className="px-6 py-3 text-sm font-medium text-gray-900">
+                                                                <td className="px-6 py-4 text-sm font-medium text-gray-900">
                                                                     {param.name}
                                                                 </td>
-                                                                <td className="px-6 py-3 text-sm text-right text-gray-800">
+                                                                <td className="px-6 py-4 text-sm text-right text-gray-800">
                                                                     {param.weight}
                                                                 </td>
-                                                                <td className="px-6 py-3 text-sm">
+                                                                <td className="px-6 py-4 text-sm">
                                                                     <div className="flex items-center justify-center gap-2">
                                                                         <button
                                                                             onClick={() =>
@@ -2158,7 +1957,7 @@ export default function AdminKelolaBobot({
                 parameter={selectedParam}
             />
 
-            <AdminAddAdditionalAbioticModal
+            <AddAdditionalAbioticModal
                 isOpen={showAddAdditionalModal}
                 onClose={() => {
                     setShowAddAdditionalModal(false);
@@ -2170,7 +1969,7 @@ export default function AdminKelolaBobot({
                 errors={addAdditionalErrors}
             />
 
-            <AdminEditAdditionalAbioticModal
+            <EditAdditionalAbioticModal
                 isOpen={showEditAdditionalModal}
                 onClose={() => {
                     setShowEditAdditionalModal(false);
@@ -2184,7 +1983,7 @@ export default function AdminKelolaBobot({
                 selectedParam={selectedAdditionalParam}
             />
 
-            <AdminDeleteAdditionalAbioticModal
+            <DeleteAdditionalAbioticModal
                 isOpen={showDeleteAdditionalModal}
                 onClose={() => setShowDeleteAdditionalModal(false)}
                 onConfirm={handleDeleteAdditionalConfirm}
@@ -2192,7 +1991,7 @@ export default function AdminKelolaBobot({
                 parameter={selectedAdditionalParam}
             />
 
-            <AdditionalAbioticModal
+            <AddBioticIndexModal
                 isOpen={showAddBioticModal}
                 onClose={() => {
                     setShowAddBioticModal(false);
@@ -2202,10 +2001,9 @@ export default function AdminKelolaBobot({
                 form={addBioticForm}
                 setForm={setAddBioticForm}
                 errors={addBioticErrors}
-                title="Tambah Parameter Biotic Index"
             />
 
-            <AdditionalAbioticModal
+            <EditBioticIndexModal
                 isOpen={showEditBioticModal}
                 onClose={() => {
                     setShowEditBioticModal(false);
@@ -2216,10 +2014,10 @@ export default function AdminKelolaBobot({
                 form={editBioticForm}
                 setForm={setEditBioticForm}
                 errors={editBioticErrors}
-                title="Edit Parameter Biotic Index"
+                selectedParam={selectedBioticParam}
             />
 
-            <DeleteMainAbioticModal
+            <DeleteBioticIndexModal
                 isOpen={showDeleteBioticModal}
                 onClose={() => setShowDeleteBioticModal(false)}
                 onConfirm={handleDeleteBioticConfirm}
@@ -2227,7 +2025,7 @@ export default function AdminKelolaBobot({
                 parameter={selectedBioticParam}
             />
 
-            <FamilyBioticModal
+            <AddFamilyBioticModal
                 isOpen={showAddFamilyModal}
                 onClose={() => {
                     setShowAddFamilyModal(false);
@@ -2237,10 +2035,9 @@ export default function AdminKelolaBobot({
                 form={addFamilyForm}
                 setForm={setAddFamilyForm}
                 errors={addFamilyErrors}
-                title="Tambah Family Biotic"
             />
 
-            <FamilyBioticModal
+            <EditFamilyBioticModal
                 isOpen={showEditFamilyModal}
                 onClose={() => {
                     setShowEditFamilyModal(false);
@@ -2251,10 +2048,10 @@ export default function AdminKelolaBobot({
                 form={editFamilyForm}
                 setForm={setEditFamilyForm}
                 errors={editFamilyErrors}
-                title="Edit Family Biotic"
+                selectedParam={selectedFamilyParam}
             />
 
-            <DeleteMainAbioticModal
+            <DeleteFamilyBioticModal
                 isOpen={showDeleteFamilyModal}
                 onClose={() => setShowDeleteFamilyModal(false)}
                 onConfirm={handleDeleteFamilyConfirm}

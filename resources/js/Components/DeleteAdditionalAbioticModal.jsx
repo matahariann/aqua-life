@@ -1,7 +1,7 @@
 import React from "react";
 import { Trash2, X } from "lucide-react";
 
-export default function AdminDeleteAdditionalAbioticModal({
+export default function DeleteAdditionalAbioticModal({
     isOpen,
     onClose,
     parameter,

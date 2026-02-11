@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Plus, X } from "lucide-react";
 
-export default function AdminAddAdditionalAbioticModal({
+export default function AddFamilyBioticModal({
     isOpen,
     onClose,
     form,
@@ -28,18 +28,6 @@ export default function AdminAddAdditionalAbioticModal({
             case "name":
                 if (!value || value.trim() === "") {
                     error = "Nama parameter harus diisi";
-                }
-                break;
-
-            case "initial_value":
-                if (value === "" || value === null || value === undefined) {
-                    error = "Nilai awal harus diisi";
-                }
-                break;
-
-            case "final_value":
-                if (value === "" || value === null || value === undefined) {
-                    error = "Nilai akhir harus diisi";
                 }
                 break;
 
@@ -109,8 +97,6 @@ export default function AdminAddAdditionalAbioticModal({
         // Mark all fields as touched
         setTouched({
             name: true,
-            initial_value: true,
-            final_value: true,
             weight: true,
         });
 
@@ -158,7 +144,7 @@ export default function AdminAddAdditionalAbioticModal({
                             Tambah Parameter
                         </h3>
                         <p className="text-white/80 text-sm mt-1">
-                            Additional Abiotic
+                            Family Biotic
                         </p>
                     </div>
 
@@ -166,7 +152,7 @@ export default function AdminAddAdditionalAbioticModal({
                         {/* Name Field */}
                         <div>
                             <label className="block text-sm font-semibold text-white mb-1.5 drop-shadow-md">
-                                Nama Parameter
+                                Nama Family
                             </label>
                             <input
                                 type="text"
@@ -188,56 +174,6 @@ export default function AdminAddAdditionalAbioticModal({
                                     {errors.name}
                                 </p>
                             )}
-                        </div>
-
-                        {/* Initial & Final Value */}
-                        <div className="grid grid-cols-2 gap-3">
-                            <div>
-                                <label className="block text-sm font-semibold text-white mb-1.5 drop-shadow-md">
-                                    Nilai Awal
-                                </label>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    value={form.initial_value || ""}
-                                    onChange={(e) => handleFieldChange("initial_value", e.target.value)}
-                                    onBlur={() => handleBlur("initial_value")}
-                                    className={`w-full px-4 py-2 bg-white/20 backdrop-blur-md border-2 rounded-lg text-white placeholder-white/50 focus:bg-white/30 focus:outline-none transition-all ${
-                                        errors.initial_value
-                                            ? "border-red-400 focus:border-red-500"
-                                            : "border-white/40 focus:border-white/60"
-                                    }`}
-                                    placeholder="0.00"
-                                />
-                                {errors.initial_value && (
-                                    <p className="mt-2 text-xs text-red-100 drop-shadow-lg bg-red-500/20 px-2 py-1 rounded border border-red-300/30">
-                                        {errors.initial_value}
-                                    </p>
-                                )}
-                            </div>
-                            <div>
-                                <label className="block text-sm font-semibold text-white mb-1.5 drop-shadow-md">
-                                    Nilai Akhir
-                                </label>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    value={form.final_value || ""}
-                                    onChange={(e) => handleFieldChange("final_value", e.target.value)}
-                                    onBlur={() => handleBlur("final_value")}
-                                    className={`w-full px-4 py-2 bg-white/20 backdrop-blur-md border-2 rounded-lg text-white placeholder-white/50 focus:bg-white/30 focus:outline-none transition-all ${
-                                        errors.final_value
-                                            ? "border-red-400 focus:border-red-500"
-                                            : "border-white/40 focus:border-white/60"
-                                    }`}
-                                    placeholder="0.00"
-                                />
-                                {errors.final_value && (
-                                    <p className="mt-2 text-xs text-red-100 drop-shadow-lg bg-red-500/20 px-2 py-1 rounded border border-red-300/30">
-                                        {errors.final_value}
-                                    </p>
-                                )}
-                            </div>
                         </div>
 
                         {/* Weight Field */}
