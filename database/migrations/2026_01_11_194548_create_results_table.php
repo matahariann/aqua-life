@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('results', function (Blueprint $table) {
             $table->id();
             $table->float('value');
-            $table->enum('status', ['good', 'moderate', 'poor']);
+            $table->enum('status', ['Sangat Baik', 'Baik', 'Sedang', 'Buruk', 'Sangat Buruk']);
             $table->string('conclusion');
             $table->string('recommendation');
             $table->unsignedBigInteger('id_user');

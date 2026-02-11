@@ -16,19 +16,13 @@ class GeoZoneSeeder extends Seeder
         DB::table('geo_zones')->insert([
             [
                 'id' => 1,
-                'name' => 'Pesisir',
+                'name' => 'Temperate',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'id' => 2,
-                'name' => 'Estuari',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'id' => 3,
-                'name' => 'Perairan Darat',
+                'name' => 'Tropical',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

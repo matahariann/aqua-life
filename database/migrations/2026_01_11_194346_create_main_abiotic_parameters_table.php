@@ -17,8 +17,8 @@ return new class extends Migration
             $table->float('initial_value');
             $table->float('final_value');
             $table->float('weight')->default(0);
-            $table->unsignedBigInteger('id_geo_zone');
-            $table->unsignedBigInteger('id_type_water');
+            $table->unsignedBigInteger('id_geo_zone')->nullable();
+            $table->unsignedBigInteger('id_type_water')->nullable();
             $table->timestamps();
 
             $table->foreign('id_geo_zone')->references('id')->on('geo_zones')->onDelete('cascade');
