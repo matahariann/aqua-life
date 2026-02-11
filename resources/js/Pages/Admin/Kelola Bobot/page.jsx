@@ -8,6 +8,9 @@ import ModalStyles from "@/Components/ModalStyles";
 import AddMainAbioticModal from "@/Components/AdminAddMainAbioticModal";
 import EditMainAbioticModal from "@/Components/AdminEditMainAbioticModal";
 import DeleteMainAbioticModal from "@/Components/AdminDeleteMainAbioticModal";
+import AdminAddAdditionalAbioticModal from "@/Components/AdminAddAdditionalAbioticModal";
+import AdminEditAdditionalAbioticModal from "@/Components/AdminEditAdditionalAbioticModal";
+import AdminDeleteAdditionalAbioticModal from "@/Components/AdminDeleteAdditionalAbioticModal";
 
 
 
@@ -1435,10 +1438,10 @@ export default function AdminKelolaBobot({
                                                 setShowAddAdditionalModal(true);
                                                 setAddAdditionalErrors({});
                                             }}
-                                            className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-5 py-2.5 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105"
+                                            className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105 ring-2 ring-white/30"
                                         >
-                                            <Plus className="w-4 h-4" />
-                                            Add
+                                            <Plus className="w-5 h-5" />
+                                            Tambah Data
                                         </button>
                                     </div>
 
@@ -1446,22 +1449,22 @@ export default function AdminKelolaBobot({
                                         <table className="w-full">
                                             <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white">
                                                 <tr>
-                                                    <th className="px-6 py-3 text-left text-xs font-semibold">
+                                                    <th className="px-6 py-4 text-left text-sm font-semibold">
                                                         ID
                                                     </th>
-                                                    <th className="px-6 py-3 text-left text-xs font-semibold">
+                                                    <th className="px-6 py-4 text-left text-sm font-semibold">
                                                         Nama
                                                     </th>
-                                                    <th className="px-6 py-3 text-right text-xs font-semibold">
+                                                    <th className="px-6 py-4 text-right text-sm font-semibold">
                                                         Nilai Awal
                                                     </th>
-                                                    <th className="px-6 py-3 text-right text-xs font-semibold">
+                                                    <th className="px-6 py-4 text-right text-sm font-semibold">
                                                         Nilai Akhir
                                                     </th>
-                                                    <th className="px-6 py-3 text-right text-xs font-semibold">
+                                                    <th className="px-6 py-4 text-right text-sm font-semibold">
                                                         Bobot
                                                     </th>
-                                                    <th className="px-6 py-3 text-center text-xs font-semibold">
+                                                    <th className="px-6 py-4 text-center text-sm font-semibold">
                                                         Aksi
                                                     </th>
                                                 </tr>
@@ -1476,28 +1479,28 @@ export default function AdminKelolaBobot({
                                                                 key={param.id}
                                                                 className="hover:bg-blue-50 transition-colors"
                                                             >
-                                                                <td className="px-6 py-3 text-sm text-gray-700">
+                                                                <td className="px-6 py-4 text-sm text-gray-700">
                                                                     {param.id}
                                                                 </td>
-                                                                <td className="px-6 py-3 text-sm font-medium text-gray-900">
+                                                                <td className="px-6 py-4 text-sm font-medium text-gray-900">
                                                                     {param.name}
                                                                 </td>
-                                                                <td className="px-6 py-3 text-sm text-right text-gray-800">
+                                                                <td className="px-6 py-4 text-sm text-right text-gray-800">
                                                                     {
                                                                         param.initial_value
                                                                     }
                                                                 </td>
-                                                                <td className="px-6 py-3 text-sm text-right text-gray-800">
+                                                                <td className="px-6 py-4 text-sm text-right text-gray-800">
                                                                     {
                                                                         param.final_value
                                                                     }
                                                                 </td>
-                                                                <td className="px-6 py-3 text-sm text-right text-gray-800">
+                                                                <td className="px-6 py-4 text-sm text-right text-gray-800">
                                                                     {
                                                                         param.weight
                                                                     }
                                                                 </td>
-                                                                <td className="px-6 py-3 text-sm">
+                                                                <td className="px-6 py-4 text-sm">
                                                                     <div className="flex items-center justify-center gap-2">
                                                                         <button
                                                                             onClick={() =>
@@ -2155,7 +2158,7 @@ export default function AdminKelolaBobot({
                 parameter={selectedParam}
             />
 
-            <AdditionalAbioticModal
+            <AdminAddAdditionalAbioticModal
                 isOpen={showAddAdditionalModal}
                 onClose={() => {
                     setShowAddAdditionalModal(false);
@@ -2165,10 +2168,9 @@ export default function AdminKelolaBobot({
                 form={addAdditionalForm}
                 setForm={setAddAdditionalForm}
                 errors={addAdditionalErrors}
-                title="Tambah Parameter Additional Abiotic"
             />
 
-            <AdditionalAbioticModal
+            <AdminEditAdditionalAbioticModal
                 isOpen={showEditAdditionalModal}
                 onClose={() => {
                     setShowEditAdditionalModal(false);
@@ -2179,10 +2181,10 @@ export default function AdminKelolaBobot({
                 form={editAdditionalForm}
                 setForm={setEditAdditionalForm}
                 errors={editAdditionalErrors}
-                title="Edit Parameter Additional Abiotic"
+                selectedParam={selectedAdditionalParam}
             />
 
-            <DeleteMainAbioticModal
+            <AdminDeleteAdditionalAbioticModal
                 isOpen={showDeleteAdditionalModal}
                 onClose={() => setShowDeleteAdditionalModal(false)}
                 onConfirm={handleDeleteAdditionalConfirm}
