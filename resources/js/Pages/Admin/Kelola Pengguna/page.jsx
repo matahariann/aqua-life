@@ -325,7 +325,7 @@ export default function AdminKelolaPengguna({ users }) {
                             </div>
                         </div>
 
-                        <div className="overflow-auto max-h-[65vh] relative">
+                        <div className="overflow-auto max-h-[55vh] relative">
                             <table className="w-full">
                                 <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white relative sticky top-0 z-10">
                                     <tr>
@@ -451,9 +451,6 @@ export default function AdminKelolaPengguna({ users }) {
                                 </tbody>
                             </table>
                         </div>
-
-                        {/* Pagination Controls */}
-                        {users.last_page > 1 && (
                             <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
                                 <div className="text-sm text-gray-600">
                                     Halaman {users.current_page} dari{" "}
@@ -537,7 +534,6 @@ export default function AdminKelolaPengguna({ users }) {
                                     </button>
                                 </div>
                             </div>
-                        )}
                     </div>
                 </div>
 

@@ -290,6 +290,18 @@ export default function AdminKelolaBobot({
         });
     };
 
+    const handlePageChangeFamily = (pageUrl) => {
+        if (!pageUrl) return;
+        const urlObj = new URL(pageUrl, window.location.origin);
+        urlObj.searchParams.set("per_page", perPageFamily);
+        urlObj.searchParams.set("tab", "family-biotic");
+        router.get(urlObj.pathname + urlObj.search, {}, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        });
+    };
+
     const handleAddSubmit = (e) => {
         e.preventDefault();
         router.post(
@@ -981,7 +993,7 @@ export default function AdminKelolaBobot({
                                 </button>
                             </div>
 
-                            <div className="overflow-auto max-h-[45vh] relative">
+                            <div className="overflow-auto max-h-[35vh] relative">
                                 <table className="w-full">
                                     <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white sticky top-0 z-10">
                                         <tr>
@@ -1092,8 +1104,7 @@ export default function AdminKelolaBobot({
                                 </table>
                             </div>
 
-                            {mainAbioticParameters?.last_page > 1 && (
-                                <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                            <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
                                     <div className="text-sm text-gray-600">
                                         Halaman{" "}
                                         {
@@ -1180,7 +1191,6 @@ export default function AdminKelolaBobot({
                                         </button>
                                     </div>
                                 </div>
-                            )}
                         </div>
                     ) : (
                         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
@@ -1244,7 +1254,7 @@ export default function AdminKelolaBobot({
                                         </button>
                                     </div>
 
-                                    <div className="overflow-auto max-h-[45vh] relative">
+                                    <div className="overflow-auto max-h-[35vh] relative">
                                         <table className="w-full">
                                             <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white sticky top-0 z-10">
                                                 <tr>
@@ -1344,9 +1354,7 @@ export default function AdminKelolaBobot({
                                         </table>
                                     </div>
 
-                                    {additionalAbioticParameters?.last_page >
-                                        1 && (
-                                        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                                    <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
                                             <div className="text-sm text-gray-600">
                                                 Halaman{" "}
                                                 {
@@ -1438,7 +1446,6 @@ export default function AdminKelolaBobot({
                                                 </button>
                                             </div>
                                         </div>
-                                    )}
                                 </>
                             )}
                             
@@ -1498,7 +1505,7 @@ export default function AdminKelolaBobot({
                                         </button>
                                     </div>
 
-                                    <div className="overflow-auto max-h-[45vh] relative">
+                                    <div className="overflow-auto max-h-[35vh] relative">
                                         <table className="w-full">
                                             <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white sticky top-0 z-10">
                                                 <tr>
@@ -1598,9 +1605,7 @@ export default function AdminKelolaBobot({
                                         </table>
                                     </div>
 
-                                    {bioticIndexParameters?.last_page >
-                                        1 && (
-                                        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                                    <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
                                             <div className="text-sm text-gray-600">
                                                 Halaman{" "}
                                                 {
@@ -1692,7 +1697,6 @@ export default function AdminKelolaBobot({
                                                 </button>
                                             </div>
                                         </div>
-                                            )}
                                 </>
                             )}
 
@@ -1746,7 +1750,7 @@ export default function AdminKelolaBobot({
                                         </button>
                                     </div>
 
-                                    <div className="overflow-auto max-h-[45vh] relative">
+                                    <div className="overflow-auto max-h-[35vh] relative">
                                         <table className="w-full">
                                             <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white sticky top-0 z-10">
                                                 <tr>
@@ -1825,8 +1829,7 @@ export default function AdminKelolaBobot({
                                         </table>
                                     </div>
 
-                                    {bioticFamilies?.last_page > 1 && (
-                                        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                                    <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
                                             <div className="text-sm text-gray-600">
                                                 Halaman{" "}
                                                 {bioticFamilies.current_page}{" "}
@@ -1911,7 +1914,6 @@ export default function AdminKelolaBobot({
                                                 </button>
                                             </div>
                                         </div>
-                                    )}
                                 </>
                             )}
                         </div>
