@@ -48,43 +48,45 @@ const StepIndicator = ({ currentStep, steps }) => {
     );
 };
 
-const StationForm = ({ data, setData, geoZones, waterTypes }) => {
+const StationForm = ({ data, setData, geoZones, waterTypes, errors }) => {
     return (
         <div className="space-y-6 animate-fade-in-up">
             <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">Informasi Stasiun</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Geographical Zone</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Geographical Zone <span className="text-red-500">*</span></label>
                     <select
                         value={data.id_geo_zone}
                         onChange={(e) => setData("id_geo_zone", e.target.value)}
-                        className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.id_geo_zone ? 'border-red-500 bg-red-50' : ''}`}
                     >
                         <option value="">Pilih Zone</option>
                         {geoZones.map((z) => (
                             <option key={z.id} value={z.id}>{z.name}</option>
                         ))}
                     </select>
+                    {errors.id_geo_zone && <p className="text-red-500 text-xs mt-1">{errors.id_geo_zone}</p>}
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Type of Water</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Type of Water <span className="text-red-500">*</span></label>
                     <select
                         value={data.id_type_water}
                         onChange={(e) => setData("id_type_water", e.target.value)}
-                        className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.id_type_water ? 'border-red-500 bg-red-50' : ''}`}
                     >
                         <option value="">Pilih Tipe Air</option>
                         {waterTypes.map((w) => (
                             <option key={w.id} value={w.id}>{w.name}</option>
                         ))}
                     </select>
+                    {errors.id_type_water && <p className="text-red-500 text-xs mt-1">{errors.id_type_water}</p>}
                 </div>
             </div>
         </div>
     );
 };
 
-const MainParameterForm = ({ data, setData, bioticFamilies }) => {
+const MainParameterForm = ({ data, setData, bioticFamilies, errors }) => {
     
     const handleAddFamily = () => {
         setData("families", [
@@ -103,7 +105,7 @@ const MainParameterForm = ({ data, setData, bioticFamilies }) => {
         const newFamilies = [...data.families];
         newFamilies[index][field] = value;
         
-        // Auto-fill name if selecting from dropdown (optional/redundant if ID is enough)
+        // Auto-fill name if selecting from dropdown
         if (field === 'id_family') {
             const selected = bioticFamilies.find(f => f.id == value);
             if(selected) newFamilies[index]['name'] = selected.name; 
@@ -122,11 +124,11 @@ const MainParameterForm = ({ data, setData, bioticFamilies }) => {
                 
                 <div className="space-y-4">
                     {data.families.map((fam, index) => (
-                        <div key={index} className="flex flex-wrap md:flex-nowrap gap-4 items-end bg-gray-50 p-4 rounded-xl shadow-sm border">
+                        <div key={index} className="flex flex-wrap md:flex-nowrap gap-4 items-start bg-gray-50 p-4 rounded-xl shadow-sm border">
                            <div className="w-full md:w-1/4">
-                                <label className="text-xs text-gray-500">Family Checkbox/Dropdown</label>
+                                <label className="text-xs text-gray-500">Family Checkbox/Dropdown <span className="text-red-500">*</span></label>
                                 <select 
-                                    className="w-full mt-1 p-2 border rounded-lg text-sm"
+                                    className={`w-full mt-1 p-2 border rounded-lg text-sm ${errors[`family_${index}_id_family`] ? 'border-red-500 bg-red-50' : ''}`}
                                     value={fam.id_family}
                                     onChange={(e) => handleFamilyChange(index, "id_family", e.target.value)}
                                 >
@@ -135,38 +137,42 @@ const MainParameterForm = ({ data, setData, bioticFamilies }) => {
                                         <option key={f.id} value={f.id}>{f.name} (Bobot: {f.weight})</option>
                                     ))}
                                 </select>
+                                {errors[`family_${index}_id_family`] && <p className="text-red-500 text-xs mt-1">{errors[`family_${index}_id_family`]}</p>}
                            </div>
                            <div className="w-full md:w-1/4">
-                                <label className="text-xs text-gray-500">Nama Genus/Spesies</label>
+                                <label className="text-xs text-gray-500">Nama Genus/Spesies <span className="text-red-500">*</span></label>
                                 <input 
                                     type="text" 
-                                    className="w-full mt-1 p-2 border rounded-lg text-sm"
+                                    className={`w-full mt-1 p-2 border rounded-lg text-sm ${errors[`family_${index}_name`] ? 'border-red-500 bg-red-50' : ''}`}
                                     placeholder="Contoh: Chironomus sp."
                                     value={fam.name}
                                     onChange={(e) => handleFamilyChange(index, "name", e.target.value)}
                                 />
+                                {errors[`family_${index}_name`] && <p className="text-red-500 text-xs mt-1">{errors[`family_${index}_name`]}</p>}
                            </div>
                            <div className="w-full md:w-1/4">
-                                <label className="text-xs text-gray-500">Kelimpahan</label>
+                                <label className="text-xs text-gray-500">Kelimpahan <span className="text-red-500">*</span></label>
                                 <input 
                                     type="number" 
-                                    className="w-full mt-1 p-2 border rounded-lg text-sm"
+                                    className={`w-full mt-1 p-2 border rounded-lg text-sm ${errors[`family_${index}_abundance`] ? 'border-red-500 bg-red-50' : ''}`}
                                     value={fam.abundance}
                                     onChange={(e) => handleFamilyChange(index, "abundance", e.target.value)}
                                 />
+                                {errors[`family_${index}_abundance`] && <p className="text-red-500 text-xs mt-1">{errors[`family_${index}_abundance`]}</p>}
                            </div>
                            <div className="w-full md:w-1/4">
-                                <label className="text-xs text-gray-500">Taxa Indicator</label>
+                                <label className="text-xs text-gray-500">Taxa Indicator <span className="text-red-500">*</span></label>
                                 <input 
                                     type="number" step="0.01"
-                                    className="w-full mt-1 p-2 border rounded-lg text-sm"
+                                    className={`w-full mt-1 p-2 border rounded-lg text-sm ${errors[`family_${index}_taxa`] ? 'border-red-500 bg-red-50' : ''}`}
                                     value={fam.taxa_indicator}
                                     onChange={(e) => handleFamilyChange(index, "taxa_indicator", e.target.value)}
                                 />
+                                {errors[`family_${index}_taxa`] && <p className="text-red-500 text-xs mt-1">{errors[`family_${index}_taxa`]}</p>}
                            </div>
                            <button 
                                 onClick={() => handleRemoveFamily(index)}
-                                className="text-red-500 hover:text-red-700 p-2"
+                                className="text-red-500 hover:text-red-700 p-2 mt-4 md:mt-0"
                            >
                                ✕
                            </button>
@@ -198,13 +204,14 @@ const MainParameterForm = ({ data, setData, bioticFamilies }) => {
                         { label: "Ammonia (mg/L)", name: "ammonia" },
                     ].map((field) => (
                         <div key={field.name}>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{field.label} <span className="text-red-500">*</span></label>
                             <input
                                 type="number" step="0.01"
                                 value={data[field.name]}
                                 onChange={(e) => setData(field.name, e.target.value)}
-                                className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none ${errors[field.name] ? 'border-red-500 bg-red-50' : ''}`}
                             />
+                            {errors[field.name] && <p className="text-red-500 text-xs mt-1">{errors[field.name]}</p>}
                         </div>
                     ))}
                 </div>
@@ -213,7 +220,7 @@ const MainParameterForm = ({ data, setData, bioticFamilies }) => {
     );
 };
 
-const AdditionalParameterForm = ({ data, setData }) => {
+const AdditionalParameterForm = ({ data, setData, errors }) => {
     return (
         <div className="space-y-8 animate-fade-in-up">
             {/* Biotic Index Section */}
@@ -230,13 +237,14 @@ const AdditionalParameterForm = ({ data, setData }) => {
                         { label: "Number of Species", name: "number_of_species" },
                     ].map((field) => (
                         <div key={field.name}>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{field.label} <span className="text-red-500">*</span></label>
                             <input
                                 type="number" step="0.01"
                                 value={data[field.name]}
                                 onChange={(e) => setData(field.name, e.target.value)}
-                                className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                                className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none ${errors[field.name] ? 'border-red-500 bg-red-50' : ''}`}
                             />
+                            {errors[field.name] && <p className="text-red-500 text-xs mt-1">{errors[field.name]}</p>}
                         </div>
                     ))}
                 </div>
@@ -261,13 +269,14 @@ const AdditionalParameterForm = ({ data, setData }) => {
                         { label: "Macrozoobenthos Den.", name: "macrozoobenthos_density" },
                     ].map((field) => (
                         <div key={field.name}>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{field.label} <span className="text-red-500">*</span></label>
                             <input
                                 type="number" step="0.01"
                                 value={data[field.name]}
                                 onChange={(e) => setData(field.name, e.target.value)}
-                                className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                                className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-orange-500 focus:outline-none ${errors[field.name] ? 'border-red-500 bg-red-50' : ''}`}
                             />
+                            {errors[field.name] && <p className="text-red-500 text-xs mt-1">{errors[field.name]}</p>}
                         </div>
                     ))}
                 </div>
@@ -281,6 +290,7 @@ const AdditionalParameterForm = ({ data, setData }) => {
 export default function AdminHitungKualitasAir({ geoZones, waterTypes, bioticFamilies }) {
     const [currentStep, setCurrentStep] = useState(1);
     const [result, setResult] = useState(null); // To store result after submission
+    const [validationErrors, setValidationErrors] = useState({}); // To track empty fields
 
     const { data, setData, post, processing, errors } = useForm({
         // Station
@@ -326,10 +336,74 @@ export default function AdminHitungKualitasAir({ geoZones, waterTypes, bioticFam
         { title: "Hasil Perhitungan" }, // Step 4 is Result View
     ];
 
+    const validateStep = () => {
+        const errors = {};
+        
+        if (currentStep === 1) {
+            if (!data.id_geo_zone) errors.id_geo_zone = "Geographical Zone wajib diisi";
+            if (!data.id_type_water) errors.id_type_water = "Type of Water wajib diisi";
+        }
+        else if (currentStep === 2) {
+            const mainAbioticFields = [
+                { key: 'salinity', label: 'Salinity' },
+                { key: 'temperature', label: 'Temperature' },
+                { key: 'dissolved_oxygen', label: 'Dissolved Oxygen' },
+                { key: 'ph', label: 'pH' },
+                { key: 'nh3', label: 'NH3' },
+                { key: 'nh2', label: 'NH2' },
+                { key: 'ammonia', label: 'Ammonia' }
+            ];
+            
+            mainAbioticFields.forEach(field => {
+                if (data[field.key] === "" || data[field.key] === null) {
+                    errors[field.key] = `${field.label} wajib diisi`;
+                }
+            });
+            
+            // Validate biotic families
+            data.families.forEach((fam, index) => {
+                if (!fam.id_family) errors[`family_${index}_id_family`] = "Family wajib dipilih";
+                if (!fam.name) errors[`family_${index}_name`] = "Nama spesies wajib diisi";
+                if (fam.abundance === "" || fam.abundance === null) errors[`family_${index}_abundance`] = "Kelimpahan wajib diisi";
+                if (fam.taxa_indicator === "" || fam.taxa_indicator === null) errors[`family_${index}_taxa`] = "Taxa Indicator wajib diisi";
+            });
+        }
+        else if (currentStep === 3) {
+            const indexFields = [
+                { key: 'similarity', label: 'Similarity' },
+                { key: 'dominance', label: 'Dominance' },
+                { key: 'diversity', label: 'Diversity' },
+                { key: 'total_abundance', label: 'Total Abundance' },
+                { key: 'number_of_species', label: 'Number of Species' }
+            ];
+            
+            const additionalAbioticFields = [
+                { key: 'conductivity', label: 'Conductivity' },
+                { key: 'ratio_cn', label: 'Ratio C/N' },
+                { key: 'turbidity', label: 'Turbidity' },
+                { key: 'clay', label: 'Clay' },
+                { key: 'sand', label: 'Sand' },
+                { key: 'silt', label: 'Silt' },
+                { key: 'coarse_sediment', label: 'Coarse Sediment' },
+                { key: 'total_organic_dissolved', label: 'Total Org. Dissolved' },
+                { key: 'total_organic_substrate', label: 'Total Org. Substrate' },
+                { key: 'macrozoobenthos_density', label: 'Macrozoobenthos Den.' }
+            ];
+            
+            [...indexFields, ...additionalAbioticFields].forEach(field => {
+                if (data[field.key] === "" || data[field.key] === null) {
+                    errors[field.key] = `${field.label} wajib diisi`;
+                }
+            });
+        }
+        
+        setValidationErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
     const nextStep = () => {
-        // Validation logic per step can be added here
-        if (currentStep === 1 && (!data.id_geo_zone || !data.id_type_water)) {
-            toast.error("Mohon lengkapi data stasiun");
+        if (!validateStep()) {
+            toast.error("Mohon lengkapi semua input yang diwajibkan pada form ini");
             return;
         }
         setCurrentStep(prev => prev + 1);
@@ -339,6 +413,11 @@ export default function AdminHitungKualitasAir({ geoZones, waterTypes, bioticFam
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        
+        if (!validateStep()) {
+            toast.error("Mohon lengkapi semua input yang diwajibkan pada form ini");
+            return;
+        }
         
         post('/admin/hitung-kualitas-air?is_preview=1', {
             transform: (data) => ({
@@ -381,34 +460,66 @@ export default function AdminHitungKualitasAir({ geoZones, waterTypes, bioticFam
     const renderStepContent = () => {
         switch (currentStep) {
             case 1:
-                return <StationForm data={data} setData={setData} geoZones={geoZones} waterTypes={waterTypes} />;
+                return <StationForm data={data} setData={setData} geoZones={geoZones} waterTypes={waterTypes} errors={validationErrors} />;
             case 2:
-                return <MainParameterForm data={data} setData={setData} bioticFamilies={bioticFamilies} />;
+                return <MainParameterForm data={data} setData={setData} bioticFamilies={bioticFamilies} errors={validationErrors} />;
             case 3:
-                return <AdditionalParameterForm data={data} setData={setData} />;
+                return <AdditionalParameterForm data={data} setData={setData} errors={validationErrors} />;
             case 4:
                 return (
                     <div className="animate-fade-in-up py-4">
-                        <div className="text-center mb-8">
-                            <div className="inline-block p-4 rounded-full bg-blue-100 text-blue-600 mb-4 text-4xl">
-                                <FaChartPie />
-                            </div>
-                            <h2 className="text-3xl font-bold text-gray-800 mb-2">Hasil Perhitungan WSM</h2>
-                            <p className="text-gray-600">Berikut adalah ringkasan data dan hasil perhitungan kualitas air.</p>
-                        </div>
-
                         <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
-                            <h3 className="text-xl font-bold border-b pb-2 mb-4">Ringkasan Input Data</h3>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                                <div><span className="text-gray-500 block">pH</span><span className="font-semibold">{data.ph || '-'}</span></div>
-                                <div><span className="text-gray-500 block">Suhu</span><span className="font-semibold">{data.temperature || '-'} °C</span></div>
-                                <div><span className="text-gray-500 block">DO</span><span className="font-semibold">{data.dissolved_oxygen || '-'} mg/L</span></div>
-                                <div><span className="text-gray-500 block">Salinitas</span><span className="font-semibold">{data.salinity || '-'} ppt</span></div>
-                                <div><span className="text-gray-500 block">Kekeruhan</span><span className="font-semibold">{data.turbidity || '-'}</span></div>
-                                <div><span className="text-gray-500 block">Rasio C/N</span><span className="font-semibold">{data.ratio_cn || '-'}</span></div>
-                                <div><span className="text-gray-500 block">Konduktivitas</span><span className="font-semibold">{data.conductivity || '-'}</span></div>
-                                <div><span className="text-gray-500 block">Biota Family</span><span className="font-semibold">{data.families.filter(f => f.id_family).length} jenis</span></div>
+                            <h3 className="text-xl font-bold border-b pb-2 mb-4 flex items-center gap-2">
+                                <FaVial className="text-emerald-500" /> Ringkasan Parameter Abiotik
+                            </h3>
+                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 text-sm mb-8 bg-gray-50 p-4 rounded-lg">
+                                {/* Main Abiotic */}
+                                <div><span className="text-gray-500 block">pH</span><span className="font-semibold">{data.ph}</span></div>
+                                <div><span className="text-gray-500 block">Suhu</span><span className="font-semibold">{data.temperature} °C</span></div>
+                                <div><span className="text-gray-500 block">DO</span><span className="font-semibold">{data.dissolved_oxygen} mg/L</span></div>
+                                <div><span className="text-gray-500 block">Salinitas</span><span className="font-semibold">{data.salinity} ppt</span></div>
+                                <div><span className="text-gray-500 block">NH3</span><span className="font-semibold">{data.nh3} mg/L</span></div>
+                                <div><span className="text-gray-500 block">NH2</span><span className="font-semibold">{data.nh2} mg/L</span></div>
+                                <div><span className="text-gray-500 block">Ammonia</span><span className="font-semibold">{data.ammonia} mg/L</span></div>
+                                {/* Additional Abiotic */}
+                                <div><span className="text-gray-500 block">Conductivity</span><span className="font-semibold">{data.conductivity}</span></div>
+                                <div><span className="text-gray-500 block">Ratio C/N</span><span className="font-semibold">{data.ratio_cn}</span></div>
+                                <div><span className="text-gray-500 block">Turbidity</span><span className="font-semibold">{data.turbidity}</span></div>
+                                <div><span className="text-gray-500 block">Clay</span><span className="font-semibold">{data.clay} %</span></div>
+                                <div><span className="text-gray-500 block">Sand</span><span className="font-semibold">{data.sand} %</span></div>
+                                <div><span className="text-gray-500 block">Silt</span><span className="font-semibold">{data.silt} %</span></div>
+                                <div><span className="text-gray-500 block">Coarse Sed.</span><span className="font-semibold">{data.coarse_sediment}</span></div>
+                                <div><span className="text-gray-500 block">Total Org. Dissolved</span><span className="font-semibold">{data.total_organic_dissolved}</span></div>
+                                <div><span className="text-gray-500 block">Total Org. Substrate</span><span className="font-semibold">{data.total_organic_substrate}</span></div>
+                                <div><span className="text-gray-500 block">Macrozoobenthos Den.</span><span className="font-semibold">{data.macrozoobenthos_density}</span></div>
                             </div>
+
+                            <h3 className="text-xl font-bold border-b pb-2 mb-4 flex items-center gap-2">
+                                <FaFlask className="text-blue-500" /> Ringkasan Parameter Biotik
+                            </h3>
+                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 text-sm mb-4 bg-gray-50 p-4 rounded-lg">
+                                {/* Biotic Index */}
+                                <div><span className="text-gray-500 block">Similarity</span><span className="font-semibold">{data.similarity}</span></div>
+                                <div><span className="text-gray-500 block">Dominance</span><span className="font-semibold">{data.dominance}</span></div>
+                                <div><span className="text-gray-500 block">Diversity</span><span className="font-semibold">{data.diversity}</span></div>
+                                <div><span className="text-gray-500 block">Total Abundance</span><span className="font-semibold">{data.total_abundance}</span></div>
+                                <div><span className="text-gray-500 block">Number of Species</span><span className="font-semibold">{data.number_of_species}</span></div>
+                            </div>
+                            
+                            {data.families.length > 0 && (
+                                <div className="mt-4">
+                                    <span className="text-gray-500 font-medium block mb-2 text-sm">Spesies Family ({data.families.length}):</span>
+                                    <div className="flex flex-wrap gap-2">
+                                        {data.families.map((fam, idx) => (
+                                            fam.id_family && (
+                                            <span key={idx} className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">
+                                                {bioticFamilies.find(f => f.id == fam.id_family)?.name || fam.name} (Kelimpahan: {fam.abundance})
+                                            </span>
+                                            )
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {result && (
