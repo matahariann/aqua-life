@@ -109,6 +109,7 @@ Route::middleware('auth')->group(function () {
 
         // Hitung Kualitas Air
         Route::get('/hitung-kualitas-air', [OperatorHitungKualitasAir::class, 'index'])->name('hitung-kualitas-air');
+        Route::post('/hitung-kualitas-air', [OperatorHitungKualitasAir::class, 'store'])->name('hitung-kualitas-air.store');
 
         // Kelola Bobot
         Route::get('/kelola-bobot', [OperatorKelolaBobot::class, 'index'])->name('kelola-bobot');
@@ -124,6 +125,7 @@ Route::middleware('auth')->group(function () {
 
         // Hitung Kualitas Air
         Route::get('/hitung-kualitas-air', [MemberHitungKualitasAir::class, 'index'])->name('hitung-kualitas-air');
+        Route::post('/hitung-kualitas-air', [MemberHitungKualitasAir::class, 'store'])->name('hitung-kualitas-air.store');
 
         // Pembayaran
         Route::get('/pembayaran', [MemberPembayaran::class, 'index'])->name('pembayaran');

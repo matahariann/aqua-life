@@ -68,17 +68,20 @@ class AdminHitungKualitasAir extends Controller
             'families.*.id_family' => 'exists:biotic_families,id',
         ]);
 
-        try {
-            DB::beginTransaction();
-            
-            // Create Station
-            $station = \App\Models\Station::create([
-                'id_geo_zone' => $validated['id_geo_zone'],
-                'id_type_water' => $validated['id_type_water'],
-                'id_user' => Auth::id(),
-            ]);
+        $isPreview = $request->query('is_preview') == 1 || $request->input('is_preview') == true;
 
-            // Save Main Abiotic Data (Snapshot)
+        try {
+            if (!$isPreview) {
+                DB::beginTransaction();
+                
+                // Create Station
+                $station = \App\Models\Station::create([
+                    'id_geo_zone' => $validated['id_geo_zone'],
+                    'id_type_water' => $validated['id_type_water'],
+                    'id_user' => Auth::id(),
+                ]);
+
+                // Save Main Abiotic Data (Snapshot)
             \App\Models\StationMainAbiotic::create([
                 'id_station' => $station->id,
                 'id_user' => Auth::id(),
@@ -125,12 +128,13 @@ class AdminHitungKualitasAir extends Controller
                     ]);
                 }
             }
+        } // Close if (!$isPreview)
 
-            // --- WSM Calculation ---
-            $totalWeight = 0;
-            $totalScore = 0;
+        // --- WSM Calculation ---
+        $totalScore = 0;
+        $maxTotalScore = 0;
 
-            // 1. Calculate Main Abiotic
+        // 1. Calculate Main Abiotic
             $mainParams = [
                 'ph' => ['val' => $validated['ph'], 'geo' => null, 'water' => null],
                 'temperature' => ['val' => $validated['temperature'], 'geo' => $validated['id_geo_zone'], 'water' => null],
@@ -157,20 +161,16 @@ class AdminHitungKualitasAir extends Controller
                     default => ucfirst($name),
                 };
 
-                $query = \App\Models\MainAbioticParameter::where('name', $dbName)
-                    ->where('initial_value', '<=', $data['val'])
-                    ->where('final_value', '>=', $data['val']);
+                $query = \App\Models\MainAbioticParameter::where('name', $dbName);
 
                 if ($data['geo']) $query->where('id_geo_zone', $data['geo']);
                 if ($data['water']) $query->where('id_type_water', $data['water']);
 
-                // If specialized (geo/water) not found, try generic (null)
-                // Actually, the logic in seeding suggests precise matches.
-                // Step: Try specialized first.
-                $paramObj = $query->first();
-                
-                // Fallback for Temperature/Salinity if range is slightly off or using generic params
-                // But let's assume valid range.
+                $maxW = (clone $query)->max('weight') ?? 3;
+                $maxTotalScore += $maxW;
+
+                $paramObj = (clone $query)->where('initial_value', '<=', $data['val'])
+                    ->where('final_value', '>=', $data['val'])->first();
                 
                 if ($paramObj) {
                    $totalScore += $paramObj->weight; 
@@ -192,9 +192,13 @@ class AdminHitungKualitasAir extends Controller
             ];
 
             foreach ($additionalParams as $field => $dbName) {
+                if (!isset($validated[$field])) continue;
                 $val = $validated[$field];
-                $paramObj = \App\Models\AdditionalAbioticParameter::where('name', $dbName)
-                    ->where('initial_value', '<=', $val)
+                $query = \App\Models\AdditionalAbioticParameter::where('name', $dbName);
+                
+                $maxTotalScore += (clone $query)->max('weight') ?? 3;
+
+                $paramObj = (clone $query)->where('initial_value', '<=', $val)
                     ->where('final_value', '>=', $val)
                     ->first();
                 
@@ -213,9 +217,13 @@ class AdminHitungKualitasAir extends Controller
             ];
             
             foreach ($indexParams as $field => $dbName) {
+                if (!isset($validated[$field])) continue;
                 $val = $validated[$field];
-                $paramObj = \App\Models\BioticIndexParameter::where('name', $dbName)
-                    ->where('initial_value', '<=', $val)
+                $query = \App\Models\BioticIndexParameter::where('name', $dbName);
+                
+                $maxTotalScore += (clone $query)->max('weight') ?? 3;
+
+                $paramObj = (clone $query)->where('initial_value', '<=', $val)
                     ->where('final_value', '>=', $val)
                     ->first();
                 
@@ -231,33 +239,33 @@ class AdminHitungKualitasAir extends Controller
             // Let's assume we sum the weights of identified families.
             if (!empty($validated['families'])) {
                 foreach ($validated['families'] as $fam) {
+                    if (empty($fam['id_family'])) continue;
                     $familyObj = \App\Models\BioticFamily::find($fam['id_family']);
                     if ($familyObj) {
                         $totalScore += $familyObj->weight;
+                        $maxTotalScore += $familyObj->weight; // Max weight is its own weight
                     }
                 }
             }
 
-            // Determine Status
-            // Normalize Total Score? max possible score ~100?
-            // Let's assume raw score for now, but usually it's normalized 0-100.
-            // If the user didn't specify normalization logic, I will clamp or just use ranges.
-            // User said: "Value 80 – 100: Sangat Baik..."
-            // I need to ensure $totalScore fits 0-100.
-            // Simplified normalization: Score / MaxPossibleScore * 100?
-            // Since we don't know MaxPossible without querying all max weights...
-            // I will assume the sum of weights provided in DB ~100.
-            // Wait, there are many parameters. 
-            // 7 Main + 10 Additional + 5 Index + N Families.
-            // Weights in seeder for Main ~1-3. Additional ~1-3. Index ~3-10.
-            // Total seems > 100 maybe?
-            // Let's try simple summation first.
-            
-            $finalValue = min($totalScore, 100); // Cap at 100 for safety
+            // Determine Status (WSM Normalization)
+            if ($maxTotalScore == 0) $maxTotalScore = 1;
+            $finalValue = round(($totalScore / $maxTotalScore) * 100, 2);
 
             $status = $this->getStatus($finalValue);
             $conclusion = $this->getConclusion($status);
             $recommendation = $this->getRecommendation($status);
+
+            if ($isPreview) {
+                return redirect()->back()->with('preview_result', [
+                    'value' => $finalValue,
+                    'status' => $status,
+                    'conclusion' => $conclusion,
+                    'recommendation' => $recommendation,
+                    'total_score' => $totalScore,
+                    'max_total_score' => $maxTotalScore,
+                ]);
+            }
 
             // Save Result
             $result = \App\Models\Result::create([
@@ -271,10 +279,12 @@ class AdminHitungKualitasAir extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'Perhitungan selesai. Nilai: ' . $finalValue);
+            return redirect()->back()->with('success', 'Data berhasil disimpan!');
 
         } catch (\Exception $e) {
-            DB::rollBack();
+            if (!$isPreview && DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
             return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
     }

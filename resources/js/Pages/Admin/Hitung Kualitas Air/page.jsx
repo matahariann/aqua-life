@@ -12,7 +12,8 @@ import {
     FaArrowRight, 
     FaArrowLeft,
     FaSave,
-    FaPrint
+    FaPrint,
+    FaInfoCircle
 } from "react-icons/fa";
 
 // --- Components ---
@@ -339,33 +340,40 @@ export default function AdminHitungKualitasAir({ geoZones, waterTypes, bioticFam
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        // Filter empty families to avoid validation errors
-        const cleanedFamilies = data.families.filter(f => f.id_family && f.id_family !== "");
-        
-        // We need to update the data with cleaned families before posting
-        // Use the setData updater form to ensure we send clean data, 
-        // OR just pass the data manually to transform? 
-        // Inertia useForm 'transform' request data before sending:
-        
-        post(route('admin.hitung-kualitas-air.store'), {
-            // Manually override the families data in the payload if possible, 
-            // but useForm usage sends 'data'. 
-            // Let's use transform prop of useForm if available, but here we can just update state first?
-            // State update might be async/slow. 
-            // Better: use the transform callback option of post (if supported) or global transform.
-            // Inertia v1.0+ supports transform.
+        post('/admin/hitung-kualitas-air?is_preview=1', {
             transform: (data) => ({
                 ...data,
                 families: data.families.filter(f => f.id_family && f.id_family !== ""),
             }),
+            preserveScroll: true,
+            preserveState: true,
             onSuccess: (page) => {
-                setCurrentStep(4);
-                toast.success("Perhitungan Selesai!");
+                if (page.props.flash && page.props.flash.preview_result) {
+                    setResult(page.props.flash.preview_result);
+                    setCurrentStep(4);
+                    toast.success("Perhitungan Selesai!");
+                } else if (page.props.flash && page.props.flash.error) {
+                    toast.error(page.props.flash.error);
+                }
             },
             onError: (err) => {
                 toast.error("Terdapat kesalahan pada input data. Periksa kembali form.");
                 console.error("Validation Errors:", err);
-                // Highlight the specific error if possible (Inertia handles this via 'errors' prop)
+            }
+        });
+    };
+
+    const handleSave = () => {
+        post('/admin/hitung-kualitas-air', {
+            transform: (data) => ({
+                ...data,
+                families: data.families.filter(f => f.id_family && f.id_family !== ""),
+            }),
+            onSuccess: () => {
+                toast.success("Data berhasil disimpan!");
+                setTimeout(() => {
+                    window.location.href = '/admin/history';
+                }, 1000);
             }
         });
     };
@@ -380,25 +388,71 @@ export default function AdminHitungKualitasAir({ geoZones, waterTypes, bioticFam
                 return <AdditionalParameterForm data={data} setData={setData} />;
             case 4:
                 return (
-                    <div className="text-center animate-fade-in-up py-10">
-                        <div className="inline-block p-4 rounded-full bg-green-100 text-green-600 mb-4 text-4xl">
-                            <FaCheck />
+                    <div className="animate-fade-in-up py-4">
+                        <div className="text-center mb-8">
+                            <div className="inline-block p-4 rounded-full bg-blue-100 text-blue-600 mb-4 text-4xl">
+                                <FaChartPie />
+                            </div>
+                            <h2 className="text-3xl font-bold text-gray-800 mb-2">Hasil Perhitungan WSM</h2>
+                            <p className="text-gray-600">Berikut adalah ringkasan data dan hasil perhitungan kualitas air.</p>
                         </div>
-                        <h2 className="text-3xl font-bold text-gray-800 mb-2">Hasil Perhitungan Tersimpan</h2>
-                        <p className="text-gray-600 mb-8">Data kualitas air telah berhasil dihitung dan disimpan ke dalam database.</p>
+
+                        <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
+                            <h3 className="text-xl font-bold border-b pb-2 mb-4">Ringkasan Input Data</h3>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                                <div><span className="text-gray-500 block">pH</span><span className="font-semibold">{data.ph || '-'}</span></div>
+                                <div><span className="text-gray-500 block">Suhu</span><span className="font-semibold">{data.temperature || '-'} °C</span></div>
+                                <div><span className="text-gray-500 block">DO</span><span className="font-semibold">{data.dissolved_oxygen || '-'} mg/L</span></div>
+                                <div><span className="text-gray-500 block">Salinitas</span><span className="font-semibold">{data.salinity || '-'} ppt</span></div>
+                                <div><span className="text-gray-500 block">Kekeruhan</span><span className="font-semibold">{data.turbidity || '-'}</span></div>
+                                <div><span className="text-gray-500 block">Rasio C/N</span><span className="font-semibold">{data.ratio_cn || '-'}</span></div>
+                                <div><span className="text-gray-500 block">Konduktivitas</span><span className="font-semibold">{data.conductivity || '-'}</span></div>
+                                <div><span className="text-gray-500 block">Biota Family</span><span className="font-semibold">{data.families.filter(f => f.id_family).length} jenis</span></div>
+                            </div>
+                        </div>
+
+                        {result && (
+                            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl shadow-sm border border-blue-100 p-8 mb-8 text-center">
+                                <h3 className="text-lg font-bold text-gray-700 mb-2">Skor Kualitas Air (WSM Normalisasi)</h3>
+                                <div className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600 drop-shadow-sm mb-4">
+                                    {result.value}
+                                </div>
+                                <div className="inline-block px-6 py-2 rounded-full text-lg font-bold bg-white text-blue-700 shadow-sm border border-blue-200 mb-6">
+                                    Status: {result.status}
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                                    <div className="bg-white p-5 rounded-xl shadow-sm border border-blue-50">
+                                        <h4 className="font-bold text-gray-800 mb-2 flex items-center gap-2"><FaInfoCircle className="text-blue-500"/> Kesimpulan</h4>
+                                        <p className="text-gray-600 text-sm leading-relaxed">{result.conclusion}</p>
+                                    </div>
+                                    <div className="bg-white p-5 rounded-xl shadow-sm border border-blue-50">
+                                        <h4 className="font-bold text-gray-800 mb-2 flex items-center gap-2"><FaCheck className="text-emerald-500"/> Rekomendasi</h4>
+                                        <p className="text-gray-600 text-sm leading-relaxed">{result.recommendation}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                         
-                        <div className="flex justify-center gap-4">
+                        <div className="flex justify-center flex-wrap gap-4 mt-8">
                             <button 
-                                onClick={() => window.location.href = route('admin.history')}
-                                className="px-6 py-2 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-lg flex items-center gap-2"
+                                onClick={prevStep}
+                                className="px-6 py-3 bg-white text-gray-700 border rounded-xl font-bold hover:bg-gray-50 transition shadow-sm flex items-center gap-2"
                             >
-                                <FaSave /> Lihat Riwayat
+                                <FaArrowLeft /> Kembali Edit
+                            </button>
+                            <button 
+                                onClick={handleSave}
+                                disabled={processing}
+                                className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-lg flex items-center gap-2 disabled:opacity-70"
+                            >
+                                {processing ? "Menyimpan..." : <><FaSave /> Simpan ke History</>}
                             </button>
                              <button 
                                 onClick={() => window.print()}
-                                className="px-6 py-2 bg-gray-600 text-white rounded-xl font-bold hover:bg-gray-700 transition shadow-lg flex items-center gap-2"
+                                className="px-6 py-3 bg-gray-600 text-white rounded-xl font-bold hover:bg-gray-700 transition shadow-lg flex items-center gap-2"
                             >
-                                <FaPrint /> Cetak
+                                <FaPrint /> Cetak Laporan
                             </button>
                         </div>
                     </div>
