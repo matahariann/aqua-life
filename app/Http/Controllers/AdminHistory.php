@@ -9,13 +9,16 @@ use App\Models\Result;
 
 class AdminHistory extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
+        
+        $perPage = $request->input('per_page', 10);
 
         $histories = Result::with(['station.geoZone', 'station.waterType', 'user'])
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate($perPage)
+            ->withQueryString();
 
         return Inertia::render("Admin/History/page", [
             'auth' => [
