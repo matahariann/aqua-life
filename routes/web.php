@@ -64,6 +64,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/history', [AdminHistory::class, 'index'])->name('history');
         Route::get('/history/{id}/result', [AdminHistory::class, 'result'])->name('history.result');
         Route::get('/history/{id}/edit', [AdminHistory::class, 'edit'])->name('history.edit');
+        Route::put('/history/{id}', [AdminHistory::class, 'update'])->name('history.update');
 
         // Hitung Kualitas Air
         Route::get('/hitung-kualitas-air', [AdminHitungKualitasAir::class, 'index'])->name('hitung-kualitas-air');
