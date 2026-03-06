@@ -34,6 +34,7 @@ export default function AdminHitungKualitasAir({ geoZones, waterTypes, bioticFam
 
     const { data, setData, post, processing, errors } = useForm({
         // Station
+        name: "",
         id_geo_zone: "",
         id_type_water: "",
         
@@ -80,6 +81,7 @@ export default function AdminHitungKualitasAir({ geoZones, waterTypes, bioticFam
         const errors = {};
         
         if (currentStep === 1) {
+            if (!data.name) errors.name = "Nama Station wajib diisi";
             if (!data.id_geo_zone) errors.id_geo_zone = "Geographical Zone wajib diisi";
             if (!data.id_type_water) errors.id_type_water = "Type of Water wajib diisi";
         }

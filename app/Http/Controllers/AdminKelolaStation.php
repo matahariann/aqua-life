@@ -62,10 +62,12 @@ class AdminKelolaStation extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'name' => 'required|string|max:255',
             'id_type_water' => 'required|exists:water_types,id',
             'id_geo_zone' => 'required|exists:geo_zones,id',
             'id_user' => 'required|exists:users,id',
         ], [
+            'name.required' => 'Nama station harus diisi',
             'id_type_water.required' => 'Tipe air harus dipilih',
             'id_type_water.exists' => 'Tipe air tidak valid',
             'id_geo_zone.required' => 'Zona geografis harus dipilih',
@@ -82,10 +84,12 @@ class AdminKelolaStation extends Controller
     public function update(Request $request, Station $station)
     {
         $validated = $request->validate([
+            'name' => 'required|string|max:255',
             'id_type_water' => 'required|exists:water_types,id',
             'id_geo_zone' => 'required|exists:geo_zones,id',
             'id_user' => 'required|exists:users,id',
         ], [
+            'name.required' => 'Nama station harus diisi',
             'id_type_water.required' => 'Tipe air harus dipilih',
             'id_type_water.exists' => 'Tipe air tidak valid',
             'id_geo_zone.required' => 'Zona geografis harus dipilih',

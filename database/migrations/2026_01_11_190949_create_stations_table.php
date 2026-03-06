@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('stations', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->unsignedBigInteger('id_type_water');
             $table->unsignedBigInteger('id_geo_zone');
             $table->unsignedBigInteger('id_user');
@@ -29,8 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('stations');
-
         Schema::table('stations', function (Blueprint $table) {
             $table->dropForeign(['id_type_water']);
             $table->dropForeign(['id_geo_zone']);

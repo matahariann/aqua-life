@@ -32,6 +32,7 @@ class AdminHitungKualitasAir extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'name' => 'required|string|max:255',
             'id_geo_zone' => 'required|exists:geo_zones,id',
             'id_type_water' => 'required|exists:water_types,id',
             
@@ -76,6 +77,7 @@ class AdminHitungKualitasAir extends Controller
                 
                 // Create Station
                 $station = \App\Models\Station::create([
+                    'name' => $validated['name'],
                     'id_geo_zone' => $validated['id_geo_zone'],
                     'id_type_water' => $validated['id_type_water'],
                     'id_user' => Auth::id(),

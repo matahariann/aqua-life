@@ -12,6 +12,7 @@ class Station extends Model
     protected $table = 'stations';
 
     protected $fillable = [
+        'name',
         'id_type_water',
         'id_geo_zone',
         'id_user',
