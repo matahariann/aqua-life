@@ -20,7 +20,8 @@ export default function PrintReport({
             <div className="flex justify-between mb-8 border-b-2 border-gray-200 pb-4">
                 <div>
                     <p className="mb-1"><span className="font-semibold inline-block w-32">Tanggal Cetak</span>: {new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                    <p><span className="font-semibold inline-block w-32">Jam</span>: {new Date().toLocaleTimeString('id-ID')}</p>
+                    <p className="mb-1"><span className="font-semibold inline-block w-32">Jam</span>: {new Date().toLocaleTimeString('id-ID')}</p>
+                    <p><span className="font-semibold inline-block w-32">Nama Stasiun</span>: {data.name || '-'}</p>
                 </div>
                 <div className="text-right">
                     <p className="mb-1"><span className="font-semibold">Zona Geografis:</span> {geoZones.find(z => z.id == data.id_geo_zone)?.name || '-'}</p>
