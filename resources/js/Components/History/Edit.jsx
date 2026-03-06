@@ -163,7 +163,11 @@ export default function AdminHistoryEdit({ geoZones, waterTypes, bioticFamilies,
             return;
         }
         
-        put(`/admin/history/${data.id_history}?is_preview=1`, {
+        const previewPutUrl = window.location.pathname.startsWith('/admin/kelola-station')
+            ? `/admin/kelola-station/${data.id_history}/history?is_preview=1`
+            : `/admin/history/${data.id_history}?is_preview=1`;
+
+        put(previewPutUrl, {
             preserveScroll: true,
             preserveState: true,
             transform: (data) => ({
@@ -187,7 +191,19 @@ export default function AdminHistoryEdit({ geoZones, waterTypes, bioticFamilies,
     };
 
     const handleSave = () => {
-        put(`/admin/history/${data.id_history}`, {
+        // Also check if we should post to /admin/history or /admin/kelola-station if needed,
+        // but handleSave expects the update route. For now, the form submission URL should be dynamic as well.
+        // The URL in handleSave:
+        const baseUrl = window.location.pathname.startsWith('/admin/kelola-station') 
+            ? '/admin/kelola-station' 
+            : '/admin/history';
+            
+        // For the update route, if we are in Kelola Station, you might want to call the updateHistory route
+        const putUrl = window.location.pathname.startsWith('/admin/kelola-station')
+            ? `/admin/kelola-station/${data.id_history}/history`
+            : `/admin/history/${data.id_history}`;
+            
+        put(putUrl, {
             transform: (data) => ({
                 ...data,
                 families: data.families.filter(f => f.id_family && f.id_family !== ""),
@@ -195,7 +211,7 @@ export default function AdminHistoryEdit({ geoZones, waterTypes, bioticFamilies,
             onSuccess: () => {
                 toast.success("Perubahan berhasil disimpan!");
                 setTimeout(() => {
-                    window.location.href = '/admin/history';
+                    window.location.href = baseUrl;
                 }, 1000);
             }
         });

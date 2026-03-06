@@ -168,16 +168,16 @@ export default function AdminKelolaStation({ histories }) {
                                                 </td>
                                                 <td className="px-6 py-4 text-sm">
                                                     <div className="flex items-center justify-center gap-2">
-                                                        <Link href={`/admin/history/${history.id}/result`} className="text-emerald-600 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 p-2 rounded-lg transition-colors flex items-center gap-2" title="Lihat Hasil">
+                                                        <Link href={`/admin/kelola-station/${history.id}/result`} className="text-emerald-600 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 p-2 rounded-lg transition-colors flex items-center gap-2" title="Lihat Hasil">
                                                             <FaEye size={16} /> <span className="hidden xl:inline">Result</span>
                                                         </Link>
-                                                        <Link href={`/admin/history/${history.id}/edit`} className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors flex items-center gap-2" title="Edit Data">
+                                                        <Link href={`/admin/kelola-station/${history.id}/edit`} className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors flex items-center gap-2" title="Edit Data">
                                                             <FaEdit size={16} /> <span className="hidden xl:inline">Edit</span>
                                                         </Link>
                                                         <button
                                                             onClick={(e) => {
                                                                 e.preventDefault();
-                                                                const printUrl = `/admin/history/${history.id}/result?print=1`;
+                                                                const printUrl = `/admin/kelola-station/${history.id}/result?print=1`;
                                                                 const iframe = document.createElement('iframe');
                                                                 iframe.style.display = 'none';
                                                                 iframe.src = printUrl;

@@ -58,16 +58,15 @@ export default function HistoryResult({ auth, result, data, geoZones, waterTypes
 
             <main className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-100 p-6 flex flex-col items-center justify-center print:hidden">
                 <div className="w-full max-w-7xl mx-auto h-[95vh] flex flex-col">
-                     {/* Header */}
-                     <div className="flex justify-between items-center mb-6 shrink-0">
+                    <div className="flex justify-between items-center mb-6 shrink-0">
                         <h1 className="text-3xl font-bold flex items-center gap-3 text-gray-800">
                             <FaHistory className="text-blue-600"/> Detail Histori Perhitungan
                         </h1>
                         <Link 
-                            href="/admin/history"
+                            href={typeof window !== 'undefined' && window.location.pathname.startsWith('/admin/kelola-station') ? "/admin/kelola-station" : "/admin/history"}
                             className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center gap-2 shadow-sm font-medium transition-colors"
                         >
-                            <FaArrowLeft /> Kembali ke Histori
+                            <FaArrowLeft /> Kembali
                         </Link>
                     </div>
 

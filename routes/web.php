@@ -103,6 +103,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/kelola-station', [AdminKelolaStation::class, 'store'])->name('kelola-station.store');
         Route::put('/kelola-station/{station}', [AdminKelolaStation::class, 'update'])->name('kelola-station.update');
         Route::delete('/kelola-station/{station}', [AdminKelolaStation::class, 'destroy'])->name('kelola-station.destroy');
+        Route::get('/kelola-station/{id}/result', [AdminHistory::class, 'result'])->name('kelola-station.result');
+        Route::get('/kelola-station/{id}/edit', [AdminHistory::class, 'edit'])->name('kelola-station.edit');
+        Route::put('/kelola-station/{id}/history', [AdminHistory::class, 'update'])->name('kelola-station.updateHistory');
     });
 
     // Operator routes
