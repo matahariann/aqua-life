@@ -6,24 +6,8 @@ import { FaArrowLeft, FaHistory } from "react-icons/fa";
 import { Link } from "@inertiajs/react";
 
 export default function HistoryResult({ auth, result, data, geoZones, waterTypes, bioticFamilies }) {
-    // Check if we should autoshown print dialog (e.g., from Print button)
-    useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('print') === '1') {
-            setTimeout(() => {
-                window.print();
-            }, 500); // slight delay to ensure render
-
-            const closeAfterPrint = () => {
-                window.close();
-            };
-            window.addEventListener('afterprint', closeAfterPrint);
-            
-            return () => {
-                window.removeEventListener('afterprint', closeAfterPrint);
-            }
-        }
-    }, []);
+    // If it's print mode, we just let the parent iframe trigger the print.
+    // The CSS logic handles the layout.
 
     const isPrintMode = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('print') === '1';
 

@@ -170,7 +170,24 @@ export default function AdminHistory({ histories }) {
                                                             <FaEdit size={16} /> <span className="hidden xl:inline">Edit</span>
                                                         </Link>
                                                         <button
-                                                            onClick={() => window.open(`/admin/history/${history.id}/result?print=1`, '_blank')}
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                const printUrl = `/admin/history/${history.id}/result?print=1`;
+                                                                const iframe = document.createElement('iframe');
+                                                                iframe.style.display = 'none';
+                                                                iframe.src = printUrl;
+                                                                document.body.appendChild(iframe);
+                                                                iframe.onload = function() {
+                                                                    setTimeout(function() {
+                                                                        iframe.contentWindow.focus();
+                                                                        iframe.contentWindow.print();
+                                                                        // Clean up the iframe after a delay
+                                                                        setTimeout(() => {
+                                                                            document.body.removeChild(iframe);
+                                                                        }, 10000);
+                                                                    }, 1000);
+                                                                };
+                                                            }}
                                                             className="text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-200 p-2 rounded-lg transition-colors flex items-center gap-2"
                                                             title="Cetak Laporan"
                                                         >
