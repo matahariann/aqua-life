@@ -27,9 +27,9 @@ import PrintReport from "@/Components/HitungKualitasAir/PrintReport";
 
 // --- Main Page Component ---
 
-export default function AdminHitungKualitasAir({ geoZones, waterTypes, bioticFamilies, initialData }) {
-    const [currentStep, setCurrentStep] = useState(1);
-    const [result, setResult] = useState(null); // To store result after submission
+export default function AdminHitungKualitasAir({ geoZones, waterTypes, bioticFamilies, initialData, isHistoryView = false, resultData = null }) {
+    const [currentStep, setCurrentStep] = useState(isHistoryView ? 4 : 1);
+    const [result, setResult] = useState(resultData); // To store result after submission or directly if history view
     const [validationErrors, setValidationErrors] = useState({}); // To track empty fields
 
     const { data, setData, post, processing, errors } = useForm({
@@ -215,9 +215,10 @@ export default function AdminHitungKualitasAir({ geoZones, waterTypes, bioticFam
                         data={data} 
                         result={result} 
                         bioticFamilies={bioticFamilies} 
-                        prevStep={prevStep} 
+                        prevStep={isHistoryView ? () => window.history.back() : prevStep} 
                         handleSave={handleSave} 
-                        processing={processing} 
+                        processing={processing}
+                        isHistoryView={isHistoryView} 
                     />
                 );
             default:
