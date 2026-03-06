@@ -7,7 +7,8 @@ export default function ResultView({
     bioticFamilies, 
     prevStep, 
     handleSave, 
-    processing 
+    processing,
+    isHistoryView = false 
 }) {
     return (
         <div className="animate-fade-in-up py-4">
@@ -89,25 +90,36 @@ export default function ResultView({
             )}
             
             <div className="flex justify-center flex-wrap gap-4 mt-8">
-                <button 
-                    onClick={prevStep}
-                    className="px-6 py-3 bg-white text-gray-700 border rounded-xl font-bold hover:bg-gray-50 transition shadow-sm flex items-center gap-2"
-                >
-                    <FaArrowLeft /> Kembali Edit
-                </button>
-                <button 
-                    onClick={handleSave}
-                    disabled={processing}
-                    className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-lg flex items-center gap-2 disabled:opacity-70"
-                >
-                    {processing ? "Menyimpan..." : <><FaSave /> Simpan ke History</>}
-                </button>
+                {isHistoryView ? (
                     <button 
-                    onClick={() => window.print()}
-                    className="px-6 py-3 bg-gray-600 text-white rounded-xl font-bold hover:bg-gray-700 transition shadow-lg flex items-center gap-2"
-                >
-                    <FaPrint /> Cetak Laporan
-                </button>
+                        onClick={() => window.print()}
+                        className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-lg flex items-center gap-2"
+                    >
+                        <FaPrint /> Cetak Laporan
+                    </button>
+                ) : (
+                    <>
+                        <button 
+                            onClick={prevStep}
+                            className="px-6 py-3 bg-white text-gray-700 border rounded-xl font-bold hover:bg-gray-50 transition shadow-sm flex items-center gap-2"
+                        >
+                            <FaArrowLeft /> Kembali Edit
+                        </button>
+                        <button 
+                            onClick={handleSave}
+                            disabled={processing}
+                            className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-lg flex items-center gap-2 disabled:opacity-70"
+                        >
+                            {processing ? "Menyimpan..." : <><FaSave /> Simpan ke History</>}
+                        </button>
+                        <button 
+                            onClick={() => window.print()}
+                            className="px-6 py-3 bg-gray-600 text-white rounded-xl font-bold hover:bg-gray-700 transition shadow-lg flex items-center gap-2"
+                        >
+                            <FaPrint /> Cetak Laporan
+                        </button>
+                    </>
+                )}
             </div>
         </div>
     );

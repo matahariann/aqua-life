@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Eye, Edit, Printer, ChevronLeft, ChevronRight, History } from "lucide-react";
-import { router } from "@inertiajs/react";
+import { ChevronLeft, ChevronRight, History } from "lucide-react";
+import { FaEye, FaEdit, FaPrint } from "react-icons/fa";
+import { router, Link } from "@inertiajs/react";
 import AdminLayout from "../../../Layouts/AdminLayout";
 
 export default function AdminHistory({ histories }) {
@@ -162,26 +163,18 @@ export default function AdminHistory({ histories }) {
                                                 </td>
                                                 <td className="px-6 py-4 text-sm">
                                                     <div className="flex items-center justify-center gap-2">
+                                                        <Link href={`/admin/history/${history.id}/result`} className="text-emerald-600 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 p-2 rounded-lg transition-colors flex items-center gap-2" title="Lihat Hasil">
+                                                            <FaEye size={16} /> <span className="hidden xl:inline">Result</span>
+                                                        </Link>
+                                                        <Link href={`/admin/history/${history.id}/edit`} className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors flex items-center gap-2" title="Edit Data">
+                                                            <FaEdit size={16} /> <span className="hidden xl:inline">Edit</span>
+                                                        </Link>
                                                         <button
-                                                            className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-                                                            title="Result"
-                                                            onClick={() => alert('View Result: ' + history.id)}
+                                                            onClick={() => window.open(`/admin/history/${history.id}/result?print=1`, '_blank')}
+                                                            className="text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-200 p-2 rounded-lg transition-colors flex items-center gap-2"
+                                                            title="Cetak Laporan"
                                                         >
-                                                            <Eye className="w-4 h-4" />
-                                                        </button>
-                                                        <button
-                                                            className="p-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-colors"
-                                                            title="Edit"
-                                                            onClick={() => alert('Edit: ' + history.id)}
-                                                        >
-                                                            <Edit className="w-4 h-4" />
-                                                        </button>
-                                                        <button
-                                                            className="p-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
-                                                            title="Print"
-                                                            onClick={() => alert('Print: ' + history.id)}
-                                                        >
-                                                            <Printer className="w-4 h-4" />
+                                                            <FaPrint size={16} /> <span className="hidden xl:inline">Print</span>
                                                         </button>
                                                     </div>
                                                 </td>

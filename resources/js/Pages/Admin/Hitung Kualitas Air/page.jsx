@@ -27,47 +27,49 @@ import PrintReport from "@/Components/HitungKualitasAir/PrintReport";
 
 // --- Main Page Component ---
 
-export default function AdminHitungKualitasAir({ geoZones, waterTypes, bioticFamilies }) {
+export default function AdminHitungKualitasAir({ geoZones, waterTypes, bioticFamilies, initialData }) {
     const [currentStep, setCurrentStep] = useState(1);
     const [result, setResult] = useState(null); // To store result after submission
     const [validationErrors, setValidationErrors] = useState({}); // To track empty fields
 
     const { data, setData, post, processing, errors } = useForm({
         // Station
-        name: "",
-        id_geo_zone: "",
-        id_type_water: "",
+        id_history: initialData?.id_history || "",
+        id_station: initialData?.id_station || "",
+        name: initialData?.name || "",
+        id_geo_zone: initialData?.id_geo_zone || "",
+        id_type_water: initialData?.id_type_water || "",
         
         // Main Abiotic
-        ph: "",
-        temperature: "",
-        dissolved_oxygen: "",
-        salinity: "",
-        nh3: "",
-        nh2: "",
-        ammonia: "",
+        ph: initialData?.ph || "",
+        temperature: initialData?.temperature || "",
+        dissolved_oxygen: initialData?.dissolved_oxygen || "",
+        salinity: initialData?.salinity || "",
+        nh3: initialData?.nh3 || "",
+        nh2: initialData?.nh2 || "",
+        ammonia: initialData?.ammonia || "",
 
         // Main Biotic (Dynamic)
-        families: [], 
+        families: initialData?.families || [], 
 
         // Additional Abiotic
-        conductivity: "",
-        ratio_cn: "",
-        turbidity: "",
-        clay: "",
-        sand: "",
-        silt: "",
-        coarse_sediment: "",
-        total_organic_dissolved: "",
-        total_organic_substrate: "",
-        macrozoobenthos_density: "",
+        conductivity: initialData?.conductivity || "",
+        ratio_cn: initialData?.ratio_cn || "",
+        turbidity: initialData?.turbidity || "",
+        clay: initialData?.clay || "",
+        sand: initialData?.sand || "",
+        silt: initialData?.silt || "",
+        coarse_sediment: initialData?.coarse_sediment || "",
+        total_organic_dissolved: initialData?.total_organic_dissolved || "",
+        total_organic_substrate: initialData?.total_organic_substrate || "",
+        macrozoobenthos_density: initialData?.macrozoobenthos_density || "",
 
         // Biotic Index
-        similarity: "",
-        dominance: "",
-        diversity: "",
-        total_abundance: "",
-        number_of_species: "",
+        similarity: initialData?.similarity || "",
+        dominance: initialData?.dominance || "",
+        diversity: initialData?.diversity || "",
+        total_abundance: initialData?.total_abundance || "",
+        number_of_species: initialData?.number_of_species || "",
     });
 
     const steps = [

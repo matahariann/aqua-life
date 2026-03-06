@@ -70,9 +70,10 @@ class AdminHitungKualitasAir extends Controller
         ]);
 
         $isPreview = $request->query('is_preview') == 1 || $request->input('is_preview') == true;
+        $isUpdate = !empty($validated['id_history']);
 
         try {
-            if (!$isPreview) {
+            if (!$isPreview && !$isUpdate) {
                 DB::beginTransaction();
                 
                 // Create Station
@@ -84,17 +85,17 @@ class AdminHitungKualitasAir extends Controller
                 ]);
 
                 // Save Main Abiotic Data (Snapshot)
-            \App\Models\StationMainAbiotic::create([
-                'id_station' => $station->id,
-                'id_user' => Auth::id(),
-                'ph' => $validated['ph'],
-                'temperature' => $validated['temperature'],
-                'dissolved_oxygen' => $validated['dissolved_oxygen'],
-                'salinity' => $validated['salinity'],
-                'nh3' => $validated['nh3'],
-                'nh2' => $validated['nh2'],
-                'ammonia' => $validated['ammonia'],
-            ]);
+                \App\Models\StationMainAbiotic::create([
+                    'id_station' => $station->id,
+                    'id_user' => Auth::id(),
+                    'ph' => $validated['ph'],
+                    'temperature' => $validated['temperature'],
+                    'dissolved_oxygen' => $validated['dissolved_oxygen'],
+                    'salinity' => $validated['salinity'],
+                    'nh3' => $validated['nh3'],
+                    'nh2' => $validated['nh2'],
+                    'ammonia' => $validated['ammonia'],
+                ]);
 
             // Save Additional Abiotic & Bio Index Data (Snapshot)
             \App\Models\StationIndexAdditional::create([
@@ -270,16 +271,93 @@ class AdminHitungKualitasAir extends Controller
             }
 
             // Save Result
-            $result = \App\Models\Result::create([
-                'value' => $finalValue,
-                'status' => $status,
-                'conclusion' => $conclusion,
-                'recommendation' => $recommendation,
-                'id_user' => Auth::id(),
-                'id_station' => $station->id,
-            ]);
+            if ($isUpdate) {
+                $result = \App\Models\Result::find($validated['id_history']);
+                if ($result) {
+                    $result->update([
+                        'value' => $finalValue,
+                        'status' => $status,
+                        'conclusion' => $conclusion,
+                        'recommendation' => $recommendation,
+                        'id_user' => Auth::id(), // Or keep original user?
+                    ]);
 
-            DB::commit();
+                    // Update Station details if needed
+                    $station = \App\Models\Station::find($validated['id_station']);
+                    if ($station) {
+                        $station->update([
+                            'name' => $validated['name'],
+                            'id_geo_zone' => $validated['id_geo_zone'],
+                            'id_type_water' => $validated['id_type_water'],
+                        ]);
+                    }
+
+                    // For Abiotics and Biotics, it's complex to update all relationships individually or delete and recreate.
+                    // Given the DB structure (snapshot records), the simplest approach is to delete the old snapshots for this station and recreate them.
+                    \App\Models\StationMainAbiotic::where('id_station', $station->id)->delete();
+                    \App\Models\StationIndexAdditional::where('id_station', $station->id)->delete();
+                    \App\Models\Species::where('id_station', $station->id)->delete();
+
+                    // Recreate snapshots using current validated data
+                    \App\Models\StationMainAbiotic::create([
+                        'id_station' => $station->id,
+                        'id_user' => Auth::id(),
+                        'ph' => $validated['ph'],
+                        'temperature' => $validated['temperature'],
+                        'dissolved_oxygen' => $validated['dissolved_oxygen'],
+                        'salinity' => $validated['salinity'],
+                        'nh3' => $validated['nh3'],
+                        'nh2' => $validated['nh2'],
+                        'ammonia' => $validated['ammonia'],
+                    ]);
+                    
+                    \App\Models\StationIndexAdditional::create([
+                        'id_station' => $station->id,
+                        'id_user' => Auth::id(),
+                        'conductivity' => $validated['conductivity'],
+                        'ratio_cn' => $validated['ratio_cn'],
+                        'turbidity' => $validated['turbidity'],
+                        'clay' => $validated['clay'],
+                        'sand' => $validated['sand'],
+                        'silt' => $validated['silt'],
+                        'coarse_sediment' => $validated['coarse_sediment'],
+                        'total_organic_dissolved' => $validated['total_organic_dissolved'],
+                        'total_organic_substrate' => $validated['total_organic_substrate'],
+                        'macrozoobenthos_density' => $validated['macrozoobenthos_density'],
+                        'similarity' => $validated['similarity'],
+                        'dominance' => $validated['dominance'],
+                        'diversity' => $validated['diversity'],
+                        'total_abundance' => $validated['total_abundance'],
+                        'number_of_species' => $validated['number_of_species'],
+                    ]);
+
+                    if (!empty($validated['families'])) {
+                        foreach ($validated['families'] as $fam) {
+                            \App\Models\Species::create([
+                                'id_station' => $station->id,
+                                'id_user' => Auth::id(),
+                                'id_family' => $fam['id_family'],
+                                'name' => $fam['name'] ?? 'Unknown', 
+                                'abundance' => $fam['abundance'] ?? 0,
+                                'taxa_indicator' => $fam['taxa_indicator'] ?? 0,
+                            ]);
+                        }
+                    }
+                }
+            } else {
+                $result = \App\Models\Result::create([
+                    'value' => $finalValue,
+                    'status' => $status,
+                    'conclusion' => $conclusion,
+                    'recommendation' => $recommendation,
+                    'id_user' => Auth::id(),
+                    'id_station' => $station->id,
+                ]);
+            }
+
+            if (!$isUpdate) {
+                DB::commit();
+            }
 
             return redirect()->back()->with('success', 'Data berhasil disimpan!');
 
