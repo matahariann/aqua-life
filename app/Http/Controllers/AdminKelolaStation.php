@@ -26,20 +26,11 @@ class AdminKelolaStation extends Controller
             $perPage = 10;
         }
     
-        // Ambil data station dengan pagination
-        $stations = Station::with([
-            'waterType:id,name',
-            'geoZone:id,name',
-            'user:id,name,email,role,is_membership',
-        ])
-        ->orderBy('created_at', 'desc')
-        ->paginate($perPage)
-        ->withQueryString();
-    
-        // Ambil data untuk dropdown
-        $waterTypes = WaterType::orderBy('name')->get(['id', 'name']);
-        $geoZones = GeoZone::orderBy('name')->get(['id', 'name']);
-        $users = User::orderBy('name')->get(['id', 'name', 'email']);
+        // Ambil data history semua user dengan pagination
+        $histories = \App\Models\Result::with(['station.geoZone', 'station.waterType', 'user'])
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage)
+            ->withQueryString();
         
         // Kirim data ke view
         return Inertia::render("Admin/Kelola Station/page", [
@@ -52,10 +43,7 @@ class AdminKelolaStation extends Controller
                     'membership' => $user->is_membership,
                 ]
             ],
-            'stations' => $stations,
-            'waterTypes' => $waterTypes,
-            'geoZones' => $geoZones,
-            'users' => $users
+            'histories' => $histories
         ]);
     }
 
