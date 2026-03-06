@@ -101,7 +101,7 @@ class AdminHistory extends Controller
             })->toArray(),
         ];
 
-        return Inertia::render("Admin/Hitung Kualitas Air/page", [
+        return Inertia::render("Admin/History/Result", [
             'auth' => [
                 'user' => [
                     'id' => $user->id,
@@ -110,12 +110,11 @@ class AdminHistory extends Controller
                     'role' => $user->role,
                 ]
             ],
+            'result' => $result,
+            'data' => $data,
             'geoZones' => \App\Models\GeoZone::all(),
             'waterTypes' => \App\Models\WaterType::all(),
             'bioticFamilies' => \App\Models\BioticFamily::all(),
-            'isHistoryView' => true,
-            'initialData' => $data,
-            'resultData' => $result
         ]);
     }
 
