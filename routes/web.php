@@ -112,6 +112,9 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:operator')->prefix('operator')->name('operator.')->group(function () {
         // History
         Route::get('/history', [OperatorHistory::class, 'index'])->name('history');
+        Route::get('/history/{id}/result', [OperatorHistory::class, 'result'])->name('history.result');
+        Route::get('/history/{id}/edit', [OperatorHistory::class, 'edit'])->name('history.edit');
+        Route::put('/history/{id}', [OperatorHistory::class, 'update'])->name('history.update');
 
         // Hitung Kualitas Air
         Route::get('/hitung-kualitas-air', [OperatorHitungKualitasAir::class, 'index'])->name('hitung-kualitas-air');

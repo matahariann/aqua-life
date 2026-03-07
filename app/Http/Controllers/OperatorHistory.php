@@ -16,6 +16,7 @@ class OperatorHistory extends Controller
         $perPage = $request->input('per_page', 10);
 
         $histories = Result::with(['station.geoZone', 'station.waterType', 'user'])
+            ->where('id_user', $user->id)
             ->orderBy('created_at', 'desc')
             ->paginate($perPage)
             ->withQueryString();
