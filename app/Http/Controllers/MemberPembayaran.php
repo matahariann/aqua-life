@@ -16,7 +16,29 @@ class MemberPembayaran extends Controller
         $payments = \App\Models\Payment::where('id_user', $user->id)
             ->orderBy('created_at', 'desc')
             ->paginate($perPage)
-            ->withQueryString();
+            ->withQueryString()
+            ->through(function ($payment) {
+                $proof = (string) ($payment->proof ?? '');
+                $proofUrl = $proof;
+
+                if ($proof && !preg_match('/^https?:\/\//i', $proof)) {
+                    if (strpos($proof, '/') === false) {
+                        // Seeded file directly in public folder
+                        $proofUrl = '/' . ltrim($proof, '/');
+                    } else {
+                        // Uploaded file under storage/app/public/...
+                        $proofUrl = '/storage/' . ltrim($proof, '/');
+                    }
+                }
+
+                return [
+                    'id' => $payment->id,
+                    'status' => $payment->status,
+                    'proof' => $payment->proof,
+                    'proof_url' => $proofUrl,
+                    'created_at' => $payment->created_at,
+                ];
+            });
 
         return Inertia::render("Member/Pembayaran/page", [
             'auth' => [

@@ -27,10 +27,15 @@ class AdminKelolaPembayaran extends Controller
                 $proof = (string) ($payment->proof ?? '');
                 $proofUrl = $proof;
 
-                // If it's a plain filename, assume it's in public/
-                // If it's a relative path (e.g. storage/...), asset() still works.
+                // If it's a plain filename, assume it's in public disk via storage symlink
                 if ($proof && !preg_match('/^https?:\/\//i', $proof)) {
-                    $proofUrl = asset($proof);
+                    if (strpos($proof, '/') === false) {
+                        // Seeded file directly in public folder
+                        $proofUrl = '/' . ltrim($proof, '/');
+                    } else {
+                        // Uploaded file under storage/app/public/...
+                        $proofUrl = '/storage/' . ltrim($proof, '/');
+                    }
                 }
 
                 return [

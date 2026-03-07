@@ -1,11 +1,69 @@
 import React, { useState, useEffect } from "react";
 import { useForm, router } from "@inertiajs/react";
 import { toast, Toaster } from "sonner";
+import { ChevronLeft, ChevronRight, Eye, X } from "lucide-react";
 import { FaMoneyBillWave, FaUpload, FaTimes, FaCamera, FaHistory, FaCheckCircle, FaClock, FaTimesCircle } from "react-icons/fa";
 import MemberLayout from "@/Layouts/MemberLayout";
 
+function ProofPreviewModal({ isOpen, onClose, src }) {
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+            <div className="absolute inset-0 bg-black/60" onClick={onClose}>
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-400/30 rounded-full blur-3xl animate-float"></div>
+                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-400/30 rounded-full blur-3xl animate-float-delayed"></div>
+            </div>
+
+            <div className="relative bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl max-w-md sm:max-w-lg w-full transform transition-all animate-modal-appear overflow-hidden border border-white/30">
+                <div className="h-1.5 bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 shadow-lg"></div>
+
+                <button
+                    onClick={onClose}
+                    className="absolute top-6 right-6 p-2.5 rounded-xl bg-white/20 hover:bg-white/30 backdrop-blur-md transition-all duration-300 group z-10 border border-white/40 hover:border-white/60 shadow-lg"
+                    title="Tutup"
+                >
+                    <X className="text-xl text-white group-hover:rotate-90 transition-all duration-300 drop-shadow-lg" />
+                </button>
+
+                <div className="p-5 sm:p-6">
+                    <div className="mb-4">
+                        <h3 className="text-white text-xl font-bold drop-shadow-lg">Bukti Pembayaran</h3>
+                    </div>
+
+                    <div className="bg-black/20 border border-white/20 rounded-2xl overflow-hidden flex justify-center">
+                        <img
+                            src={src}
+                            alt="Bukti Pembayaran"
+                            className="w-auto max-w-full max-h-[65vh] object-contain bg-black/10"
+                        />
+                    </div>
+
+                    <div className="mt-4 flex justify-end">
+                        <a
+                            href={src}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 text-white font-semibold px-4 py-2.5 rounded-xl transition-all"
+                        >
+                            <Eye className="w-4 h-4" />
+                            Buka di Tab Baru
+                        </a>
+                    </div>
+                </div>
+
+                <div className="relative h-3 overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/20 to-white/10"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer"></div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function MemberPembayaran({ auth, payments }) {
     const [showModal, setShowModal] = useState(false);
+    const [previewModal, setPreviewModal] = useState({ open: false, src: "" });
     const [preview, setPreview] = useState(null);
     const [perPage, setPerPage] = useState(payments.per_page || 10);
 
@@ -105,6 +163,32 @@ export default function MemberPembayaran({ auth, payments }) {
         }
     };
 
+    const renderPageNumbers = () => {
+        const pages = [];
+        const currentPage = payments?.current_page || 1;
+        const lastPage = payments?.last_page || 1;
+
+        if (lastPage <= 7) {
+            for (let i = 1; i <= lastPage; i++) pages.push(i);
+        } else {
+            if (currentPage > 3) {
+                pages.push(1);
+                if (currentPage > 4) pages.push("...");
+            }
+
+            for (let i = Math.max(1, currentPage - 2); i <= Math.min(lastPage, currentPage + 2); i++) {
+                pages.push(i);
+            }
+
+            if (currentPage < lastPage - 2) {
+                if (currentPage < lastPage - 3) pages.push("...");
+                pages.push(lastPage);
+            }
+        }
+
+        return pages;
+    };
+
     return (
         <MemberLayout>
             <Toaster position="top-right" richColors />
@@ -170,69 +254,76 @@ export default function MemberPembayaran({ auth, payments }) {
                     )}
 
                     {/* History Table */}
-                    <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-                        <div className="bg-gray-50/80 px-8 py-6 border-b border-gray-100 flex items-center justify-between">
+                    <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                        <div className={"bg-gradient-to-r from-cyan-500 to-emerald-500 p-1 rounded-xl shadow-lg ring-4 ring-white/30"}></div>
+                        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                             <h2 className="text-xl font-bold text-gray-800 flex items-center gap-3">
                                 <FaHistory className="text-blue-500 opacity-80" />
                                 Riwayat Pembayaran
                             </h2>
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2">
                                 <label className="text-sm font-semibold text-gray-500">Tampilkan:</label>
                                 <select 
                                     value={perPage} 
                                     onChange={handlePerPageChange}
-                                    className="border border-gray-200 rounded-xl px-4 py-2 text-sm font-semibold text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none shadow-sm transition-all"
+                                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 >
                                     <option value="5">5</option>
                                     <option value="10">10</option>
                                     <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
                                 </select>
                             </div>
                         </div>
 
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
-                                <thead>
-                                    <tr className="bg-gray-50/50">
-                                        <th className="px-8 py-5 text-sm font-bold text-gray-500 uppercase tracking-wider border-b border-gray-100">Tanggal</th>
-                                        <th className="px-8 py-5 text-sm font-bold text-gray-500 uppercase tracking-wider border-b border-gray-100">Bukti Pembayaran</th>
-                                        <th className="px-8 py-5 text-sm font-bold text-gray-500 uppercase tracking-wider border-b border-gray-100">Status</th>
+                        <div className="overflow-x-auto max-h-[55vh] relative">
+                            <table className="w-full">
+                                <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white relative sticky top-0 z-10">
+                                    <tr>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Tanggal</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Bukti Pembayaran</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Status</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-50">
+                                <tbody className="divide-y divide-gray-200">
                                     {payments.data.length > 0 ? (
                                         payments.data.map((payment) => (
-                                            <tr key={payment.id} className="hover:bg-blue-50/30 transition-colors duration-200">
-                                                <td className="px-8 py-5">
+                                            <tr key={payment.id} className="hover:bg-blue-50 transition-colors duration-200">
+                                                <td className="px-6 py-4">
                                                     <div className="flex flex-col gap-1">
-                                                        <span className="font-bold text-gray-800">
+                                                        <span className="text-sm font-bold text-gray-800">
                                                             {new Date(payment.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                                                         </span>
-                                                        <span className="text-xs font-semibold text-gray-400 flex items-center gap-1">
+                                                        <span className="text-xs font-semibold text-gray-500 flex items-center gap-1">
                                                             <FaClock className="w-3 h-3" />
                                                             {new Date(payment.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
                                                         </span>
                                                     </div>
                                                 </td>
-                                                <td className="px-8 py-5">
-                                                    <div className="relative group w-32 h-20 rounded-xl overflow-hidden border border-gray-200 shadow-sm cursor-pointer hover:shadow-md transition-all">
-                                                        <img 
-                                                            src={`/storage/${payment.proof}`} 
-                                                            alt="Bukti" 
-                                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                                            onClick={() => window.open(`/storage/${payment.proof}`, '_blank')}
-                                                        />
-                                                        <div 
-                                                            className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center text-white"
-                                                            onClick={() => window.open(`/storage/${payment.proof}`, '_blank')}
+                                                <td className="px-6 py-4 text-sm">
+                                                    {payment.proof_url ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setPreviewModal({ open: true, src: payment.proof_url })}
+                                                            className="group flex items-center gap-3 text-left"
+                                                            title="Klik untuk lihat gambar"
                                                         >
-                                                            <FaCamera className="w-6 h-6" />
-                                                        </div>
-                                                    </div>
+                                                            <img
+                                                                src={payment.proof_url}
+                                                                alt="Bukti"
+                                                                className="w-14 h-14 rounded-xl object-cover border border-gray-200 shadow-sm group-hover:shadow-md transition"
+                                                            />
+                                                            <span className="text-blue-600 font-semibold group-hover:underline inline-flex items-center gap-2">
+                                                                <Eye className="w-4 h-4" />
+                                                            </span>
+                                                        </button>
+                                                    ) : (
+                                                        <span className="text-gray-500">-</span>
+                                                    )}
                                                 </td>
-                                                <td className="px-8 py-5">
+                                                <td className="px-6 py-4 text-sm">
                                                     <div className="flex items-center gap-2">
-                                                        {getStatusIcon(payment.status)}
                                                         {getStatusText(payment.status)}
                                                     </div>
                                                 </td>
@@ -240,10 +331,10 @@ export default function MemberPembayaran({ auth, payments }) {
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan="3" className="px-8 py-16 text-center text-gray-400 font-medium">
-                                                <div className="flex flex-col items-center gap-3">
-                                                    <FaHistory className="w-12 h-12 text-gray-200" />
-                                                    <p>Belum ada riwayat pembayaran.</p>
+                                            <td colSpan="3" className="px-6 py-10 text-center text-gray-500 font-medium">
+                                                <div className="flex flex-col items-center gap-2">
+                                                    <FaHistory className="w-8 h-8 text-gray-300" />
+                                                    <p>Belum ada data pembayaran.</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -253,30 +344,66 @@ export default function MemberPembayaran({ auth, payments }) {
                         </div>
 
                         {/* Pagination */}
-                        {payments.last_page > 1 && (
-                            <div className="bg-gray-50/80 px-8 py-5 border-t border-gray-100 flex items-center justify-between">
-                                <span className="text-sm font-medium text-gray-500">
-                                    Menampilkan {payments.from || 0} - {payments.to || 0} dari {payments.total}
-                                </span>
-                                <div className="flex gap-2">
-                                    {payments.links.map((link, index) => (
-                                        <button
-                                            key={index}
-                                            onClick={() => handlePageChange(link.url)}
-                                            disabled={!link.url}
-                                            dangerouslySetInnerHTML={{ __html: link.label }}
-                                            className={`px-4 py-2 rounded-xl text-sm font-bold transition-all shadow-sm
-                                                ${link.active 
-                                                    ? 'bg-blue-600 text-white shadow-blue-500/30' 
-                                                    : !link.url 
-                                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                                                        : 'bg-white text-gray-600 hover:bg-gray-100 hover:text-blue-600'
-                                                }`}
-                                        />
-                                    ))}
-                                </div>
+                        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                            <div className="text-sm text-gray-600">
+                                Halaman {payments.current_page} dari {payments.last_page}
                             </div>
-                        )}
+
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => handlePageChange(payments.prev_page_url)}
+                                    disabled={!payments.prev_page_url}
+                                    className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                        payments.prev_page_url
+                                            ? "bg-blue-500 text-white hover:bg-blue-600"
+                                            : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                    }`}
+                                >
+                                    <ChevronLeft className="w-4 h-4" />
+                                    Prev
+                                </button>
+
+                                <div className="flex items-center gap-1">
+                                    {renderPageNumbers().map((page, idx) => {
+                                        if (page === "...") {
+                                            return (
+                                                <span key={`ellipsis-${idx}`} className="px-3 py-2 text-gray-500">
+                                                    ...
+                                                </span>
+                                            );
+                                        }
+
+                                        const pageUrl = `/member/pembayaran?page=${page}&per_page=${perPage}`;
+                                        return (
+                                            <button
+                                                key={page}
+                                                onClick={() => handlePageChange(pageUrl)}
+                                                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                                    page === payments.current_page
+                                                        ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white"
+                                                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                                }`}
+                                            >
+                                                {page}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                <button
+                                    onClick={() => handlePageChange(payments.next_page_url)}
+                                    disabled={!payments.next_page_url}
+                                    className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                        payments.next_page_url
+                                            ? "bg-blue-500 text-white hover:bg-blue-600"
+                                            : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                    }`}
+                                >
+                                    Next
+                                    <ChevronRight className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -385,6 +512,12 @@ export default function MemberPembayaran({ auth, payments }) {
                         </div>
                     </div>
                 )}
+                {/* Image Preview Modal */}
+                <ProofPreviewModal
+                    isOpen={previewModal.open}
+                    onClose={() => setPreviewModal({ open: false, src: "" })}
+                    src={previewModal.src}
+                />
             </main>
         </MemberLayout>
     );
