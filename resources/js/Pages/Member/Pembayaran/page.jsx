@@ -138,12 +138,13 @@ export default function MemberPembayaran({ auth, payments }) {
     };
 
     const getStatusIcon = (status) => {
-        switch (status) {
-            case "Approved":
+        if (!status) return null;
+        switch (status.toLowerCase()) {
+            case "approved":
                 return <FaCheckCircle className="text-green-500 w-5 h-5" />;
-            case "Pending":
+            case "pending":
                 return <FaClock className="text-yellow-500 w-5 h-5" />;
-            case "Rejected":
+            case "rejected":
                 return <FaTimesCircle className="text-red-500 w-5 h-5" />;
             default:
                 return null;
@@ -151,13 +152,14 @@ export default function MemberPembayaran({ auth, payments }) {
     };
 
     const getStatusText = (status) => {
-        switch (status) {
-            case "Approved":
-                return <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold ring-1 ring-green-300">DITERIMA</span>;
-            case "Pending":
-                return <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold ring-1 ring-yellow-300">MENUNGGU VERIFIKASI</span>;
-            case "Rejected":
-                return <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold ring-1 ring-red-300">DITOLAK</span>;
+        if (!status) return null;
+        switch (status.toLowerCase()) {
+            case "approved":
+                return <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold ring-1 ring-green-300">Disetujui</span>;
+            case "pending":
+                return <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold ring-1 ring-yellow-300">Pending</span>;
+            case "rejected":
+                return <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold ring-1 ring-red-300">Ditolak</span>;
             default:
                 return null;
         }
