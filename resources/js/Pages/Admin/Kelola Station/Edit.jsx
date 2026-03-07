@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useForm } from "@inertiajs/react";
 import { toast, Toaster } from "sonner";
-import OperatorLayout from "@/Layouts/OperatorLayout";
+import AdminLayout from "@/Layouts/AdminLayout";
 import { 
     FaMapMarkerAlt, 
     FaFlask, 
@@ -27,7 +27,7 @@ import PrintReport from "@/Components/HitungKualitasAir/PrintReport";
 
 // --- Main Page Component ---
 
-export default function OperatorHistoryEdit({ geoZones, waterTypes, bioticFamilies, initialData }) {
+export default function AdminKelolaStationEdit({ geoZones, waterTypes, bioticFamilies, initialData }) {
     const [currentStep, setCurrentStep] = useState(1);
     const [result, setResult] = useState(null); 
     const [validationErrors, setValidationErrors] = useState({}); // To track empty fields
@@ -163,7 +163,7 @@ export default function OperatorHistoryEdit({ geoZones, waterTypes, bioticFamili
             return;
         }
         
-        const previewPutUrl = `/operator/history/${data.id_history}?is_preview=1`;
+        const previewPutUrl = `/admin/kelola-station/${data.id_history}/history?is_preview=1`;
 
         put(previewPutUrl, {
             preserveScroll: true,
@@ -189,8 +189,8 @@ export default function OperatorHistoryEdit({ geoZones, waterTypes, bioticFamili
     };
 
     const handleSave = () => {
-        const baseUrl = '/operator/history';
-        const putUrl = `/operator/history/${data.id_history}`;
+        const baseUrl = '/admin/kelola-station';
+        const putUrl = `/admin/kelola-station/${data.id_history}/history`;
             
         put(putUrl, {
             transform: (data) => ({
@@ -232,7 +232,7 @@ export default function OperatorHistoryEdit({ geoZones, waterTypes, bioticFamili
     };
 
     return (
-        <OperatorLayout>
+        <AdminLayout>
             {/* Style khusus untuk cetak */}
             <style>{`
                 @media print {
@@ -315,6 +315,6 @@ export default function OperatorHistoryEdit({ geoZones, waterTypes, bioticFamili
                      </div>
                 </div>
             </main>
-        </OperatorLayout>
+        </AdminLayout>
     );
 }

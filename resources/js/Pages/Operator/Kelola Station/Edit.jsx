@@ -27,7 +27,7 @@ import PrintReport from "@/Components/HitungKualitasAir/PrintReport";
 
 // --- Main Page Component ---
 
-export default function OperatorHistoryEdit({ geoZones, waterTypes, bioticFamilies, initialData }) {
+export default function OperatorKelolaStationEdit({ geoZones, waterTypes, bioticFamilies, initialData }) {
     const [currentStep, setCurrentStep] = useState(1);
     const [result, setResult] = useState(null); 
     const [validationErrors, setValidationErrors] = useState({}); // To track empty fields
@@ -163,7 +163,7 @@ export default function OperatorHistoryEdit({ geoZones, waterTypes, bioticFamili
             return;
         }
         
-        const previewPutUrl = `/operator/history/${data.id_history}?is_preview=1`;
+        const previewPutUrl = `/operator/kelola-station/${data.id_history}/history?is_preview=1`;
 
         put(previewPutUrl, {
             preserveScroll: true,
@@ -189,8 +189,8 @@ export default function OperatorHistoryEdit({ geoZones, waterTypes, bioticFamili
     };
 
     const handleSave = () => {
-        const baseUrl = '/operator/history';
-        const putUrl = `/operator/history/${data.id_history}`;
+        const baseUrl = '/operator/kelola-station';
+        const putUrl = `/operator/kelola-station/${data.id_history}/history`;
             
         put(putUrl, {
             transform: (data) => ({

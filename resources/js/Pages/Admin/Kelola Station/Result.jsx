@@ -5,7 +5,7 @@ import PrintReport from "@/Components/HitungKualitasAir/PrintReport";
 import { FaArrowLeft, FaHistory } from "react-icons/fa";
 import { Link } from "@inertiajs/react";
 
-export default function AdminHistoryResult({ auth, result, data, geoZones, waterTypes, bioticFamilies }) {
+export default function AdminKelolaStationResult({ auth, result, data, geoZones, waterTypes, bioticFamilies }) {
     // If it's print mode, we just let the parent iframe trigger the print.
     // The CSS logic handles the layout.
 
@@ -63,7 +63,7 @@ export default function AdminHistoryResult({ auth, result, data, geoZones, water
                             <FaHistory className="text-blue-600"/> Detail Histori Perhitungan
                         </h1>
                         <Link 
-                            href="/admin/history"
+                            href="/admin/kelola-station"
                             className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center gap-2 shadow-sm font-medium transition-colors"
                         >
                             <FaArrowLeft /> Kembali
