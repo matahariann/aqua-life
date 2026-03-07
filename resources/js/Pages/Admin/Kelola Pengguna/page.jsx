@@ -9,7 +9,7 @@ import EditUserModal from "@/Components/EditUserModal";
 import DeleteUserModal from "@/Components/DeleteUserModal";
 import ModalStyles from "@/Components/ModalStyles";
 
-export default function AdminKelolaPengguna({ users }) {
+export default function AdminKelolaPengguna({ auth, users }) {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -420,8 +420,7 @@ export default function AdminKelolaPengguna({ users }) {
                                                             >
                                                                 <Edit className="w-4 h-4" />
                                                             </button>
-                                                            {user.role !==
-                                                                "admin" && (
+                                                            {user.id !== auth.user.id && (
                                                                 <button
                                                                     onClick={() =>
                                                                         handleDeleteClick(

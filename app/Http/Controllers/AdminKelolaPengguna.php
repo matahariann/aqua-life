@@ -107,6 +107,10 @@ class AdminKelolaPengguna extends Controller
 
     public function destroy(User $user)
     {
+        if ($user->id === Auth::id()) {
+            return redirect()->back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri');
+        }
+
         $user->delete();
         return redirect()->back()->with('success', 'Pengguna berhasil dihapus');
     }
