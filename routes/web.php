@@ -151,6 +151,9 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:member')->prefix('member')->name('member.')->group(function () {
         // History
         Route::get('/history', [MemberHistory::class, 'index'])->name('history');
+        Route::get('/history/{id}/result', [MemberHistory::class, 'result'])->name('history.result');
+        Route::get('/history/{id}/edit', [MemberHistory::class, 'edit'])->name('history.edit');
+        Route::put('/history/{id}', [MemberHistory::class, 'update'])->name('history.update');
 
         // Hitung Kualitas Air
         Route::get('/hitung-kualitas-air', [MemberHitungKualitasAir::class, 'index'])->name('hitung-kualitas-air');

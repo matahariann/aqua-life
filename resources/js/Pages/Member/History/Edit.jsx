@@ -27,12 +27,12 @@ import PrintReport from "@/Components/HitungKualitasAir/PrintReport";
 
 // --- Main Page Component ---
 
-export default function MemberHitungKualitasAir({ geoZones, waterTypes, bioticFamilies, initialData, isHistoryView = false, resultData = null }) {
-    const [currentStep, setCurrentStep] = useState(isHistoryView ? 4 : 1);
-    const [result, setResult] = useState(resultData); // To store result after submission or directly if history view
+export default function MemberHistoryEdit({ geoZones, waterTypes, bioticFamilies, initialData }) {
+    const [currentStep, setCurrentStep] = useState(1);
+    const [result, setResult] = useState(null); 
     const [validationErrors, setValidationErrors] = useState({}); // To track empty fields
 
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, put, processing, errors } = useForm({
         // Station
         id_history: initialData?.id_history || "",
         id_station: initialData?.id_station || "",
@@ -163,13 +163,15 @@ export default function MemberHitungKualitasAir({ geoZones, waterTypes, bioticFa
             return;
         }
         
-        post('/Member/hitung-kualitas-air?is_preview=1', {
+        const previewPutUrl = `/Member/history/${data.id_history}?is_preview=1`;
+
+        put(previewPutUrl, {
+            preserveScroll: true,
+            preserveState: true,
             transform: (data) => ({
                 ...data,
                 families: data.families.filter(f => f.id_family && f.id_family !== ""),
             }),
-            preserveScroll: true,
-            preserveState: true,
             onSuccess: (page) => {
                 if (page.props.flash && page.props.flash.preview_result) {
                     setResult(page.props.flash.preview_result);
@@ -187,15 +189,18 @@ export default function MemberHitungKualitasAir({ geoZones, waterTypes, bioticFa
     };
 
     const handleSave = () => {
-        post('/Member/hitung-kualitas-air', {
+        const baseUrl = '/Member/history';
+        const putUrl = `/Member/history/${data.id_history}`;
+            
+        put(putUrl, {
             transform: (data) => ({
                 ...data,
                 families: data.families.filter(f => f.id_family && f.id_family !== ""),
             }),
             onSuccess: () => {
-                toast.success("Data berhasil disimpan!");
+                toast.success("Perubahan berhasil disimpan!");
                 setTimeout(() => {
-                    window.location.href = '/Member/history';
+                    window.location.href = baseUrl;
                 }, 1000);
             }
         });
@@ -215,10 +220,10 @@ export default function MemberHitungKualitasAir({ geoZones, waterTypes, bioticFa
                         data={data} 
                         result={result} 
                         bioticFamilies={bioticFamilies} 
-                        prevStep={isHistoryView ? () => window.history.back() : prevStep} 
+                        prevStep={prevStep} 
                         handleSave={handleSave} 
                         processing={processing}
-                        isHistoryView={isHistoryView} 
+                        isHistoryView={false} 
                     />
                 );
             default:
