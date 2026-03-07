@@ -161,6 +161,7 @@ Route::middleware('auth')->group(function () {
 
         // Pembayaran
         Route::get('/pembayaran', [MemberPembayaran::class, 'index'])->name('pembayaran');
+        Route::post('/pembayaran', [MemberPembayaran::class, 'store'])->name('pembayaran.store');
     });
 
 });
