@@ -163,7 +163,7 @@ export default function MemberHitungKualitasAir({ geoZones, waterTypes, bioticFa
             return;
         }
         
-        post('/Member/hitung-kualitas-air?is_preview=1', {
+        post('/member/hitung-kualitas-air?is_preview=1', {
             transform: (data) => ({
                 ...data,
                 families: data.families.filter(f => f.id_family && f.id_family !== ""),
@@ -187,7 +187,7 @@ export default function MemberHitungKualitasAir({ geoZones, waterTypes, bioticFa
     };
 
     const handleSave = () => {
-        post('/Member/hitung-kualitas-air', {
+        post('/member/hitung-kualitas-air', {
             transform: (data) => ({
                 ...data,
                 families: data.families.filter(f => f.id_family && f.id_family !== ""),
@@ -195,7 +195,7 @@ export default function MemberHitungKualitasAir({ geoZones, waterTypes, bioticFa
             onSuccess: () => {
                 toast.success("Data berhasil disimpan!");
                 setTimeout(() => {
-                    window.location.href = '/Member/history';
+                    window.location.href = '/member/history';
                 }, 1000);
             }
         });
