@@ -119,9 +119,29 @@ Route::middleware('auth')->group(function () {
 
         // Kelola Bobot
         Route::get('/kelola-bobot', [OperatorKelolaBobot::class, 'index'])->name('kelola-bobot');
+        Route::post('/kelola-bobot/main-abiotic', [OperatorKelolaBobot::class, 'storeMainAbiotic'])->name('kelola-bobot.main-abiotic.store');
+        Route::put('/kelola-bobot/main-abiotic/{parameter}', [OperatorKelolaBobot::class, 'updateMainAbiotic'])->name('kelola-bobot.main-abiotic.update');
+        Route::delete('/kelola-bobot/main-abiotic/{parameter}', [OperatorKelolaBobot::class, 'destroyMainAbiotic'])->name('kelola-bobot.main-abiotic.destroy');
+        Route::post('/kelola-bobot/additional-abiotic', [OperatorKelolaBobot::class, 'storeAdditionalAbiotic'])->name('kelola-bobot.additional-abiotic.store');
+        Route::put('/kelola-bobot/additional-abiotic/{parameter}', [OperatorKelolaBobot::class, 'updateAdditionalAbiotic'])->name('kelola-bobot.additional-abiotic.update');
+        Route::delete('/kelola-bobot/additional-abiotic/{parameter}', [OperatorKelolaBobot::class, 'destroyAdditionalAbiotic'])->name('kelola-bobot.additional-abiotic.destroy');
 
-        // Kelola Pembayaran
+        Route::post('/kelola-bobot/biotic-index', [OperatorKelolaBobot::class, 'storeBioticIndex'])->name('kelola-bobot.biotic-index.store');
+        Route::put('/kelola-bobot/biotic-index/{parameter}', [OperatorKelolaBobot::class, 'updateBioticIndex'])->name('kelola-bobot.biotic-index.update');
+        Route::delete('/kelola-bobot/biotic-index/{parameter}', [OperatorKelolaBobot::class, 'destroyBioticIndex'])->name('kelola-bobot.biotic-index.destroy');
+
+        Route::post('/kelola-bobot/family-biotic', [OperatorKelolaBobot::class, 'storeFamilyBiotic'])->name('kelola-bobot.family-biotic.store');
+        Route::put('/kelola-bobot/family-biotic/{parameter}', [OperatorKelolaBobot::class, 'updateFamilyBiotic'])->name('kelola-bobot.family-biotic.update');
+        Route::delete('/kelola-bobot/family-biotic/{parameter}', [OperatorKelolaBobot::class, 'destroyFamilyBiotic'])->name('kelola-bobot.family-biotic.destroy');
+
+        // Kelola Station
         Route::get('/kelola-station', [OperatorKelolaStation::class, 'index'])->name('kelola-station');
+        Route::post('/kelola-station', [OperatorKelolaStation::class, 'store'])->name('kelola-station.store');
+        Route::put('/kelola-station/{station}', [OperatorKelolaStation::class, 'update'])->name('kelola-station.update');
+        Route::delete('/kelola-station/{station}', [OperatorKelolaStation::class, 'destroy'])->name('kelola-station.destroy');
+        Route::get('/kelola-station/{id}/result', [OperatorHistory::class, 'result'])->name('kelola-station.result');
+        Route::get('/kelola-station/{id}/edit', [OperatorHistory::class, 'edit'])->name('kelola-station.edit');
+        Route::put('/kelola-station/{id}/history', [OperatorHistory::class, 'update'])->name('kelola-station.updateHistory');
     });
 
     // Member routes
