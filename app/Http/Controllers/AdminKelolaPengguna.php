@@ -62,6 +62,10 @@ class AdminKelolaPengguna extends Controller
     
         $validated['password'] = Hash::make($validated['password']);
     
+        if (in_array($validated['role'], ['admin', 'operator'])) {
+            $validated['is_membership'] = true;
+        }
+
         User::create($validated);
     
         return redirect()->back()->with('success', 'Pengguna berhasil ditambahkan');
@@ -90,6 +94,10 @@ class AdminKelolaPengguna extends Controller
             $validated['password'] = Hash::make($validated['password']);
         } else {
             unset($validated['password']);
+        }
+
+        if (in_array($validated['role'], ['admin', 'operator'])) {
+            $validated['is_membership'] = true;
         }
 
         $user->update($validated);

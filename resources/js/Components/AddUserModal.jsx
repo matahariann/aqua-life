@@ -61,10 +61,17 @@ export default function AddUserModal({
     };
 
     const handleFieldChange = (name, value) => {
-        setForm({
+        let updatedForm = {
             ...form,
             [name]: value,
-        });
+        };
+
+        // Otomatis aktifkan membership jika role adalah admin atau operator
+        if (name === "role" && (value === "admin" || value === "operator")) {
+            updatedForm.is_membership = true;
+        }
+
+        setForm(updatedForm);
 
         // Clear error saat user mulai mengetik
         if (errors[name]) {
@@ -304,26 +311,28 @@ export default function AddUserModal({
                             </select>
                         </div>
 
-                        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md p-3 rounded-lg border border-white/30">
-                            <input
-                                type="checkbox"
-                                id="add_membership"
-                                checked={form.is_membership}
-                                onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        is_membership: e.target.checked,
-                                    })
-                                }
-                                className="w-4 h-4 rounded bg-white/20 border-2 border-white/40"
-                            />
-                            <label
-                                htmlFor="add_membership"
-                                className="text-sm font-semibold text-white drop-shadow-md cursor-pointer"
-                            >
-                                Membership Aktif
-                            </label>
-                        </div>
+                        {form.role === "member" && (
+                            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md p-3 rounded-lg border border-white/30">
+                                <input
+                                    type="checkbox"
+                                    id="add_membership"
+                                    checked={form.is_membership}
+                                    onChange={(e) =>
+                                        setForm({
+                                            ...form,
+                                            is_membership: e.target.checked,
+                                        })
+                                    }
+                                    className="w-4 h-4 rounded bg-white/20 border-2 border-white/40"
+                                />
+                                <label
+                                    htmlFor="add_membership"
+                                    className="text-sm font-semibold text-white drop-shadow-md cursor-pointer"
+                                >
+                                    Membership Aktif
+                                </label>
+                            </div>
+                        )}
 
                         <div className="flex gap-3 pt-2">
                             <button
