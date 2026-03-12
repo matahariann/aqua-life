@@ -162,6 +162,8 @@ Route::middleware('auth')->group(function () {
         // Pembayaran
         Route::get('/pembayaran', [MemberPembayaran::class, 'index'])->name('pembayaran');
         Route::post('/pembayaran', [MemberPembayaran::class, 'store'])->name('pembayaran.store');
+        Route::put('/pembayaran/{payment}', [MemberPembayaran::class, 'update'])->name('pembayaran.update');
+        Route::delete('/pembayaran/{payment}', [MemberPembayaran::class, 'destroy'])->name('pembayaran.destroy');
     });
 
 });

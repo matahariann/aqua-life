@@ -76,8 +76,9 @@ export default function MemberPembayaran({ auth, payments }) {
     const [previewModal, setPreviewModal] = useState({ open: false, src: "" });
     const [preview, setPreview] = useState(null);
     const [perPage, setPerPage] = useState(payments.per_page || 10);
+    const [editingPaymentId, setEditingPaymentId] = useState(null);
 
-    const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
+    const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm({
         proof: null,
     });
 
@@ -102,23 +103,33 @@ export default function MemberPembayaran({ auth, payments }) {
             return;
         }
 
-        post("/member/pembayaran", {
+        const isEditing = !!editingPaymentId;
+
+        const options = {
             preserveScroll: true,
             onSuccess: () => {
                 setShowModal(false);
                 reset();
                 setPreview(null);
-                toast.success("Bukti pembayaran berhasil diunggah!");
+                setEditingPaymentId(null);
+                toast.success(isEditing ? "Bukti pembayaran berhasil diperbarui!" : "Bukti pembayaran berhasil diunggah!");
             },
             onError: (errors) => {
-                toast.error("Gagal mengunggah bukti pembayaran.");
+                toast.error(isEditing ? "Gagal memperbarui bukti pembayaran." : "Gagal mengunggah bukti pembayaran.");
                 console.error(errors);
-            }
-        });
+            },
+        };
+
+        if (isEditing) {
+            put(`/member/pembayaran/${editingPaymentId}`, options);
+        } else {
+            post("/member/pembayaran", options);
+        }
     };
 
     const handleCloseModal = () => {
         setShowModal(false);
+        setEditingPaymentId(null);
         reset();
         setPreview(null);
         clearErrors();
@@ -297,7 +308,8 @@ export default function MemberPembayaran({ auth, payments }) {
                                         <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Bukti Pembayaran</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Status</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Tanggal Mulai Membership</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Tanggal Berakhir Membership</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Tanggal Berakhir Membership</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
@@ -340,6 +352,41 @@ export default function MemberPembayaran({ auth, payments }) {
                                                     {payment.status?.toLowerCase() === "approved"
                                                         ? formatDate(payment.membership_end_at)
                                                         : "-"}
+                                                </td>
+                                                <td className="px-6 py-4 text-sm text-gray-800">
+                                                    {payment.status?.toLowerCase() !== "approved" ? (
+                                                        <div className="flex items-center gap-2">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    setEditingPaymentId(payment.id);
+                                                                    setShowModal(true);
+                                                                    setPreview(null);
+                                                                    reset();
+                                                                    clearErrors();
+                                                                }}
+                                                                className="px-3 py-1 rounded-lg text-xs font-semibold bg-yellow-100 text-yellow-800 hover:bg-yellow-200 transition-colors"
+                                                            >
+                                                                Edit
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    if (!confirm("Yakin ingin menghapus riwayat pembayaran ini?")) return;
+                                                                    router.delete(`/member/pembayaran/${payment.id}`, {
+                                                                        preserveScroll: true,
+                                                                        onSuccess: () => toast.success("Riwayat pembayaran berhasil dihapus."),
+                                                                        onError: () => toast.error("Gagal menghapus riwayat pembayaran."),
+                                                                    });
+                                                                }}
+                                                                className="px-3 py-1 rounded-lg text-xs font-semibold bg-red-100 text-red-800 hover:bg-red-200 transition-colors"
+                                                            >
+                                                                Hapus
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <span className="text-gray-400 text-xs italic">-</span>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))
