@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('proof');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->timestamp('membership_start_at')->nullable();
+            $table->timestamp('membership_end_at')->nullable();
             $table->unsignedBigInteger('id_user');
             $table->timestamps();
 

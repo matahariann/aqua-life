@@ -64,6 +64,9 @@ class AdminKelolaPengguna extends Controller
     
         if (in_array($validated['role'], ['admin', 'operator'])) {
             $validated['is_membership'] = true;
+            // Untuk admin & operator, membership dianggap aktif tanpa masa berakhir khusus
+            $validated['membership_start_at'] = now();
+            $validated['membership_end_at'] = null;
         }
 
         User::create($validated);
@@ -98,6 +101,13 @@ class AdminKelolaPengguna extends Controller
 
         if (in_array($validated['role'], ['admin', 'operator'])) {
             $validated['is_membership'] = true;
+            // Pastikan admin & operator tetap dianggap membership aktif tanpa masa berakhir khusus
+            $validated['membership_start_at'] = $user->membership_start_at ?? now();
+            $validated['membership_end_at'] = null;
+        } else {
+            // Untuk role member, perubahan status membership akan diatur lewat proses pembayaran
+            // sehingga di sini kita tidak menyentuh membership_start_at/end_at
+            unset($validated['membership_start_at'], $validated['membership_end_at']);
         }
 
         $user->update($validated);

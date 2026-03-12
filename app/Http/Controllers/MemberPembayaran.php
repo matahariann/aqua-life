@@ -37,6 +37,8 @@ class MemberPembayaran extends Controller
                     'proof' => $payment->proof,
                     'proof_url' => $proofUrl,
                     'created_at' => $payment->created_at,
+                    'membership_start_at' => $payment->membership_start_at,
+                    'membership_end_at' => $payment->membership_end_at,
                 ];
             });
 

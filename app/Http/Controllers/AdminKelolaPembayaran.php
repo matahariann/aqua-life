@@ -44,6 +44,8 @@ class AdminKelolaPembayaran extends Controller
                     'proof' => $payment->proof,
                     'proof_url' => $proofUrl,
                     'created_at' => $payment->created_at,
+                    'membership_start_at' => $payment->membership_start_at,
+                    'membership_end_at' => $payment->membership_end_at,
                     'user' => [
                         'email' => $payment->user?->email,
                     ],
@@ -66,7 +68,24 @@ class AdminKelolaPembayaran extends Controller
 
     public function approve(Payment $payment)
     {
-        $payment->update(['status' => 'approved']);
+        // Set status payment disetujui
+        $payment->status = 'approved';
+
+        // Tanggal mulai membership = saat disetujui
+        $start = now();
+        $end = $start->copy()->addMonth();
+
+        // Simpan tanggal berakhir membership di history pembayaran
+        $payment->membership_end_at = $end;
+        $payment->save();
+
+        // Update status membership user terkait
+        $user = $payment->user;
+        if ($user && $user->role === 'member') {
+            $user->is_membership = true;
+            $user->save();
+        }
+
         return redirect()->back()->with('success', 'Pembayaran disetujui');
     }
 

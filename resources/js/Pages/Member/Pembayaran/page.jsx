@@ -5,6 +5,16 @@ import { ChevronLeft, ChevronRight, Eye, X } from "lucide-react";
 import { FaMoneyBillWave, FaUpload, FaTimes, FaCamera, FaHistory, FaCheckCircle, FaClock, FaTimesCircle } from "react-icons/fa";
 import MemberLayout from "@/Layouts/MemberLayout";
 
+function formatDate(dateString) {
+    if (!dateString) return "-";
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    }).format(date);
+}
+
 function ProofPreviewModal({ isOpen, onClose, src }) {
     if (!isOpen) return null;
 
@@ -283,26 +293,18 @@ export default function MemberPembayaran({ auth, payments }) {
                             <table className="w-full">
                                 <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white relative sticky top-0 z-10">
                                     <tr>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Tanggal</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">No</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Bukti Pembayaran</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Status</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Tanggal Mulai Membership</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Tanggal Berakhir Membership</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
                                     {payments.data.length > 0 ? (
-                                        payments.data.map((payment) => (
+                                        payments.data.map((payment, index) => (
                                             <tr key={payment.id} className="hover:bg-blue-50 transition-colors duration-200">
-                                                <td className="px-6 py-4">
-                                                    <div className="flex flex-col gap-1">
-                                                        <span className="text-sm font-bold text-gray-800">
-                                                            {new Date(payment.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
-                                                        </span>
-                                                        <span className="text-xs font-semibold text-gray-500 flex items-center gap-1">
-                                                            <FaClock className="w-3 h-3" />
-                                                            {new Date(payment.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
-                                                        </span>
-                                                    </div>
-                                                </td>
+                                                <td className="px-6 py-4 text-sm text-gray-700">{(payments.from || 1) + index}</td>
                                                 <td className="px-6 py-4 text-sm">
                                                     {payment.proof_url ? (
                                                         <button
@@ -328,6 +330,16 @@ export default function MemberPembayaran({ auth, payments }) {
                                                     <div className="flex items-center gap-2">
                                                         {getStatusText(payment.status)}
                                                     </div>
+                                                </td>
+                                                <td className="px-6 py-4 text-sm text-gray-800">
+                                                    {payment.status?.toLowerCase() === "approved"
+                                                        ? formatDate(payment.membership_start_at)
+                                                        : "-"}
+                                                </td>
+                                                <td className="px-6 py-4 text-sm text-gray-800">
+                                                    {payment.status?.toLowerCase() === "approved"
+                                                        ? formatDate(payment.membership_end_at)
+                                                        : "-"}
                                                 </td>
                                             </tr>
                                         ))
