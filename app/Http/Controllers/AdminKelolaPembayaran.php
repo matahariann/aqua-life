@@ -75,7 +75,8 @@ class AdminKelolaPembayaran extends Controller
         $start = now();
         $end = $start->copy()->addMonth();
 
-        // Simpan tanggal berakhir membership di history pembayaran
+        // Simpan tanggal mulai & berakhir membership di history pembayaran
+        $payment->membership_start_at = $start;
         $payment->membership_end_at = $end;
         $payment->save();
 
