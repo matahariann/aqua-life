@@ -37,8 +37,8 @@ class PaymentSeeder extends Seeder
                 'proof' => 'contoh_bukti_pembayaran.jpeg',
                 'status' => 'approved',
                 'id_user' => 5,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => '2026-02-14',
+                'updated_at' => '2026-02-14',
             ],
         ]);
     }
