@@ -163,7 +163,7 @@ export default function MemberHistoryEdit({ geoZones, waterTypes, bioticFamilies
             return;
         }
         
-        const previewPutUrl = `/Member/history/${data.id_history}?is_preview=1`;
+        const previewPutUrl = `/member/history/${data.id_history}?is_preview=1`;
 
         put(previewPutUrl, {
             preserveScroll: true,
@@ -189,8 +189,8 @@ export default function MemberHistoryEdit({ geoZones, waterTypes, bioticFamilies
     };
 
     const handleSave = () => {
-        const baseUrl = '/Member/history';
-        const putUrl = `/Member/history/${data.id_history}`;
+        const baseUrl = '/member/history';
+        const putUrl = `/member/history/${data.id_history}`;
             
         put(putUrl, {
             transform: (data) => ({

@@ -63,7 +63,7 @@ export default function MemberHistoryResult({ auth, result, data, geoZones, wate
                             <FaHistory className="text-blue-600"/> Detail Histori Perhitungan
                         </h1>
                         <Link 
-                            href="/Member/history"
+                            href="/member/history"
                             className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center gap-2 shadow-sm font-medium transition-colors"
                         >
                             <FaArrowLeft /> Kembali
