@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role', ['member', 'operator', 'admin'])->default('member');
             $table->boolean('is_membership')->default(false);
+            $table->timestamp('membership_start_at')->nullable();
+            $table->timestamp('membership_end_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

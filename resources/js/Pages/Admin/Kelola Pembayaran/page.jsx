@@ -221,8 +221,7 @@ export default function AdminKelolaPembayaran({ payments }) {
                                         <th className="px-6 py-4 text-left text-sm font-semibold">No</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Email</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Bukti</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Tanggal Mulai Membership</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Tanggal Berakhir Membership</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold">Tanggal Pembayaran</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Status</th>
                                         <th className="px-6 py-4 text-center text-sm font-semibold">Aksi</th>
                                     </tr>
@@ -255,10 +254,7 @@ export default function AdminKelolaPembayaran({ payments }) {
                                                     )}
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-800">
-                                                    {p.status === "approved" ? formatDate(p.membership_start_at) : "-"}
-                                                </td>
-                                                <td className="px-6 py-4 text-sm text-gray-800">
-                                                    {p.status === "approved" ? formatDate(p.membership_end_at) : "-"}
+                                                    {formatDate(p.created_at)}
                                                 </td>
                                                 
                                                 <td className="px-6 py-4 text-sm">

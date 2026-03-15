@@ -44,8 +44,6 @@ class AdminKelolaPembayaran extends Controller
                     'proof' => $payment->proof,
                     'proof_url' => $proofUrl,
                     'created_at' => $payment->created_at,
-                    'membership_start_at' => $payment->membership_start_at,
-                    'membership_end_at' => $payment->membership_end_at,
                     'user' => [
                         'email' => $payment->user?->email,
                     ],
@@ -75,15 +73,15 @@ class AdminKelolaPembayaran extends Controller
         $start = now();
         $end = $start->copy()->addMonth();
 
-        // Simpan tanggal mulai & berakhir membership di history pembayaran
-        $payment->membership_start_at = $start;
-        $payment->membership_end_at = $end;
+        // Simpan tanggal mulai & berakhir membership di user
         $payment->save();
 
         // Update status membership user terkait
         $user = $payment->user;
         if ($user && $user->role === 'member') {
             $user->is_membership = true;
+            $user->membership_start_at = $start;
+            $user->membership_end_at = $end;
             $user->save();
         }
 
@@ -99,6 +97,8 @@ class AdminKelolaPembayaran extends Controller
         $user = $payment->user;
         if ($user && $user->role === 'member') {
             $user->is_membership = false;
+            $user->membership_start_at = null;
+            $user->membership_end_at = null;
             $user->save();
         }
 

@@ -17,6 +17,7 @@ class MemberPembayaran extends Controller
         $perPage = $request->input('per_page', 10);
         $payments = \App\Models\Payment::where('id_user', $user->id)
             ->orderBy('created_at', 'desc')
+            ->with(['user:id,email,membership_start_at,membership_end_at'])
             ->paginate($perPage)
             ->withQueryString()
             ->through(function ($payment) {
@@ -39,8 +40,10 @@ class MemberPembayaran extends Controller
                     'proof' => $payment->proof,
                     'proof_url' => $proofUrl,
                     'created_at' => $payment->created_at,
-                    'membership_start_at' => $payment->membership_start_at,
-                    'membership_end_at' => $payment->membership_end_at,
+                    'user' => [
+                        'membership_start_at' => $payment->user?->membership_start_at,
+                        'membership_end_at' => $payment->user?->membership_end_at,
+                    ]
                 ];
             });
 

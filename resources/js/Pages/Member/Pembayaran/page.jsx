@@ -402,8 +402,9 @@ export default function MemberPembayaran({ auth, payments }) {
                                     <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">No</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Bukti Pembayaran</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Status</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Tanggal Mulai Membership</th>
-                                    <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Tanggal Berakhir Membership</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Tanggal Pembayaran</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Mulai Membership</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Berakhir Membership</th>
                                     <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Aksi</th>
                                     </tr>
                                 </thead>
@@ -439,13 +440,16 @@ export default function MemberPembayaran({ auth, payments }) {
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-800">
+                                                    {formatDate(payment.created_at)}
+                                                </td>
+                                                <td className="px-6 py-4 text-sm text-gray-800">
                                                     {payment.status?.toLowerCase() === "approved"
-                                                        ? formatDate(payment.membership_start_at)
+                                                        ? formatDate(payment.user?.membership_start_at)
                                                         : "-"}
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-800">
                                                     {payment.status?.toLowerCase() === "approved"
-                                                        ? formatDate(payment.membership_end_at)
+                                                        ? formatDate(payment.user?.membership_end_at)
                                                         : "-"}
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-800">

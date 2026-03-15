@@ -9,6 +9,16 @@ import EditUserModal from "@/Components/EditUserModal";
 import DeleteUserModal from "@/Components/DeleteUserModal";
 import ModalStyles from "@/Components/ModalStyles";
 
+function formatDate(dateString) {
+    if (!dateString) return "-";
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    }).format(date);
+}
+
 export default function AdminKelolaPengguna({ auth, users }) {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
@@ -344,6 +354,12 @@ export default function AdminKelolaPengguna({ auth, users }) {
                                         <th className="px-6 py-4 text-left text-sm font-semibold">
                                             Membership
                                         </th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold">
+                                            Mulai Membership
+                                        </th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold">
+                                            Berakhir Membership
+                                        </th>
                                         <th className="px-6 py-4 text-center text-sm font-semibold">
                                             Aksi
                                         </th>
@@ -406,6 +422,12 @@ export default function AdminKelolaPengguna({ auth, users }) {
                                                                 ? "Aktif"
                                                                 : "Tidak Aktif"}
                                                         </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-sm text-gray-700">
+                                                        {formatDate(user.membership_start_at)}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-sm text-gray-700">
+                                                        {formatDate(user.membership_end_at)}
                                                     </td>
                                                     <td className="px-6 py-4 text-sm">
                                                         <div className="flex items-center justify-center gap-2">
