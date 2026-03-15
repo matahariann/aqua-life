@@ -92,7 +92,16 @@ class AdminKelolaPembayaran extends Controller
 
     public function reject(Payment $payment)
     {
-        $payment->update(['status' => 'rejected']);
-        return redirect()->back()->with('success', 'Pembayaran ditolak');
+        $payment->status = 'rejected';
+        $payment->save();
+
+        // Update status membership user terkait menjadi tidak aktif jika ditolak
+        $user = $payment->user;
+        if ($user && $user->role === 'member') {
+            $user->is_membership = false;
+            $user->save();
+        }
+
+        return redirect()->back()->with('success', 'Pembayaran ditolak dan status membership dinonaktifkan.');
     }
 }
