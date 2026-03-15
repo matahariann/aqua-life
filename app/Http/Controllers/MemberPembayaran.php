@@ -110,13 +110,17 @@ class MemberPembayaran extends Controller
         }
 
         $request->validate([
-            'proof' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'proof' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
-            'proof.required' => 'Bukti pembayaran wajib diunggah',
             'proof.image' => 'File harus berupa gambar',
             'proof.mimes' => 'Format gambar harus jpeg, png, jpg, atau gif',
             'proof.max' => 'Ukuran gambar maksimal 2MB',
         ]);
+
+        $dataToUpdate = [
+            // Reset status ke Pending sesuai permintaan user
+            'status' => 'Pending',
+        ];
 
         if ($request->hasFile('proof')) {
             // Hapus file lama jika ada dan tersimpan di storage
@@ -127,13 +131,12 @@ class MemberPembayaran extends Controller
             $image = $request->file('proof');
             $path = $image->store('payments', 'public');
 
-            $payment->update([
-                'proof' => $path,
-                // Tetap pending / belum disetujui, admin yang memutuskan
-            ]);
+            $dataToUpdate['proof'] = $path;
         }
 
-        return redirect()->back()->with('success', 'Bukti pembayaran berhasil diperbarui.');
+        $payment->update($dataToUpdate);
+
+        return redirect()->back()->with('success', 'Bukti pembayaran berhasil diperbarui menjadi Pending.');
     }
 
     /**

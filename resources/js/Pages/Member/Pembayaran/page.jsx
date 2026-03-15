@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useForm, router } from "@inertiajs/react";
 import { toast, Toaster } from "sonner";
 import { ChevronLeft, ChevronRight, Eye, X } from "lucide-react";
-import { FaMoneyBillWave, FaUpload, FaTimes, FaCamera, FaHistory, FaCheckCircle, FaClock, FaTimesCircle } from "react-icons/fa";
+import { FaMoneyBillWave, FaUpload, FaTimes, FaCamera, FaHistory, FaCheckCircle, FaClock, FaTimesCircle, FaEdit, FaTrash } from "react-icons/fa";
 import MemberLayout from "@/Layouts/MemberLayout";
 
 function formatDate(dateString) {
@@ -121,7 +121,19 @@ export default function MemberPembayaran({ auth, payments }) {
         };
 
         if (isEditing) {
-            put(`/member/pembayaran/${editingPaymentId}`, options);
+            setData((prevData) => ({
+                ...prevData,
+                _method: "put",
+            }));
+            
+            // Need to set _method manually in options if setData doesn't propagate in time for post
+            post(`/member/pembayaran/${editingPaymentId}`, {
+                ...options,
+                data: {
+                    ...data,
+                    _method: "put",
+                }
+            });
         } else {
             post("/member/pembayaran", options);
         }
@@ -354,49 +366,56 @@ export default function MemberPembayaran({ auth, payments }) {
                                                         : "-"}
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-800">
-                                                    {payment.status?.toLowerCase() !== "approved" ? (
-                                                        <div className="flex items-center gap-2">
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => {
-                                                                    setEditingPaymentId(payment.id);
-                                                                    setShowModal(true);
-                                                                    setPreview(null);
-                                                                    reset();
-                                                                    clearErrors();
-                                                                }}
-                                                                className="px-3 py-1 rounded-lg text-xs font-semibold bg-yellow-100 text-yellow-800 hover:bg-yellow-200 transition-colors"
-                                                            >
-                                                                Edit
-                                                            </button>
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => {
-                                                                    if (!confirm("Yakin ingin menghapus riwayat pembayaran ini?")) return;
-                                                                    router.delete(`/member/pembayaran/${payment.id}`, {
-                                                                        preserveScroll: true,
-                                                                        onSuccess: () => toast.success("Riwayat pembayaran berhasil dihapus."),
-                                                                        onError: () => toast.error("Gagal menghapus riwayat pembayaran."),
-                                                                    });
-                                                                }}
-                                                                className="px-3 py-1 rounded-lg text-xs font-semibold bg-red-100 text-red-800 hover:bg-red-200 transition-colors"
-                                                            >
-                                                                Hapus
-                                                            </button>
-                                                        </div>
-                                                    ) : (
-                                                        <span className="text-gray-400 text-xs italic">-</span>
-                                                    )}
+                                                    <div className="flex items-center gap-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setEditingPaymentId(payment.id);
+                                                                setShowModal(true);
+                                                                setPreview(null);
+                                                                reset();
+                                                                clearErrors();
+                                                            }}
+                                                            disabled={payment.status?.toLowerCase() === "approved"}
+                                                            className={`flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-bold shadow-md transition-all duration-300 ${
+                                                                payment.status?.toLowerCase() === "approved"
+                                                                    ? "bg-gray-100 text-gray-400 cursor-not-allowed shadow-none"
+                                                                    : "bg-gradient-to-r from-amber-400 to-orange-500 text-white hover:from-amber-500 hover:to-orange-600 hover:shadow-lg transform hover:-translate-y-0.5"
+                                                            }`}
+                                                            title={payment.status?.toLowerCase() === "approved" ? "Tidak dapat mengedit pembayaran yang sudah disetujui" : "Edit Pembayaran"}
+                                                        >
+                                                            <FaEdit className="w-4 h-4 drop-shadow-sm" />
+                                                            <span>Edit</span>
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                if (!confirm("Yakin ingin menghapus riwayat pembayaran ini?")) return;
+                                                                router.delete(`/member/pembayaran/${payment.id}`, {
+                                                                    preserveScroll: true,
+                                                                    onSuccess: () => toast.success("Riwayat pembayaran berhasil dihapus."),
+                                                                    onError: () => toast.error("Gagal menghapus riwayat pembayaran."),
+                                                                });
+                                                            }}
+                                                            disabled={payment.status?.toLowerCase() === "approved"}
+                                                            className={`flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-bold shadow-md transition-all duration-300 ${
+                                                                payment.status?.toLowerCase() === "approved"
+                                                                    ? "bg-gray-100 text-gray-400 cursor-not-allowed shadow-none"
+                                                                    : "bg-gradient-to-r from-rose-500 to-red-600 text-white hover:from-rose-600 hover:to-red-700 hover:shadow-lg transform hover:-translate-y-0.5"
+                                                            }`}
+                                                            title={payment.status?.toLowerCase() === "approved" ? "Tidak dapat menghapus pembayaran yang sudah disetujui" : "Hapus Pembayaran"}
+                                                        >
+                                                            <FaTrash className="w-4 h-4 drop-shadow-sm" />
+                                                            <span>Hapus</span>
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan="3" className="px-6 py-10 text-center text-gray-500 font-medium">
-                                                <div className="flex flex-col items-center gap-2">
-                                                    <FaHistory className="w-8 h-8 text-gray-300" />
-                                                    <p>Belum ada data pembayaran.</p>
-                                                </div>
+                                            <td colSpan="5" className="px-6 py-10 text-center text-gray-500">
+                                                Belum ada data pembayaran
                                             </td>
                                         </tr>
                                     )}
