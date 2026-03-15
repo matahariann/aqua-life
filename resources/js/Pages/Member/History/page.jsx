@@ -4,7 +4,7 @@ import { FaEye, FaEdit, FaPrint } from "react-icons/fa";
 import { router, Link } from "@inertiajs/react";
 import MemberLayout from "../../../Layouts/MemberLayout";
 
-export default function MemberHistory({ histories }) {
+export default function MemberHistory({ histories, auth }) {
     const [perPage, setPerPage] = useState(histories.per_page || 10);
 
     useEffect(() => {
@@ -101,9 +101,27 @@ export default function MemberHistory({ histories }) {
                         </div>
                     </div>
 
-                    {/* Table Container */}
-                    <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-                        <div className="bg-gradient-to-r from-cyan-500 to-emerald-500 p-1 rounded-xl shadow-lg ring-4 ring-white/30"></div>
+                    {!auth.user.membership ? (
+                        <div className="bg-white rounded-2xl shadow-lg p-10 flex flex-col items-center justify-center text-center">
+                            <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-6">
+                                <svg className="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                            </div>
+                            <h2 className="text-2xl font-bold text-gray-800 mb-2">Akses Terkunci</h2>
+                            <p className="text-gray-600 mb-8 max-w-md">
+                                Maaf, fitur History hanya tersedia untuk member aktif. Silakan lakukan pendaftaran atau perpanjang masa aktif membership Anda untuk menikmati fitur ini.
+                            </p>
+                            <Link 
+                                href="/member/pembayaran" 
+                                className="px-8 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all text-lg"
+                            >
+                                Menuju Halaman Pembayaran
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                            <div className="bg-gradient-to-r from-cyan-500 to-emerald-500 p-1 rounded-xl shadow-lg ring-4 ring-white/30"></div>
                         
                         {/* Per Page Selector */}
                         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
@@ -271,6 +289,7 @@ export default function MemberHistory({ histories }) {
                             </div>
                         </div>
                     </div>
+                    )}
                 </div>
             </main>
         </MemberLayout>

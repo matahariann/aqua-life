@@ -27,7 +27,7 @@ import PrintReport from "@/Components/HitungKualitasAir/PrintReport";
 
 // --- Main Page Component ---
 
-export default function MemberHitungKualitasAir({ geoZones, waterTypes, bioticFamilies, initialData, isHistoryView = false, resultData = null }) {
+export default function MemberHitungKualitasAir({ auth, geoZones, waterTypes, bioticFamilies, initialData, isHistoryView = false, resultData = null }) {
     const [currentStep, setCurrentStep] = useState(isHistoryView ? 4 : 1);
     const [result, setResult] = useState(resultData); // To store result after submission or directly if history view
     const [validationErrors, setValidationErrors] = useState({}); // To track empty fields
@@ -263,6 +263,26 @@ export default function MemberHitungKualitasAir({ geoZones, waterTypes, bioticFa
                             <p className="opacity-90 mt-1">Metode Weighted Sum Model (WSM)</p>
                         </div>
 
+                        {!auth.user.membership ? (
+                            <div className="flex-1 flex flex-col items-center justify-center p-10 text-center bg-gray-50/50">
+                                <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-6">
+                                    <svg className="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                    </svg>
+                                </div>
+                                <h2 className="text-2xl font-bold text-gray-800 mb-2">Akses Terkunci</h2>
+                                <p className="text-gray-600 mb-8 max-w-md">
+                                    Maaf, fitur Hitung Kualitas Air hanya tersedia untuk member aktif. Silakan lakukan pendaftaran atau perpanjang masa aktif membership Anda untuk menikmati fitur ini.
+                                </p>
+                                <a 
+                                    href="/member/pembayaran" 
+                                    className="px-8 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all text-lg mb-8"
+                                >
+                                    Menuju Halaman Pembayaran
+                                </a>
+                            </div>
+                        ) : (
+                            <>
                         {/* Step Indicator */}
                         <div className="pt-8 px-6 shrink-0">
                             <StepIndicator currentStep={currentStep} steps={steps} />
@@ -306,6 +326,8 @@ export default function MemberHitungKualitasAir({ geoZones, waterTypes, bioticFa
                                     </button>
                                 )}
                             </div>
+                        )}
+                            </>
                         )}
                      </div>
                 </div>
