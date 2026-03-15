@@ -121,17 +121,16 @@ export default function MemberPembayaran({ auth, payments }) {
         };
 
         if (isEditing) {
-            setData((prevData) => ({
-                ...prevData,
-                _method: "put",
-            }));
-            
-            // Need to set _method manually in options if setData doesn't propagate in time for post
-            post(`/member/pembayaran/${editingPaymentId}`, {
+            router.post(`/member/pembayaran/${editingPaymentId}`, {
+                _method: 'put',
+                proof: data.proof
+            }, {
                 ...options,
-                data: {
-                    ...data,
-                    _method: "put",
+                onSuccess: (page) => {
+                    options.onSuccess(page);
+                },
+                onError: (err) => {
+                    options.onError(err);
                 }
             });
         } else {
