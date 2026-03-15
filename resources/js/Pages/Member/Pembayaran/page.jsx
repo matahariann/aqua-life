@@ -333,9 +333,16 @@ export default function MemberPembayaran({ auth, payments }) {
                             <div className="px-6 py-3 bg-gray-50 rounded-2xl border border-gray-200 shadow-sm flex items-center gap-3">
                                 <span className="text-sm font-semibold text-gray-600">Status Saat Ini:</span>
                                 {isMembershipActive ? (
-                                    <span className="flex items-center gap-2 text-green-600 font-bold bg-green-100/50 px-3 py-1 rounded-lg">
-                                        <FaCheckCircle /> Aktif
-                                    </span>
+                                    <div className="flex flex-row items-center gap-3">
+                                        <span className="flex items-center gap-2 text-green-600 font-bold bg-green-100/50 px-3 py-1 rounded-lg">
+                                            <FaCheckCircle /> Aktif
+                                        </span>
+                                        {auth.user.membership_start_at && auth.user.membership_end_at && (
+                                            <div className="text-sm text-gray-700 font-semibold bg-gray-100/80 px-3 py-1 rounded-lg border border-gray-200">
+                                                {formatDate(auth.user.membership_start_at)} <span className="text-gray-400 mx-1">-</span> {formatDate(auth.user.membership_end_at)}
+                                            </div>
+                                        )}
+                                    </div>
                                 ) : (
                                     <span className="flex items-center gap-2 text-red-600 font-bold bg-red-100/50 px-3 py-1 rounded-lg">
                                         <FaTimesCircle /> Tidak Aktif
@@ -403,8 +410,6 @@ export default function MemberPembayaran({ auth, payments }) {
                                         <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Bukti Pembayaran</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Status</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Tanggal Pembayaran</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Mulai Membership</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Berakhir Membership</th>
                                     <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Aksi</th>
                                     </tr>
                                 </thead>
@@ -441,16 +446,6 @@ export default function MemberPembayaran({ auth, payments }) {
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-800">
                                                     {formatDate(payment.created_at)}
-                                                </td>
-                                                <td className="px-6 py-4 text-sm text-gray-800">
-                                                    {payment.status?.toLowerCase() === "approved"
-                                                        ? formatDate(payment.user?.membership_start_at)
-                                                        : "-"}
-                                                </td>
-                                                <td className="px-6 py-4 text-sm text-gray-800">
-                                                    {payment.status?.toLowerCase() === "approved"
-                                                        ? formatDate(payment.user?.membership_end_at)
-                                                        : "-"}
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-800">
                                                     <div className="flex items-center gap-2">

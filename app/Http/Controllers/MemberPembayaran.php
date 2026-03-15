@@ -55,6 +55,8 @@ class MemberPembayaran extends Controller
                     'email' => $user->email,
                     'role' => $user->role,
                     'membership' => $user->is_membership,
+                    'membership_start_at' => $user->membership_start_at,
+                    'membership_end_at' => $user->membership_end_at,
                 ]
             ],
             'payments' => $payments,
