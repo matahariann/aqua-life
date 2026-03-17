@@ -18,6 +18,7 @@ class BioticFamiliesSeeder extends Seeder
                 'id' => 1,
                 'name' => 'Capitellidae',
                 'weight' => 6,
+                
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
