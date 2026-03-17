@@ -13,33 +13,33 @@ class PaymentSeeder extends Seeder
      */
     public function run(): void
     {
-        $start = now();
+        // $start = now();
 
-        DB::table('payments')->insert([
-            [
-                'id' => 1,
-                'proof' => 'contoh_bukti_pembayaran.jpeg',
-                'status' => 'approved',
-                'id_user' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'id' => 2,
-                'proof' => 'contoh_bukti_pembayaran.jpeg',
-                'status' => 'pending',
-                'id_user' => 4,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'id' => 3,
-                'proof' => 'contoh_bukti_pembayaran.jpeg',
-                'status' => 'approved',
-                'id_user' => 5,
-                'created_at' => '2026-02-14',
-                'updated_at' => '2026-02-14',
-            ],
-        ]);
+        // DB::table('payments')->insert([
+        //     [
+        //         'id' => 1,
+        //         'proof' => 'contoh_bukti_pembayaran.jpeg',
+        //         'status' => 'approved',
+        //         'id_user' => 3,
+        //         'created_at' => now(),
+        //         'updated_at' => now(),
+        //     ],
+        //     [
+        //         'id' => 2,
+        //         'proof' => 'contoh_bukti_pembayaran.jpeg',
+        //         'status' => 'pending',
+        //         'id_user' => 4,
+        //         'created_at' => now(),
+        //         'updated_at' => now(),
+        //     ],
+        //     [
+        //         'id' => 3,
+        //         'proof' => 'contoh_bukti_pembayaran.jpeg',
+        //         'status' => 'approved',
+        //         'id_user' => 5,
+        //         'created_at' => '2026-02-14',
+        //         'updated_at' => '2026-02-14',
+        //     ],
+        // ]);
     }
 }

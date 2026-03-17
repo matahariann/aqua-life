@@ -15,6 +15,7 @@ use App\Http\Controllers\OperatorHistory;
 use App\Http\Controllers\OperatorHitungKualitasAir;
 use App\Http\Controllers\OperatorKelolaBobot;
 use App\Http\Controllers\OperatorKelolaStation;
+use App\Http\Controllers\MidtransWebhookController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -42,6 +43,9 @@ Route::get('/', function () {
     }
     return redirect()->route('/');
 })->name('root');
+
+// Webhook untuk Midtrans (Tanpa Middleware Auth)
+Route::post('/api/midtrans/webhook', [MidtransWebhookController::class, 'handle']);
 
 Route::middleware('guest')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -89,8 +93,6 @@ Route::middleware('auth')->group(function () {
 
         // Kelola Pembayaran
         Route::get('/kelola-pembayaran', [AdminKelolaPembayaran::class, 'index'])->name('kelola-pembayaran');
-        Route::post('/kelola-pembayaran/{payment}/approve', [AdminKelolaPembayaran::class, 'approve'])->name('kelola-pembayaran.approve');
-        Route::post('/kelola-pembayaran/{payment}/reject', [AdminKelolaPembayaran::class, 'reject'])->name('kelola-pembayaran.reject');
 
         // Kelola Pengguna
         Route::get('/kelola-pengguna', [AdminKelolaPengguna::class, 'index'])->name('kelola-pengguna');

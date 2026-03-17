@@ -12,6 +12,8 @@ class Payment extends Model
     protected $table = 'payments';
 
     protected $fillable = [
+        'order_id',
+        'snap_token',
         'proof',
         'status',
         'id_user',

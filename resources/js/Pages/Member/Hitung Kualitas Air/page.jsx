@@ -260,7 +260,6 @@ export default function MemberHitungKualitasAir({ auth, geoZones, waterTypes, bi
                             <h1 className="text-3xl font-bold flex items-center gap-3">
                                 <FaChartPie className="opacity-80"/> Hitung Kualitas Air
                             </h1>
-                            <p className="opacity-90 mt-1">Metode Weighted Sum Model (WSM)</p>
                         </div>
 
                         {!auth.user.membership ? (

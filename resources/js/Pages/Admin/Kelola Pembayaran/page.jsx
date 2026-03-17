@@ -34,8 +34,8 @@ function StatusBadge({ status }) {
     };
 
     const label = useMemo(() => {
-        if (status === "approved") return "Disetujui";
-        if (status === "rejected") return "Ditolak";
+        if (status === "approved") return "Berhasil";
+        if (status === "rejected") return "Gagal/Ditolak";
         return "Pending";
     }, [status]);
 
@@ -128,22 +128,6 @@ export default function AdminKelolaPembayaran({ payments }) {
         router.get(urlObj.pathname + urlObj.search, {}, { preserveState: true, preserveScroll: true, replace: true });
     };
 
-    const doApprove = (paymentId) => {
-        router.post(`/admin/kelola-pembayaran/${paymentId}/approve`, {}, {
-            preserveScroll: true,
-            onSuccess: () => toast.success("Berhasil!", { description: "Pembayaran disetujui", duration: 2500 }),
-            onError: () => toast.error("Gagal!", { description: "Tidak bisa menyetujui pembayaran", duration: 2500 }),
-        });
-    };
-
-    const doReject = (paymentId) => {
-        router.post(`/admin/kelola-pembayaran/${paymentId}/reject`, {}, {
-            preserveScroll: true,
-            onSuccess: () => toast.success("Berhasil!", { description: "Pembayaran ditolak", duration: 2500 }),
-            onError: () => toast.error("Gagal!", { description: "Tidak bisa menolak pembayaran", duration: 2500 }),
-        });
-    };
-
     const renderPageNumbers = () => {
         const pages = [];
         const currentPage = payments?.current_page || 1;
@@ -183,9 +167,9 @@ export default function AdminKelolaPembayaran({ payments }) {
                                 </div>
                                 <div>
                                     <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 bg-clip-text text-transparent">
-                                        Kelola Pembayaran
+                                        Data Transaksi Membership
                                     </h1>
-                                    <p className="text-gray-600 text-sm">Verifikasi bukti pembayaran member</p>
+                                    <p className="text-gray-600 text-sm">Riwayat pembayaran via Midtrans</p>
                                 </div>
                             </div>
                         </div>
@@ -220,10 +204,9 @@ export default function AdminKelolaPembayaran({ payments }) {
                                     <tr>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">No</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Email</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Bukti</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold">Order ID</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Tanggal Pembayaran</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Status</th>
-                                        <th className="px-6 py-4 text-center text-sm font-semibold">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
@@ -233,7 +216,11 @@ export default function AdminKelolaPembayaran({ payments }) {
                                                 <td className="px-6 py-4 text-sm text-gray-700">{(payments.from || 1) + index}</td>
                                                 <td className="px-6 py-4 text-sm text-gray-800">{p.user?.email || "-"}</td>
                                                 <td className="px-6 py-4 text-sm">
-                                                    {p.proof_url ? (
+                                                    {p.order_id ? (
+                                                        <div className="flex flex-col gap-1">
+                                                            <span className="text-blue-600 font-mono text-xs bg-blue-50 py-1 px-2 rounded border border-blue-100">{p.order_id}</span>
+                                                        </div>
+                                                    ) : p.proof_url ? (
                                                         <button
                                                             type="button"
                                                             onClick={() => setPreview({ open: true, src: p.proof_url, email: p.user?.email || "-" })}
@@ -259,36 +246,6 @@ export default function AdminKelolaPembayaran({ payments }) {
                                                 
                                                 <td className="px-6 py-4 text-sm">
                                                     <StatusBadge status={p.status} />
-                                                </td>
-                                                <td className="px-6 py-4 text-sm">
-                                                    <div className="flex items-center justify-center gap-2">
-                                                        <button
-                                                            onClick={() => doApprove(p.id)}
-                                                            disabled={p.status === "approved"}
-                                                            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all ${
-                                                                p.status === "approved"
-                                                                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                                                                    : "bg-green-600 hover:bg-green-700 text-white shadow-sm"
-                                                            }`}
-                                                            title="Setujui"
-                                                        >
-                                                            <CheckCircle2 className="w-4 h-4" />
-                                                            Setujui
-                                                        </button>
-                                                        <button
-                                                            onClick={() => doReject(p.id)}
-                                                            disabled={p.status === "rejected"}
-                                                            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all ${
-                                                                p.status === "rejected"
-                                                                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                                                                    : "bg-red-600 hover:bg-red-700 text-white shadow-sm"
-                                                            }`}
-                                                            title="Tolak"
-                                                        >
-                                                            <XCircle className="w-4 h-4" />
-                                                            Tolak
-                                                        </button>
-                                                    </div>
                                                 </td>
                                             </tr>
                                         ))
@@ -365,6 +322,7 @@ export default function AdminKelolaPembayaran({ payments }) {
                     </div>
                 </div>
 
+                {/* Legacy Image Preview Modal */}
                 <ProofPreviewModal
                     isOpen={preview.open}
                     onClose={() => setPreview({ open: false, src: "", email: "" })}

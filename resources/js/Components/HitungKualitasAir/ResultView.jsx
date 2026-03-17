@@ -68,7 +68,7 @@ export default function ResultView({
 
             {result && (
                 <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl shadow-sm border border-blue-100 p-8 mb-8 text-center">
-                    <h3 className="text-lg font-bold text-gray-700 mb-2">Skor Kualitas Air (WSM Normalisasi)</h3>
+                    <h3 className="text-lg font-bold text-gray-700 mb-2">Skor Kualitas Air</h3>
                     <div className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600 drop-shadow-sm mb-4">
                         {result.value}
                     </div>

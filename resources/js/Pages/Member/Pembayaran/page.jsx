@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useForm, router } from "@inertiajs/react";
+import { useForm, router, usePage } from "@inertiajs/react";
 import { toast, Toaster } from "sonner";
 import { ChevronLeft, ChevronRight, Eye, X, Trash2 } from "lucide-react";
 import { FaMoneyBillWave, FaUpload, FaTimes, FaCamera, FaHistory, FaCheckCircle, FaClock, FaTimesCircle, FaEdit, FaTrash } from "react-icons/fa";
@@ -71,7 +71,7 @@ function ProofPreviewModal({ isOpen, onClose, src }) {
     );
 }
 
-function DeletePaymentModal({
+function CancelPaymentModal({
     isOpen,
     onClose,
     onConfirm,
@@ -112,14 +112,11 @@ function DeletePaymentModal({
                     </div>
 
                     <h3 className="text-3xl font-bold text-white mb-4 tracking-tight drop-shadow-lg">
-                        Konfirmasi Hapus
+                        Konfirmasi Pembatalan
                     </h3>
 
                     <p className="text-white/90 text-base leading-relaxed mb-6 px-4 drop-shadow-md">
-                        Apakah Anda yakin ingin menghapus riwayat pembayaran ini?
-                    </p>
-                    <p className="text-white/80 text-sm mb-10 drop-shadow-md">
-                        Tindakan ini tidak dapat dibatalkan.
+                        Apakah Anda yakin ingin membatalkan transaksi pembayaran ini?
                     </p>
 
                     <div className="flex gap-4">
@@ -128,7 +125,7 @@ function DeletePaymentModal({
                             disabled={processing}
                             className="flex-1 bg-white/20 backdrop-blur-md border-2 border-white/40 text-white font-semibold py-4 px-6 rounded-xl hover:bg-white/30 hover:border-white/60 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                         >
-                            Batal
+                            Tutup
                         </button>
                         <button
                             onClick={onConfirm}
@@ -136,18 +133,11 @@ function DeletePaymentModal({
                             className="flex-1 bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-red-700 hover:via-red-600 hover:to-red-700 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group border border-white/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                         >
                             <span className="relative z-10 flex items-center justify-center gap-2">
-                                {processing ? "Menghapus..." : "Ya, Hapus"}
+                                {processing ? "Membatalkan..." : "Ya, Batalkan"}
                                 <Trash2 className="text-lg" />
                             </span>
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
-                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-red-400/0 via-red-400/20 to-red-400/0 blur-xl transition-opacity duration-500"></div>
                         </button>
                     </div>
-                </div>
-
-                <div className="relative h-3 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/20 to-white/10"></div>
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer"></div>
                 </div>
             </div>
         </div>
@@ -155,79 +145,94 @@ function DeletePaymentModal({
 }
 
 export default function MemberPembayaran({ auth, payments }) {
-    const [showModal, setShowModal] = useState(false);
+    const { flash } = usePage().props;
     const [previewModal, setPreviewModal] = useState({ open: false, src: "" });
-    const [preview, setPreview] = useState(null);
     const [perPage, setPerPage] = useState(payments.per_page || 10);
-    const [editingPaymentId, setEditingPaymentId] = useState(null);
-    const [showDeleteModal, setShowDeleteModal] = useState({ open: false, id: null });
+    const [showCancelModal, setShowCancelModal] = useState({ open: false, id: null });
 
-    const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm({
-        proof: null,
-    });
+    const { post, processing } = useForm();
 
     const isMembershipActive = auth.user.membership;
 
-    const hasPendingPayment = payments.data.some((payment) => payment.status === "Pending");
+    const pendingPayment = payments?.data?.find((payment) => payment.status.toLowerCase() === "pending");
+    const hasPendingPayment = !!pendingPayment;
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setData("proof", file);
-            setPreview(URL.createObjectURL(file));
-            clearErrors("proof");
-        }
-    };
+    // Load Midtrans Snap script
+    useEffect(() => {
+        const clientKey = "Mid-client-GMbKIZPX6C8HOMjU"; // from .env MIDTRANS_CLIENT_KEY
+        const script = document.createElement("script");
+        script.src = "https://app.sandbox.midtrans.com/snap/snap.js"; // Use sandbox for testing
+        script.setAttribute("data-client-key", clientKey);
+        script.async = true;
+        document.body.appendChild(script);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+        return () => {
+            document.body.removeChild(script);
+        };
+    }, []);
+
+    const triggerSnap = (token) => {
+        console.log("triggerSnap called with token:", token);
+        console.log("window.snap exists:", !!window.snap);
         
-        if (!data.proof) {
-            toast.error("Silakan unggah bukti pembayaran terlebih dahulu.");
+        if (!window.snap) {
+            toast.error("Sistem pembayaran belum siap. Silakan refresh halaman.");
             return;
         }
 
-        const isEditing = !!editingPaymentId;
-
-        const options = {
-            preserveScroll: true,
-            onSuccess: () => {
-                setShowModal(false);
-                reset();
-                setPreview(null);
-                setEditingPaymentId(null);
-                toast.success(isEditing ? "Bukti pembayaran berhasil diperbarui!" : "Bukti pembayaran berhasil diunggah!");
+        window.snap.pay(token, {
+            onSuccess: function (result) {
+                console.log("Midtrans Success:", result);
+                toast.success("Pembayaran berhasil!");
+                router.reload();
             },
-            onError: (errors) => {
-                toast.error(isEditing ? "Gagal memperbarui bukti pembayaran." : "Gagal mengunggah bukti pembayaran.");
-                console.error(errors);
+            onPending: function (result) {
+                console.log("Midtrans Pending:", result);
+                toast.info("Menunggu pembayaran diselesaikan.");
+                router.reload();
             },
-        };
-
-        if (isEditing) {
-            router.post(`/member/pembayaran/${editingPaymentId}`, {
-                _method: 'put',
-                proof: data.proof
-            }, {
-                ...options,
-                onSuccess: (page) => {
-                    options.onSuccess(page);
-                },
-                onError: (err) => {
-                    options.onError(err);
-                }
-            });
-        } else {
-            post("/member/pembayaran", options);
-        }
+            onError: function (result) {
+                console.error("Midtrans Error:", result);
+                toast.error("Pembayaran gagal.");
+                router.reload();
+            },
+            onClose: function () {
+                console.log("Midtrans Closed Manually");
+                toast.info("Membutuhkan tindak lanjut pembayaran.");
+                router.reload();
+            }
+        });
     };
 
-    const handleCloseModal = () => {
-        setShowModal(false);
-        setEditingPaymentId(null);
-        reset();
-        setPreview(null);
-        clearErrors();
+    // Listen for snapToken from backend flash data
+    useEffect(() => {
+        console.log("Current Flash data:", flash);
+        if (flash?.snapToken) {
+            console.log("Detected snapToken in flash data:", flash.snapToken);
+            triggerSnap(flash.snapToken);
+        }
+    }, [flash]);
+
+    const handleJoinMembership = () => {
+        console.log("handleJoinMembership clicked");
+        if (pendingPayment?.snap_token) {
+            console.log("Resuming pending payment with token:", pendingPayment.snap_token);
+            // Already initialized, resume payment
+            triggerSnap(pendingPayment.snap_token);
+        } else {
+            console.log("Initiating new POST to /member/pembayaran");
+            // Initialize new payment
+            post("/member/pembayaran", {
+                preserveScroll: true,
+                onSuccess: (page) => {
+                    console.log("POST /member/pembayaran success! Page props:", page.props);
+                },
+                onError: (errors) => {
+                    console.error("POST /member/pembayaran error:", errors);
+                    toast.error("Gagal memulai proses pembayaran.");
+                }
+            });
+        }
     };
 
     const handlePerPageChange = (e) => {
@@ -253,29 +258,15 @@ export default function MemberPembayaran({ auth, payments }) {
         );
     };
 
-    const getStatusIcon = (status) => {
-        if (!status) return null;
-        switch (status.toLowerCase()) {
-            case "approved":
-                return <FaCheckCircle className="text-green-500 w-5 h-5" />;
-            case "pending":
-                return <FaClock className="text-yellow-500 w-5 h-5" />;
-            case "rejected":
-                return <FaTimesCircle className="text-red-500 w-5 h-5" />;
-            default:
-                return null;
-        }
-    };
-
     const getStatusText = (status) => {
         if (!status) return null;
         switch (status.toLowerCase()) {
             case "approved":
-                return <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold ring-1 ring-green-300">Disetujui</span>;
+                return <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold ring-1 ring-green-300">Berhasil</span>;
             case "pending":
                 return <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold ring-1 ring-yellow-300">Pending</span>;
             case "rejected":
-                return <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold ring-1 ring-red-300">Ditolak</span>;
+                return <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold ring-1 ring-red-300">Gagal/Ditolak</span>;
             default:
                 return null;
         }
@@ -352,16 +343,16 @@ export default function MemberPembayaran({ auth, payments }) {
                             
                             {!isMembershipActive && (
                                 <button
-                                    onClick={() => setShowModal(true)}
-                                    disabled={hasPendingPayment}
+                                    onClick={handleJoinMembership}
+                                    disabled={processing}
                                     className={`px-8 py-4 rounded-2xl font-bold text-white shadow-xl transition-all duration-300 flex items-center justify-center gap-2
-                                        ${hasPendingPayment 
+                                        ${processing 
                                             ? 'bg-gray-400 cursor-not-allowed opacity-80' 
                                             : 'bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 hover:scale-105 hover:shadow-2xl'
                                         }`}
                                 >
-                                    <FaUpload className="w-5 h-5" />
-                                    {hasPendingPayment ? "Menunggu Verifikasi..." : "Join Membership"}
+                                    <FaMoneyBillWave className="w-5 h-5" />
+                                    {hasPendingPayment ? "Selesaikan Pembayaran" : "Join Membership"}
                                 </button>
                             )}
                         </div>
@@ -372,8 +363,8 @@ export default function MemberPembayaran({ auth, payments }) {
                         <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-5 flex items-start gap-4 shadow-sm animate-pulse-slow">
                             <FaClock className="text-yellow-600 w-6 h-6 shrink-0 mt-0.5" />
                             <div>
-                                <h3 className="text-yellow-800 font-bold text-lg">Pembayaran Sedang Diproses</h3>
-                                <p className="text-yellow-700 text-sm mt-1 font-medium">Anda telah mengunggah bukti pembayaran. Silakan tunggu konfirmasi dari Admin. Anda tidak dapat mengajukan lagi hingga proses ini selesai.</p>
+                                <h3 className="text-yellow-800 font-bold text-lg">Pembayaran Menunggu Penyelesaian</h3>
+                                <p className="text-yellow-700 text-sm mt-1 font-medium">Anda memiliki transaksi yang belum selesai. Silakan klik "Selesaikan Pembayaran" untuk melanjutkan, atau batalkan transaksi di riwayat bawah.</p>
                             </div>
                         </div>
                     )}
@@ -407,9 +398,9 @@ export default function MemberPembayaran({ auth, payments }) {
                                 <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white relative sticky top-0 z-10">
                                     <tr>
                                     <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">No</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Bukti Pembayaran</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Order ID</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Status</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Tanggal Pembayaran</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Tanggal Dibuat</th>
                                     <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider">Aksi</th>
                                     </tr>
                                 </thead>
@@ -427,7 +418,7 @@ export default function MemberPembayaran({ auth, payments }) {
                                                             title="Klik untuk lihat gambar"
                                                         >
                                                             <img
-                                                                src={payment.proof_url}
+                                                                src={payment.order_id}
                                                                 alt="Bukti"
                                                                 className="w-14 h-14 rounded-xl object-cover border border-gray-200 shadow-sm group-hover:shadow-md transition"
                                                             />
@@ -435,6 +426,10 @@ export default function MemberPembayaran({ auth, payments }) {
                                                                 <Eye className="w-4 h-4" />
                                                             </span>
                                                         </button>
+                                                    ) : payment.snap_token ? (
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded border border-blue-200">Midtrans Payment</span>
+                                                        </div>
                                                     ) : (
                                                         <span className="text-gray-500">-</span>
                                                     )}
@@ -449,42 +444,22 @@ export default function MemberPembayaran({ auth, payments }) {
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-800">
                                                     <div className="flex items-center gap-2">
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => {
-                                                                setEditingPaymentId(payment.id);
-                                                                setShowModal(true);
-                                                                setPreview(null);
-                                                                reset();
-                                                                clearErrors();
-                                                            }}
-                                                            disabled={payment.status?.toLowerCase() === "approved"}
-                                                            className={`flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-bold shadow-md transition-all duration-300 ${
-                                                                payment.status?.toLowerCase() === "approved"
-                                                                    ? "bg-gray-100 text-gray-400 cursor-not-allowed shadow-none"
-                                                                    : "bg-gradient-to-r from-amber-400 to-orange-500 text-white hover:from-amber-500 hover:to-orange-600 hover:shadow-lg transform hover:-translate-y-0.5"
-                                                            }`}
-                                                            title={payment.status?.toLowerCase() === "approved" ? "Tidak dapat mengedit pembayaran yang sudah disetujui" : "Edit Pembayaran"}
-                                                        >
-                                                            <FaEdit className="w-4 h-4 drop-shadow-sm" />
-                                                            <span>Edit</span>
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => {
-                                                                setShowDeleteModal({ open: true, id: payment.id });
-                                                            }}
-                                                            disabled={payment.status?.toLowerCase() === "approved"}
-                                                            className={`flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-bold shadow-md transition-all duration-300 ${
-                                                                payment.status?.toLowerCase() === "approved"
-                                                                    ? "bg-gray-100 text-gray-400 cursor-not-allowed shadow-none"
-                                                                    : "bg-gradient-to-r from-rose-500 to-red-600 text-white hover:from-rose-600 hover:to-red-700 hover:shadow-lg transform hover:-translate-y-0.5"
-                                                            }`}
-                                                            title={payment.status?.toLowerCase() === "approved" ? "Tidak dapat menghapus pembayaran yang sudah disetujui" : "Hapus Pembayaran"}
-                                                        >
-                                                            <FaTrash className="w-4 h-4 drop-shadow-sm" />
-                                                            <span>Hapus</span>
-                                                        </button>
+                                                        {payment.status?.toLowerCase() === "pending" && (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    setShowCancelModal({ open: true, id: payment.id });
+                                                                }}
+                                                                className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-bold shadow-md transition-all duration-300 bg-gradient-to-r from-rose-500 to-red-600 text-white hover:from-rose-600 hover:to-red-700 hover:shadow-lg transform hover:-translate-y-0.5"
+                                                                title="Batalkan Transaksi"
+                                                            >
+                                                                <FaTimes className="w-4 h-4 drop-shadow-sm" />
+                                                                <span>Batalkan</span>
+                                                            </button>
+                                                        )}
+                                                        {payment.status?.toLowerCase() !== "pending" && (
+                                                            <span className="text-gray-400 italic text-xs">Tidak ada aksi</span>
+                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -564,131 +539,26 @@ export default function MemberPembayaran({ auth, payments }) {
                     </div>
                 </div>
 
-                {/* Upload Modal */}
-                {showModal && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-                        <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden animate-in zoom-in-95 duration-200">
-                            {/* Modal Header */}
-                            <div className="bg-gradient-to-r from-blue-600 to-cyan-600 p-6 flex items-center justify-between text-white relative overflow-hidden">
-                                <div className="absolute inset-0 bg-white/10 w-full h-full" style={{ background: 'radial-gradient(circle at top right, rgba(255,255,255,0.2) 0%, transparent 60%)'}}></div>
-                                <h3 className="text-xl font-bold flex items-center gap-3 relative z-10">
-                                    <FaUpload /> Upload Bukti
-                                </h3>
-                                <button 
-                                    onClick={handleCloseModal}
-                                    className="p-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors relative z-10"
-                                >
-                                    <FaTimes />
-                                </button>
-                            </div>
-
-                            {/* Modal Body */}
-                            <form onSubmit={handleSubmit} className="p-8">
-                                <div className="space-y-6">
-                                    {/* Info text */}
-                                    <div className="bg-blue-50 text-blue-800 p-4 rounded-xl text-sm font-medium border border-blue-100 flex gap-3">
-                                        <FaMoneyBillWave className="w-5 h-5 shrink-0 mt-0.5 text-blue-500" />
-                                        <p>Silakan upload bukti transfer pembayaran membership Anda. Admin akan melakukan verifikasi setelah bukti diunggah.</p>
-                                    </div>
-
-                                    {/* Upload Area */}
-                                    <div className="relative">
-                                        <input 
-                                            type="file" 
-                                            id="proof" 
-                                            accept="image/jpeg,image/png,image/jpg"
-                                            onChange={handleFileChange}
-                                            className="hidden" 
-                                        />
-                                        <label 
-                                            htmlFor="proof" 
-                                            className={`flex flex-col items-center justify-center w-full h-56 border-2 border-dashed rounded-2xl cursor-pointer transition-all duration-300
-                                                ${preview 
-                                                    ? 'border-blue-400 bg-blue-50/50' 
-                                                    : errors.proof 
-                                                        ? 'border-red-400 bg-red-50 hover:bg-red-100' 
-                                                        : 'border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-blue-400'
-                                                }`}
-                                        >
-                                            {preview ? (
-                                                <div className="relative w-full h-full p-2">
-                                                    <img src={preview} alt="Preview" className="w-full h-full object-contain rounded-xl" />
-                                                    <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl m-2 rounded-xl">
-                                                        <span className="text-white font-bold bg-black/50 px-4 py-2 rounded-lg backdrop-blur-sm">Ganti Gambar</span>
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <div className="flex flex-col items-center justify-center pt-5 pb-6 text-gray-500 group">
-                                                    <div className="w-16 h-16 bg-white rounded-full shadow-sm border border-gray-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                                        <FaCamera className="w-8 h-8 text-blue-400 group-hover:text-blue-600 transition-colors" />
-                                                    </div>
-                                                    <p className="mb-2 text-sm font-bold text-gray-700">Klik untuk upload foto</p>
-                                                    <p className="text-xs text-gray-400 font-medium">JPG, PNG atau JPEG (Max. 2MB)</p>
-                                                </div>
-                                            )}
-                                        </label>
-                                        {errors.proof && (
-                                            <p className="mt-2 text-sm text-red-500 font-bold px-2 flex items-center gap-1">
-                                                <FaTimesCircle /> {errors.proof}
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {/* Modal Footer */}
-                                <div className="mt-8 flex gap-3">
-                                    <button
-                                        type="button"
-                                        onClick={handleCloseModal}
-                                        className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition-colors focus:ring-4 focus:ring-gray-200 outline-none"
-                                    >
-                                        Batal
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        disabled={processing || !data.proof}
-                                        className={`flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 focus:ring-4 focus:ring-blue-300 outline-none
-                                            ${(processing || !data.proof) && 'opacity-70 cursor-not-allowed'}`}
-                                    >
-                                        {processing ? (
-                                            <>
-                                                <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                </svg>
-                                                Memproses...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <FaUpload /> Kirim Bukti
-                                            </>
-                                        )}
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                )}
-                {/* Image Preview Modal */}
+                {/* Legacy Image Preview Modal */}
                 <ProofPreviewModal
                     isOpen={previewModal.open}
                     onClose={() => setPreviewModal({ open: false, src: "" })}
                     src={previewModal.src}
                 />
 
-                {/* Confirm Delete Modal */}
-                <DeletePaymentModal
-                    isOpen={showDeleteModal.open}
-                    onClose={() => setShowDeleteModal({ open: false, id: null })}
+                {/* Confirm Cancel Modal */}
+                <CancelPaymentModal
+                    isOpen={showCancelModal.open}
+                    onClose={() => setShowCancelModal({ open: false, id: null })}
                     onConfirm={() => {
-                        if (showDeleteModal.id) {
-                            router.delete(`/member/pembayaran/${showDeleteModal.id}`, {
+                        if (showCancelModal.id) {
+                            router.delete(`/member/pembayaran/${showCancelModal.id}`, {
                                 preserveScroll: true,
                                 onSuccess: () => {
-                                    setShowDeleteModal({ open: false, id: null });
-                                    toast.success("Riwayat pembayaran berhasil dihapus.");
+                                    setShowCancelModal({ open: false, id: null });
+                                    toast.success("Riwayat pembayaran berhasil dibatalkan.");
                                 },
-                                onError: () => toast.error("Gagal menghapus riwayat pembayaran."),
+                                onError: () => toast.error("Gagal membatalkan riwayat pembayaran."),
                             });
                         }
                     }}

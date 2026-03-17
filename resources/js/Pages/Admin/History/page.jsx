@@ -92,7 +92,7 @@ export default function AdminHistory({ histories }) {
                             </div>
                             <div>
                                 <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 bg-clip-text text-transparent">
-                                    History Admin
+                                    History
                                 </h1>
                                 <p className="text-gray-600 text-sm">
                                     Riwayat perhitungan kualitas air

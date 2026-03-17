@@ -43,6 +43,7 @@ class AdminKelolaPembayaran extends Controller
                     'status' => $payment->status,
                     'proof' => $payment->proof,
                     'proof_url' => $proofUrl,
+                    'order_id' => $payment->order_id,
                     'created_at' => $payment->created_at,
                     'user' => [
                         'email' => $payment->user?->email,
@@ -62,46 +63,5 @@ class AdminKelolaPembayaran extends Controller
             ],
             'payments' => $payments,
         ]);
-    }
-
-    public function approve(Payment $payment)
-    {
-        // Set status payment disetujui
-        $payment->status = 'approved';
-
-        // Tanggal mulai membership = saat disetujui
-        $start = now();
-        $end = $start->copy()->addMonth();
-
-        // Simpan tanggal mulai & berakhir membership di user
-        $payment->save();
-
-        // Update status membership user terkait
-        $user = $payment->user;
-        if ($user && $user->role === 'member') {
-            $user->is_membership = true;
-            $user->membership_start_at = $start;
-            $user->membership_end_at = $end;
-            $user->save();
-        }
-
-        return redirect()->back()->with('success', 'Pembayaran disetujui');
-    }
-
-    public function reject(Payment $payment)
-    {
-        $payment->status = 'rejected';
-        $payment->save();
-
-        // Update status membership user terkait menjadi tidak aktif jika ditolak
-        $user = $payment->user;
-        if ($user && $user->role === 'member') {
-            $user->is_membership = false;
-            $user->membership_start_at = null;
-            $user->membership_end_at = null;
-            $user->save();
-        }
-
-        return redirect()->back()->with('success', 'Pembayaran ditolak dan status membership dinonaktifkan.');
     }
 }

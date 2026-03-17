@@ -20,7 +20,7 @@ const MemberSidebar = ({ handleLogout }) => {
         {
             href: "/member/pembayaran",
             icon: CiMoneyBill,
-            label: "Pembayaran",
+            label: "Membership",
         },
     ];
 

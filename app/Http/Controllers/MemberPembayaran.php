@@ -39,6 +39,7 @@ class MemberPembayaran extends Controller
                     'status' => $payment->status,
                     'proof' => $payment->proof,
                     'proof_url' => $proofUrl,
+                    'snap_token' => $payment->snap_token,
                     'created_at' => $payment->created_at,
                     'user' => [
                         'membership_start_at' => $payment->user?->membership_start_at,
@@ -65,41 +66,53 @@ class MemberPembayaran extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'proof' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ], [
-            'proof.required' => 'Bukti pembayaran wajib diunggah',
-            'proof.image' => 'File harus berupa gambar',
-            'proof.mimes' => 'Format gambar harus jpeg, png, jpg, atau gif',
-            'proof.max' => 'Ukuran gambar maksimal 2MB',
-        ]);
-
         $user = Auth::user();
 
         // Check if there's a pending payment
         $pendingPayment = Payment::where('id_user', $user->id)
-            ->where('status', 'Pending')
+            ->where('status', 'pending')
+            ->orWhere('status', 'Pending')
             ->first();
 
         if ($pendingPayment) {
+            // If already has snap_token, just return it so they can pay
+            if ($pendingPayment->snap_token) {
+                return redirect()->back()->with('snapToken', $pendingPayment->snap_token);
+            }
             return redirect()->back()->with('error', 'Anda masih memiliki pengajuan pembayaran yang sedang diproses.');
         }
 
-        if ($request->hasFile('proof')) {
-            $image = $request->file('proof');
-            // Store image in public disk, in "payments" folder
-            $path = $image->store('payments', 'public');
+        \Midtrans\Config::$serverKey = config('midtrans.server_key');
+        \Midtrans\Config::$isProduction = config('midtrans.is_production');
+        \Midtrans\Config::$isSanitized = config('midtrans.is_sanitized');
+        \Midtrans\Config::$is3ds = config('midtrans.is_3ds');
+
+        $orderId = 'MEMBERSHIP-' . $user->id . '-' . time();
+        $params = [
+            'transaction_details' => [
+                'order_id' => $orderId,
+                'gross_amount' => 50000, // Harga membership
+            ],
+            'customer_details' => [
+                'first_name' => $user->name,
+                'email' => $user->email,
+            ]
+        ];
+
+        try {
+            $snapToken = \Midtrans\Snap::getSnapToken($params);
 
             Payment::create([
                 'id_user' => $user->id,
-                'proof' => $path,
-                'status' => 'Pending',
+                'status' => 'pending',
+                'order_id' => $orderId,
+                'snap_token' => $snapToken,
             ]);
 
-            return redirect()->back()->with('success', 'Bukti pembayaran berhasil diunggah dan sedang diproses admin.');
+            return redirect()->back()->with('snapToken', $snapToken);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menghubungkan ke Midtrans: ' . $e->getMessage());
         }
-
-        return redirect()->back()->with('error', 'Gagal mengunggah bukti pembayaran.');
     }
 
     /**
@@ -107,41 +120,9 @@ class MemberPembayaran extends Controller
      */
     public function update(Request $request, Payment $payment)
     {
-        $user = Auth::user();
-
-        // Pastikan payment milik user & belum disetujui
-        if ($payment->id_user !== $user->id || strtolower($payment->status) === 'approved') {
-            abort(403, 'Anda tidak dapat mengubah pembayaran ini.');
-        }
-
-        $request->validate([
-            'proof' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ], [
-            'proof.image' => 'File harus berupa gambar',
-            'proof.mimes' => 'Format gambar harus jpeg, png, jpg, atau gif',
-            'proof.max' => 'Ukuran gambar maksimal 2MB',
-        ]);
-
-        $dataToUpdate = [
-            // Reset status ke Pending sesuai permintaan user
-            'status' => 'Pending',
-        ];
-
-        if ($request->hasFile('proof')) {
-            // Hapus file lama jika ada dan tersimpan di storage
-            if ($payment->proof && strpos($payment->proof, 'payments/') === 0 && Storage::disk('public')->exists($payment->proof)) {
-                Storage::disk('public')->delete($payment->proof);
-            }
-
-            $image = $request->file('proof');
-            $path = $image->store('payments', 'public');
-
-            $dataToUpdate['proof'] = $path;
-        }
-
-        $payment->update($dataToUpdate);
-
-        return redirect()->back()->with('success', 'Bukti pembayaran berhasil diperbarui menjadi Pending.');
+        // Dengan Midtrans, tidak perlu manual update bukti pembayaran.
+        // Jika ada status gagal, user buat baru atau bayar ulang.
+        return redirect()->back()->with('error', 'Pembayaran menggunakan Midtrans tidak dapat diedit secara manual.');
     }
 
     /**
@@ -153,16 +134,12 @@ class MemberPembayaran extends Controller
 
         // Pastikan payment milik user & belum disetujui
         if ($payment->id_user !== $user->id || strtolower($payment->status) === 'approved') {
-            abort(403, 'Anda tidak dapat menghapus pembayaran ini.');
+            abort(403, 'Anda tidak dapat membatalkan pembayaran ini.');
         }
 
-        // Hapus file bukti jika ada di storage
-        if ($payment->proof && strpos($payment->proof, 'payments/') === 0 && Storage::disk('public')->exists($payment->proof)) {
-            Storage::disk('public')->delete($payment->proof);
-        }
-
+        // Jika payment ini di-cancel, kita hapus dari database
         $payment->delete();
 
-        return redirect()->back()->with('success', 'Riwayat pembayaran berhasil dihapus.');
+        return redirect()->back()->with('success', 'Transaksi berhasil dibatalkan.');
     }
 }

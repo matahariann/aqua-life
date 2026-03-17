@@ -260,7 +260,6 @@ export default function AdminHitungKualitasAir({ geoZones, waterTypes, bioticFam
                             <h1 className="text-3xl font-bold flex items-center gap-3">
                                 <FaChartPie className="opacity-80"/> Hitung Kualitas Air
                             </h1>
-                            <p className="opacity-90 mt-1">Metode Weighted Sum Model (WSM)</p>
                         </div>
 
                         {/* Step Indicator */}
