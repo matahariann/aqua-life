@@ -91,7 +91,7 @@ class MemberPembayaran extends Controller
         $params = [
             'transaction_details' => [
                 'order_id' => $orderId,
-                'gross_amount' => 50000, // Harga membership
+                'gross_amount' => 500000,
             ],
             'customer_details' => [
                 'first_name' => $user->name,

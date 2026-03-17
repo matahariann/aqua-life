@@ -132,7 +132,7 @@ class OperatorHitungKualitasAir extends Controller
                     ]);
                 }
             }
-        } // Close if (!$isPreview)
+        } 
 
         // --- WSM Calculation ---
         $totalScore = 0;
@@ -150,10 +150,6 @@ class OperatorHitungKualitasAir extends Controller
             ];
 
             foreach ($mainParams as $name => $data) {
-                // Determine parameter name string for DB lookup if needed (e.g. capitalized)
-                // For simplicity, we assume name matches or we map it.
-                // Actually seeding uses names like "Salinity", "PH", etc.
-                // Let's capitalize first letter or use map.
                 $dbName = match($name) {
                     'ph' => 'PH',
                     'dissolved_oxygen' => 'Dissolved Oxygen',
@@ -237,10 +233,6 @@ class OperatorHitungKualitasAir extends Controller
             }
             
             // 4. Family Biotic
-            // Sum of weights of ONLY the families present? Or Average?
-            // "Weighted Sum Model" usually implies sum of (Weight * Value).
-            // But here, the "Value" IS the weight in the DB?
-            // Let's assume we sum the weights of identified families.
             if (!empty($validated['families'])) {
                 foreach ($validated['families'] as $fam) {
                     if (empty($fam['id_family'])) continue;
@@ -371,21 +363,19 @@ class OperatorHitungKualitasAir extends Controller
 
     private function getStatus($val)
     {
-        if ($val >= 80) return 'Sangat Baik';
-        if ($val >= 60) return 'Baik';
-        if ($val >= 40) return 'Sedang';
-        if ($val >= 20) return 'Buruk';
-        return 'Sangat Buruk';
+        if ($val >= 55.51) return 'Undisturbed Areas';
+        if ($val >= 37.01) return 'Lightly Disturbed Areas';
+        if ($val >= 18.51) return 'Moderately Disturbed Areas';
+        return 'Heavily Disturbed Areas';
     }
     
     private function getConclusion($status)
     {
         return match($status) {
-            'Sangat Baik' => 'Kualitas air sangat baik dan mendukung keberlangsungan ekosistem secara optimal',
-            'Baik' => 'Kualitas air tergolong baik namun mulai menunjukkan tekanan lingkungan ringan',
-            'Sedang' => 'Kualitas air berada pada tingkat sedang dengan indikasi gangguan lingkungan yang cukup signifikan',
-            'Buruk' => 'Kualitas air buruk dan berpotensi mengganggu keseimbangan ekosistem akuatik',
-            'Sangat Buruk' => 'Kualitas air sangat buruk dan menunjukkan kondisi pencemaran berat',
+            'Undisturbed Areas' => 'Water environment condition is healty, within normal range and undisturbed (Undisturbed Areas)',
+            'Lightly Disturbed Areas' => 'Water environment condition is healty, within normal range and lightly disturbed (Lightly Disturbed Areas)',
+            'Moderately Disturbed Areas' => 'Water environment condition is moderately disturbed (Moderately Disturbed Areas)',
+            'Heavily Disturbed Areas' => 'Water environment condition is heavily disturbed (Heavily Disturbed Areas)',
             default => '-'
         };
     }
@@ -393,11 +383,10 @@ class OperatorHitungKualitasAir extends Controller
     private function getRecommendation($status)
     {
         return match($status) {
-            'Sangat Baik' => 'Pertahankan kondisi ini melalui monitoring rutin dan pengelolaan berkelanjutan',
-            'Baik' => 'Lakukan pengawasan dan pengendalian sumber pencemar untuk mencegah penurunan kualitas',
-            'Sedang' => 'Diperlukan tindakan pengelolaan dan mitigasi untuk memperbaiki kondisi perairan',
-            'Buruk' => 'Segera lakukan identifikasi dan penanganan terhadap sumber pencemaran utama',
-            'Sangat Buruk' => 'Diperlukan tindakan pemulihan dan rehabilitasi lingkungan secara segera dan menyeluruh',
+            'Undisturbed Areas' => 'Keep the carrying capacity environment (environmental carrying capacity) under normal/stable conditions (equilibrium)',
+            'Lightly Disturbed Areas' => 'Perform monitoring and control of pollution sources to prevent quality degradation',
+            'Moderately Disturbed Areas' => 'Management and mitigation actions are needed to improve water conditions',
+            'Heavily Disturbed Areas' => 'Immediately identify and handle the main pollution sources',
             default => '-'
         };
     }

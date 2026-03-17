@@ -21,6 +21,14 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
+                $user = Auth::guard($guard)->user();
+                if ($user->role === 'member') {
+                    return redirect()->route('member.history');
+                } elseif ($user->role === 'operator') {
+                    return redirect()->route('operator.history');
+                } elseif ($user->role === 'admin') {
+                    return redirect()->route('admin.kelola-pengguna');
+                }
                 return redirect(RouteServiceProvider::HOME);
             }
         }

@@ -57,6 +57,7 @@ class AuthController extends Controller
             return back()->withInput($request->except('password', 'password_confirmation'));
         }
     }
+    
     public function login()
     {
         if (Auth::check()) {

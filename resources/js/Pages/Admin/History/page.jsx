@@ -139,6 +139,7 @@ export default function AdminHistory({ histories }) {
                                         <th className="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap">Value</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap">Geographical Zone</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap">Type of Location</th>
+                                        <th className="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap">Status</th>
                                         <th className="px-6 py-4 text-center text-sm font-semibold whitespace-nowrap">Action</th>
                                     </tr>
                                 </thead>
@@ -160,6 +161,9 @@ export default function AdminHistory({ histories }) {
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-700">
                                                     {history.station?.water_type?.name || '-'}
+                                                </td>
+                                                <td className="px-6 py-4 text-sm text-gray-700">
+                                                    {history.status || '-'}
                                                 </td>
                                                 <td className="px-6 py-4 text-sm">
                                                     <div className="flex items-center justify-center gap-2">
