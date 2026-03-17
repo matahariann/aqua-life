@@ -220,22 +220,6 @@ export default function AdminKelolaPembayaran({ payments }) {
                                                         <div className="flex flex-col gap-1">
                                                             <span className="text-blue-600 font-mono text-xs bg-blue-50 py-1 px-2 rounded border border-blue-100">{p.order_id}</span>
                                                         </div>
-                                                    ) : p.proof_url ? (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => setPreview({ open: true, src: p.proof_url, email: p.user?.email || "-" })}
-                                                            className="group flex items-center gap-3 text-left"
-                                                            title="Klik untuk lihat gambar"
-                                                        >
-                                                            <img
-                                                                src={p.proof_url}
-                                                                alt="Bukti"
-                                                                className="w-14 h-14 rounded-xl object-cover border border-gray-200 shadow-sm group-hover:shadow-md transition"
-                                                            />
-                                                            <span className="text-blue-600 font-semibold group-hover:underline inline-flex items-center gap-2">
-                                                                <Eye className="w-4 h-4" />
-                                                            </span>
-                                                        </button>
                                                     ) : (
                                                         <span className="text-gray-500">-</span>
                                                     )}

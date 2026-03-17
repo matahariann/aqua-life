@@ -40,6 +40,7 @@ class MemberPembayaran extends Controller
                     'proof' => $payment->proof,
                     'proof_url' => $proofUrl,
                     'snap_token' => $payment->snap_token,
+                    'order_id' => $payment->order_id,
                     'created_at' => $payment->created_at,
                     'user' => [
                         'membership_start_at' => $payment->user?->membership_start_at,
