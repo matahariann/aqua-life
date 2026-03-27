@@ -3,30 +3,56 @@ import { FaFlask, FaVial } from "react-icons/fa";
 
 export default function MainParameterForm({ data, setData, bioticFamilies, errors }) {
     
+    const recalculateTotals = (familiesArray) => {
+        const totalAbundance = familiesArray.reduce((sum, fam) => sum + (parseFloat(fam.abundance) || 0), 0);
+        const uniqueSpecies = new Set(
+            familiesArray
+                .map(f => f.name?.trim().toLowerCase())
+                .filter(name => name)
+        );
+        return { total_abundance: totalAbundance, number_of_species: uniqueSpecies.size };
+    };
+
     const handleAddFamily = () => {
-        setData("families", [
+        const newFamilies = [
             ...data.families,
             { id_family: "", name: "", abundance: 0, taxa_indicator: 0 }
-        ]);
+        ];
+        setData({
+            ...data,
+            families: newFamilies,
+            ...recalculateTotals(newFamilies)
+        });
     };
 
     const handleRemoveFamily = (index) => {
         const newFamilies = [...data.families];
         newFamilies.splice(index, 1);
-        setData("families", newFamilies);
+        setData({
+            ...data,
+            families: newFamilies,
+            ...recalculateTotals(newFamilies)
+        });
     };
 
     const handleFamilyChange = (index, field, value) => {
         const newFamilies = [...data.families];
         newFamilies[index][field] = value;
         
-        // Auto-fill name if selecting from dropdown
+        // Auto-fill name and taxa indicator if selecting from dropdown
         if (field === 'id_family') {
             const selected = bioticFamilies.find(f => f.id == value);
-            if(selected) newFamilies[index]['name'] = selected.name; 
+            if(selected) {
+                newFamilies[index]['name'] = selected.name; 
+                newFamilies[index]['taxa_indicator'] = selected.weight;
+            }
         }
 
-        setData("families", newFamilies);
+        setData({
+            ...data,
+            families: newFamilies,
+            ...recalculateTotals(newFamilies)
+        });
     };
 
     return (
@@ -41,7 +67,7 @@ export default function MainParameterForm({ data, setData, bioticFamilies, error
                     {data.families.map((fam, index) => (
                         <div key={index} className="flex flex-wrap md:flex-nowrap gap-4 items-start bg-gray-50 p-4 rounded-xl shadow-sm border">
                            <div className="w-full md:w-1/4">
-                                <label className="text-xs text-gray-500">Family Checkbox/Dropdown <span className="text-red-500">*</span></label>
+                                <label className="text-xs text-gray-500">Family <span className="text-red-500">*</span></label>
                                 <select 
                                     className={`w-full mt-1 p-2 border rounded-lg text-sm ${errors[`family_${index}_id_family`] ? 'border-red-500 bg-red-50' : ''}`}
                                     value={fam.id_family}
@@ -49,7 +75,7 @@ export default function MainParameterForm({ data, setData, bioticFamilies, error
                                 >
                                     <option value="">Pilih Family</option>
                                     {bioticFamilies.map(f => (
-                                        <option key={f.id} value={f.id}>{f.name} (Bobot: {f.weight})</option>
+                                        <option key={f.id} value={f.id}>{f.name}</option>
                                     ))}
                                 </select>
                                 {errors[`family_${index}_id_family`] && <p className="text-red-500 text-xs mt-1">{errors[`family_${index}_id_family`]}</p>}
@@ -79,9 +105,9 @@ export default function MainParameterForm({ data, setData, bioticFamilies, error
                                 <label className="text-xs text-gray-500">Taxa Indicator <span className="text-red-500">*</span></label>
                                 <input 
                                     type="number" step="0.01"
-                                    className={`w-full mt-1 p-2 border rounded-lg text-sm ${errors[`family_${index}_taxa`] ? 'border-red-500 bg-red-50' : ''}`}
+                                    className={`w-full mt-1 p-2 border rounded-lg text-sm bg-gray-100 cursor-not-allowed ${errors[`family_${index}_taxa`] ? 'border-red-500 bg-red-50' : ''}`}
                                     value={fam.taxa_indicator}
-                                    onChange={(e) => handleFamilyChange(index, "taxa_indicator", e.target.value)}
+                                    readOnly={true}
                                 />
                                 {errors[`family_${index}_taxa`] && <p className="text-red-500 text-xs mt-1">{errors[`family_${index}_taxa`]}</p>}
                            </div>

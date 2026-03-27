@@ -64,8 +64,8 @@ export default function OperatorHistoryEdit({ geoZones, waterTypes, bioticFamili
         similarity: initialData?.similarity || "",
         dominance: initialData?.dominance || "",
         diversity: initialData?.diversity || "",
-        total_abundance: initialData?.total_abundance || "",
-        number_of_species: initialData?.number_of_species || "",
+        total_abundance: initialData?.total_abundance || 0,
+        number_of_species: initialData?.number_of_species || 0,
     });
 
     const steps = [
@@ -300,7 +300,7 @@ export default function OperatorHistoryEdit({ geoZones, waterTypes, bioticFamili
                                         className="px-8 py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2 disabled:opacity-70"
                                     >
                                         {processing ? "Menghitung..." : (
-                                            <>Selesai & Hitung <FaSave /></>
+                                            <>Hitung <FaSave /></>
                                         )}
                                     </button>
                                 ) : (

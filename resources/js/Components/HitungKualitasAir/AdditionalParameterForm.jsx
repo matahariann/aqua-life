@@ -16,18 +16,23 @@ export default function AdditionalParameterForm({ data, setData, errors }) {
                         { label: "Diversity", name: "diversity" },
                         { label: "Total Abundance", name: "total_abundance" },
                         { label: "Number of Species", name: "number_of_species" },
-                    ].map((field) => (
+                    ].map((field) => {
+                        const isReadOnly = field.name === 'total_abundance' || field.name === 'number_of_species';
+                        return (
                         <div key={field.name}>
                             <label className="block text-sm font-medium text-gray-700 mb-1">{field.label} <span className="text-red-500">*</span></label>
                             <input
                                 type="number" step="0.01"
                                 value={data[field.name]}
-                                onChange={(e) => setData(field.name, e.target.value)}
-                                className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none ${errors[field.name] ? 'border-red-500 bg-red-50' : ''}`}
+                                onChange={(e) => {
+                                    if (!isReadOnly) setData(field.name, e.target.value);
+                                }}
+                                readOnly={isReadOnly}
+                                className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none ${isReadOnly ? 'bg-gray-100 cursor-not-allowed' : ''} ${errors[field.name] ? 'border-red-500 bg-red-50' : ''}`}
                             />
                             {errors[field.name] && <p className="text-red-500 text-xs mt-1">{errors[field.name]}</p>}
                         </div>
-                    ))}
+                    )})}
                 </div>
             </div>
 

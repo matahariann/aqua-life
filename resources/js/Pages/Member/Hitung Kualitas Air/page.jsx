@@ -68,8 +68,8 @@ export default function MemberHitungKualitasAir({ auth, geoZones, waterTypes, bi
         similarity: initialData?.similarity || "",
         dominance: initialData?.dominance || "",
         diversity: initialData?.diversity || "",
-        total_abundance: initialData?.total_abundance || "",
-        number_of_species: initialData?.number_of_species || "",
+        total_abundance: initialData?.total_abundance || 0,
+        number_of_species: initialData?.number_of_species || 0,
     });
 
     const steps = [
@@ -294,7 +294,7 @@ export default function MemberHitungKualitasAir({ auth, geoZones, waterTypes, bi
 
                         {/* Footer Controls */}
                         {currentStep < 4 && (
-                            <div className="p-6 bg-gray-50 border-t flex justify-between">
+                            <div className="p-6 bg-gray-50 border-t flex justify-end gap-2">
                                 <button
                                     onClick={prevStep}
                                     disabled={currentStep === 1}
@@ -313,7 +313,7 @@ export default function MemberHitungKualitasAir({ auth, geoZones, waterTypes, bi
                                         className="px-8 py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2 disabled:opacity-70"
                                     >
                                         {processing ? "Menghitung..." : (
-                                            <>Selesai & Hitung <FaSave /></>
+                                            <>Hitung <FaSave /></>
                                         )}
                                     </button>
                                 ) : (

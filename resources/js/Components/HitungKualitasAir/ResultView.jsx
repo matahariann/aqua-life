@@ -103,7 +103,7 @@ export default function ResultView({
                             onClick={prevStep}
                             className="px-6 py-3 bg-white text-gray-700 border rounded-xl font-bold hover:bg-gray-50 transition shadow-sm flex items-center gap-2"
                         >
-                            <FaArrowLeft /> Kembali Edit
+                            <FaArrowLeft /> Kembali
                         </button>
                         <button 
                             onClick={handleSave}

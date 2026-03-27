@@ -300,7 +300,7 @@ export default function AdminHistoryEdit({ geoZones, waterTypes, bioticFamilies,
                                         className="px-8 py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2 disabled:opacity-70"
                                     >
                                         {processing ? "Menghitung..." : (
-                                            <>Selesai & Hitung <FaSave /></>
+                                            <>Hitung <FaSave /></>
                                         )}
                                     </button>
                                 ) : (
