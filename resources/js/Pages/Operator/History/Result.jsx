@@ -2,7 +2,8 @@ import React, { useEffect } from "react";
 import OperatorLayout from "@/Layouts/OperatorLayout";
 import ResultView from "@/Components/HitungKualitasAir/ResultView";
 import PrintReport from "@/Components/HitungKualitasAir/PrintReport";
-import { FaArrowLeft, FaHistory } from "react-icons/fa";
+import { FaHistory } from "react-icons/fa";
+import { X } from "lucide-react";
 import { Link } from "@inertiajs/react";
 
 export default function OperatorHistoryResult({ auth, result, data, geoZones, waterTypes, bioticFamilies }) {
@@ -66,7 +67,7 @@ export default function OperatorHistoryResult({ auth, result, data, geoZones, wa
                             href="/operator/history"
                             className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center gap-2 shadow-sm font-medium transition-colors"
                         >
-                            <FaArrowLeft /> Kembali
+                            <X />
                         </Link>
                     </div>
 

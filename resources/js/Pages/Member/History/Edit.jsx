@@ -3,17 +3,13 @@ import React, { useState } from "react";
 import { useForm } from "@inertiajs/react";
 import { toast, Toaster } from "sonner";
 import MemberLayout from "@/Layouts/MemberLayout";
+import { Link } from "@inertiajs/react";
+import { X } from "lucide-react";
 import { 
-    FaMapMarkerAlt, 
-    FaFlask, 
-    FaVial, 
     FaChartPie, 
-    FaCheck, 
     FaArrowRight, 
     FaArrowLeft,
     FaSave,
-    FaPrint,
-    FaInfoCircle
 } from "react-icons/fa";
 
 // --- Components ---
@@ -261,11 +257,16 @@ export default function MemberHistoryEdit({ geoZones, waterTypes, bioticFamilies
                      <div className="bg-white rounded-2xl shadow-xl overflow-hidden h-[95vh] flex flex-col">
                         
                         {/* Header */}
-                        <div className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 p-6 text-white shrink-0">
+                        <div className="flex justify-between items-center bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 p-6 text-white shrink-0">
                             <h1 className="text-3xl font-bold flex items-center gap-3">
                                 <FaChartPie className="opacity-80"/> Hitung Kualitas Air
                             </h1>
-                            <p className="opacity-90 mt-1">Metode Weighted Sum Model (WSM)</p>
+                            <Link 
+                                href="/member/history"
+                                className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center gap-2 shadow-sm font-medium transition-colors"
+                            >
+                                <X />
+                            </Link>
                         </div>
 
                         {/* Step Indicator */}
@@ -280,7 +281,7 @@ export default function MemberHistoryEdit({ geoZones, waterTypes, bioticFamilies
 
                         {/* Footer Controls */}
                         {currentStep < 4 && (
-                            <div className="p-6 bg-gray-50 border-t flex justify-between">
+                            <div className="p-6 bg-gray-50 border-t flex justify-end gap-2">
                                 <button
                                     onClick={prevStep}
                                     disabled={currentStep === 1}

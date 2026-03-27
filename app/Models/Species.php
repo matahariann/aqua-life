@@ -30,7 +30,7 @@ class Species extends Model
         return $this->belongsTo(Station::class, 'id_station', 'id');
     }
 
-    public function bioticFamily()
+    public function family()
     {
         return $this->belongsTo(BioticFamily::class, 'id_family', 'id');
     }
