@@ -276,36 +276,36 @@ class OperatorKelolaStation extends Controller
             'id_type_water' => 'required|exists:water_types,id',
             
             // Main Abiotic
-            'ph' => 'required|numeric',
-            'temperature' => 'required|numeric',
-            'dissolved_oxygen' => 'required|numeric',
-            'salinity' => 'required|numeric',
-            'nh3' => 'required|numeric',
-            'nh2' => 'required|numeric',
-            'ammonia' => 'required|numeric',
+            'ph' => 'nullable|numeric',
+            'temperature' => 'nullable|numeric',
+            'dissolved_oxygen' => 'nullable|numeric',
+            'salinity' => 'nullable|numeric',
+            'nh3' => 'nullable|numeric',
+            'nh2' => 'nullable|numeric',
+            'ammonia' => 'nullable|numeric',
 
             // Additional Abiotic
-            'conductivity' => 'required|numeric',
-            'ratio_cn' => 'required|numeric',
-            'turbidity' => 'required|numeric',
-            'clay' => 'required|numeric',
-            'sand' => 'required|numeric',
-            'silt' => 'required|numeric',
-            'coarse_sediment' => 'required|numeric',
-            'total_organic_dissolved' => 'required|numeric',
-            'total_organic_substrate' => 'required|numeric',
-            'macrozoobenthos_density' => 'required|numeric',
+            'conductivity' => 'nullable|numeric',
+            'ratio_cn' => 'nullable|numeric',
+            'turbidity' => 'nullable|numeric',
+            'clay' => 'nullable|numeric',
+            'sand' => 'nullable|numeric',
+            'silt' => 'nullable|numeric',
+            'coarse_sediment' => 'nullable|numeric',
+            'total_organic_dissolved' => 'nullable|numeric',
+            'total_organic_substrate' => 'nullable|numeric',
+            'macrozoobenthos_density' => 'nullable|numeric',
 
             // Biotic Index
-            'similarity' => 'required|numeric',
-            'dominance' => 'required|numeric',
-            'diversity' => 'required|numeric',
-            'total_abundance' => 'required|numeric',
-            'number_of_species' => 'required|numeric',
+            'similarity' => 'nullable|numeric',
+            'dominance' => 'nullable|numeric',
+            'diversity' => 'nullable|numeric',
+            'total_abundance' => 'nullable|numeric',
+            'number_of_species' => 'nullable|numeric',
 
             // Biotic Families
             'families' => 'nullable|array',
-            'families.*.id_family' => 'exists:biotic_families,id',
+            'families.*.id_family' => 'nullable|exists:biotic_families,id',
             'families.*.name' => 'nullable|string',
             'families.*.abundance' => 'nullable|numeric',
             'families.*.taxa_indicator' => 'nullable|numeric',
@@ -320,16 +320,18 @@ class OperatorKelolaStation extends Controller
 
             // 1. Calculate Main Abiotic
             $mainParams = [
-                'ph' => ['val' => $validated['ph'], 'geo' => null, 'water' => null],
-                'temperature' => ['val' => $validated['temperature'], 'geo' => $validated['id_geo_zone'], 'water' => null],
-                'dissolved_oxygen' => ['val' => $validated['dissolved_oxygen'], 'geo' => null, 'water' => null],
-                'salinity' => ['val' => $validated['salinity'], 'geo' => null, 'water' => $validated['id_type_water']],
-                'nh3' => ['val' => $validated['nh3'], 'geo' => null, 'water' => null],
-                'nh2' => ['val' => $validated['nh2'], 'geo' => null, 'water' => null],
-                'ammonia' => ['val' => $validated['ammonia'], 'geo' => null, 'water' => null],
+                'ph' => ['val' => $validated['ph'] ?? null, 'geo' => null, 'water' => null],
+                'temperature' => ['val' => $validated['temperature'] ?? null, 'geo' => $validated['id_geo_zone'] ?? null, 'water' => null],
+                'dissolved_oxygen' => ['val' => $validated['dissolved_oxygen'] ?? null, 'geo' => null, 'water' => null],
+                'salinity' => ['val' => $validated['salinity'] ?? null, 'geo' => null, 'water' => $validated['id_type_water'] ?? null],
+                'nh3' => ['val' => $validated['nh3'] ?? null, 'geo' => null, 'water' => null],
+                'nh2' => ['val' => $validated['nh2'] ?? null, 'geo' => null, 'water' => null],
+                'ammonia' => ['val' => $validated['ammonia'] ?? null, 'geo' => null, 'water' => null],
             ];
 
             foreach ($mainParams as $name => $data) {
+                if ($data['val'] === null || $data['val'] === '') continue;
+
                 $dbName = match($name) {
                     'ph' => 'PH',
                     'dissolved_oxygen' => 'Dissolved Oxygen',
@@ -469,33 +471,33 @@ class OperatorKelolaStation extends Controller
             \App\Models\StationMainAbiotic::create([
                 'id_station' => $station->id,
                 'id_user' => Auth::id(),
-                'ph' => $validated['ph'],
-                'temperature' => $validated['temperature'],
-                'dissolved_oxygen' => $validated['dissolved_oxygen'],
-                'salinity' => $validated['salinity'],
-                'nh3' => $validated['nh3'],
-                'nh2' => $validated['nh2'],
-                'ammonia' => $validated['ammonia'],
+                'ph' => $validated['ph'] ?? null,
+                'temperature' => $validated['temperature'] ?? null,
+                'dissolved_oxygen' => $validated['dissolved_oxygen'] ?? null,
+                'salinity' => $validated['salinity'] ?? null,
+                'nh3' => $validated['nh3'] ?? null,
+                'nh2' => $validated['nh2'] ?? null,
+                'ammonia' => $validated['ammonia'] ?? null,
             ]);
             
             \App\Models\StationIndexAdditional::create([
                 'id_station' => $station->id,
                 'id_user' => Auth::id(),
-                'conductivity' => $validated['conductivity'],
-                'ratio_cn' => $validated['ratio_cn'],
-                'turbidity' => $validated['turbidity'],
-                'clay' => $validated['clay'],
-                'sand' => $validated['sand'],
-                'silt' => $validated['silt'],
-                'coarse_sediment' => $validated['coarse_sediment'],
-                'total_organic_dissolved' => $validated['total_organic_dissolved'],
-                'total_organic_substrate' => $validated['total_organic_substrate'],
-                'macrozoobenthos_density' => $validated['macrozoobenthos_density'],
-                'similarity' => $validated['similarity'],
-                'dominance' => $validated['dominance'],
-                'diversity' => $validated['diversity'],
-                'total_abundance' => $validated['total_abundance'],
-                'number_of_species' => $validated['number_of_species'],
+                'conductivity' => $validated['conductivity'] ?? null,
+                'ratio_cn' => $validated['ratio_cn'] ?? null,
+                'turbidity' => $validated['turbidity'] ?? null,
+                'clay' => $validated['clay'] ?? null,
+                'sand' => $validated['sand'] ?? null,
+                'silt' => $validated['silt'] ?? null,
+                'coarse_sediment' => $validated['coarse_sediment'] ?? null,
+                'total_organic_dissolved' => $validated['total_organic_dissolved'] ?? null,
+                'total_organic_substrate' => $validated['total_organic_substrate'] ?? null,
+                'macrozoobenthos_density' => $validated['macrozoobenthos_density'] ?? null,
+                'similarity' => $validated['similarity'] ?? null,
+                'dominance' => $validated['dominance'] ?? null,
+                'diversity' => $validated['diversity'] ?? null,
+                'total_abundance' => $validated['total_abundance'] ?? null,
+                'number_of_species' => $validated['number_of_species'] ?? null,
             ]);
 
             if (!empty($validated['families'])) {
@@ -526,11 +528,10 @@ class OperatorKelolaStation extends Controller
 
     private function getStatus($val)
     {
-        if ($val >= 80) return 'Undisturbed Areas';
-        if ($val >= 60) return 'Lightly Disturbed Areas';
-        if ($val >= 40) return 'Moderately Disturbed Areas';
-        if ($val >= 20) return 'Heavily Disturbed Areas';
-        return 'Sangat Buruk';
+        if ($val >= 55.51) return 'Undisturbed Areas';
+        if ($val >= 37.01) return 'Lightly Disturbed Areas';
+        if ($val >= 18.51) return 'Moderately Disturbed Areas';
+        return 'Heavily Disturbed Areas';
     }
     
     private function getConclusion($status)

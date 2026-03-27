@@ -145,7 +145,7 @@ export default function MainParameterForm({ data, setData, bioticFamilies, error
                         { label: "Ammonia (mg/L)", name: "ammonia", placeholder: "Min: 0"},
                     ].map((field) => (
                         <div key={field.name}>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">{field.label} <span className="text-red-500">*</span></label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
                             <input
                                 type="number" step="0.01"
                                 value={data[field.name]}

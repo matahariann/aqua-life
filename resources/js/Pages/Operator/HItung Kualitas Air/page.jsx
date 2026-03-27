@@ -89,18 +89,24 @@ export default function OperatorHitungKualitasAir({ geoZones, waterTypes, biotic
         }
         else if (currentStep === 2) {
             const mainAbioticFields = [
-                { key: 'salinity', label: 'Salinity' },
-                { key: 'temperature', label: 'Temperature' },
-                { key: 'dissolved_oxygen', label: 'Dissolved Oxygen' },
-                { key: 'ph', label: 'pH' },
-                { key: 'nh3', label: 'NH3' },
-                { key: 'nh2', label: 'NH2' },
-                { key: 'ammonia', label: 'Ammonia' }
+                { key: 'salinity', label: 'Salinity', min: 0 },
+                { key: 'temperature', label: 'Temperature', min: 0, max: 100 },
+                { key: 'dissolved_oxygen', label: 'Dissolved Oxygen', min: 0, max: 13 },
+                { key: 'ph', label: 'pH', min: 0, max: 14 },
+                { key: 'nh3', label: 'NH3', min: 0 },
+                { key: 'nh2', label: 'NH2', min: 0 },
+                { key: 'ammonia', label: 'Ammonia', min: 0 }
             ];
             
             mainAbioticFields.forEach(field => {
-                if (data[field.key] === "" || data[field.key] === null) {
-                    errors[field.key] = `${field.label} wajib diisi`;
+                const val = data[field.key];
+                if (val !== "" && val !== null && val !== undefined) {
+                    const num = Number(val);
+                    if (field.min !== undefined && num < field.min) {
+                        errors[field.key] = `${field.label} minimal ${field.min}`;
+                    } else if (field.max !== undefined && num > field.max) {
+                        errors[field.key] = `${field.label} maksimal ${field.max}`;
+                    }
                 }
             });
             
@@ -114,29 +120,35 @@ export default function OperatorHitungKualitasAir({ geoZones, waterTypes, biotic
         }
         else if (currentStep === 3) {
             const indexFields = [
-                { key: 'similarity', label: 'Similarity' },
-                { key: 'dominance', label: 'Dominance' },
-                { key: 'diversity', label: 'Diversity' },
+                { key: 'similarity', label: 'Similarity', min: 0, max: 1 },
+                { key: 'dominance', label: 'Dominance', min: 0, max: 1 },
+                { key: 'diversity', label: 'Diversity', min: 0, max: 4 },
                 { key: 'total_abundance', label: 'Total Abundance' },
                 { key: 'number_of_species', label: 'Number of Species' }
             ];
             
             const additionalAbioticFields = [
-                { key: 'conductivity', label: 'Conductivity' },
-                { key: 'ratio_cn', label: 'Ratio C/N' },
-                { key: 'turbidity', label: 'Turbidity' },
-                { key: 'clay', label: 'Clay' },
-                { key: 'sand', label: 'Sand' },
-                { key: 'silt', label: 'Silt' },
-                { key: 'coarse_sediment', label: 'Coarse Sediment' },
-                { key: 'total_organic_dissolved', label: 'Total Org. Dissolved' },
-                { key: 'total_organic_substrate', label: 'Total Org. Substrate' },
-                { key: 'macrozoobenthos_density', label: 'Macrozoobenthos Den.' }
+                { key: 'conductivity', label: 'Conductivity', min: 0 },
+                { key: 'ratio_cn', label: 'Ratio C/N', min: 0 },
+                { key: 'turbidity', label: 'Turbidity', min: 0 },
+                { key: 'clay', label: 'Clay', min: 0, max: 20 },
+                { key: 'sand', label: 'Sand', min: 0, max: 100 },
+                { key: 'silt', label: 'Silt', min: 0, max: 100 },
+                { key: 'coarse_sediment', label: 'Coarse Sediment', min: 0 },
+                { key: 'total_organic_dissolved', label: 'Total Org. Dissolved', min: 0 },
+                { key: 'total_organic_substrate', label: 'Total Org. Substrate', min: 0 },
+                { key: 'macrozoobenthos_density', label: 'Macrozoobenthos Den.', min: 0 }
             ];
             
             [...indexFields, ...additionalAbioticFields].forEach(field => {
-                if (data[field.key] === "" || data[field.key] === null) {
-                    errors[field.key] = `${field.label} wajib diisi`;
+                const val = data[field.key];
+                if (val !== "" && val !== null && val !== undefined) {
+                    const num = Number(val);
+                    if (field.min !== undefined && num < field.min) {
+                        errors[field.key] = `${field.label} minimal ${field.min}`;
+                    } else if (field.max !== undefined && num > field.max) {
+                        errors[field.key] = `${field.label} maksimal ${field.max}`;
+                    }
                 }
             });
         }
@@ -147,7 +159,7 @@ export default function OperatorHitungKualitasAir({ geoZones, waterTypes, biotic
 
     const nextStep = () => {
         if (!validateStep()) {
-            toast.error("Mohon lengkapi semua input yang diwajibkan pada form ini");
+            toast.error("Mohon lengkapi semua input yang diwajibkan dan masukkan nilai sesuai range");
             return;
         }
         setCurrentStep(prev => prev + 1);
@@ -155,11 +167,30 @@ export default function OperatorHitungKualitasAir({ geoZones, waterTypes, biotic
 
     const prevStep = () => setCurrentStep(prev => prev - 1);
 
+    const hasAnyParameter = () => {
+        const parameterKeys = [
+            'ph', 'temperature', 'dissolved_oxygen', 'salinity', 'nh3', 'nh2', 'ammonia',
+            'conductivity', 'ratio_cn', 'turbidity', 'clay', 'sand', 'silt', 'coarse_sediment',
+            'total_organic_dissolved', 'total_organic_substrate', 'macrozoobenthos_density',
+            'similarity', 'dominance', 'diversity'
+        ];
+        
+        const hasAboiticOrIndex = parameterKeys.some(key => data[key] !== "" && data[key] !== null && data[key] !== undefined);
+        const hasFamilies = data.families && data.families.filter(f => f.id_family && f.id_family !== "").length > 0;
+        
+        return hasAboiticOrIndex || hasFamilies;
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         
         if (!validateStep()) {
-            toast.error("Mohon lengkapi semua input yang diwajibkan pada form ini");
+            toast.error("Mohon lengkapi semua input yang diwajibkan dan masukkan nilai sesuai range");
+            return;
+        }
+
+        if (!hasAnyParameter()) {
+            toast.error("Mohon isi minimal 1 parameter sebelum menghitung.");
             return;
         }
         
