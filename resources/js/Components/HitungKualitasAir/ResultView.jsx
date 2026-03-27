@@ -110,7 +110,7 @@ export default function ResultView({
                             disabled={processing}
                             className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-lg flex items-center gap-2 disabled:opacity-70"
                         >
-                            {processing ? "Menyimpan..." : <><FaSave /> Simpan ke History</>}
+                            {processing ? "Menyimpan..." : <><FaSave /> Simpan</>}
                         </button>
                         <button 
                             onClick={() => window.print()}

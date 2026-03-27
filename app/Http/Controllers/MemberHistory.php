@@ -98,7 +98,7 @@ class MemberHistory extends Controller
                     'id_family' => $species->id_family,
                     'name' => $species->name ?? 'Unknown',
                     'abundance' => $species->abundance,
-                    'taxa_indicator' => $species->family->taxa_indicator ?? '',
+                    'taxa_indicator' => $species->taxa_indicator,
                 ];
             })->toArray(),
         ];
@@ -181,7 +181,7 @@ class MemberHistory extends Controller
                     'id_family' => $species->id_family,
                     'name' => $species->name ?? 'Unknown',
                     'abundance' => $species->abundance,
-                    'taxa_indicator' => $species->family->taxa_indicator ?? '',
+                    'taxa_indicator' => $species->taxa_indicator,
                 ];
             })->toArray(),
         ];
@@ -449,10 +449,11 @@ class MemberHistory extends Controller
 
             return redirect()->back()->with('success', 'Perubahan Data Historis berhasil disimpan!');
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (!$isPreview && \Illuminate\Support\Facades\DB::transactionLevel() > 0) {
                 \Illuminate\Support\Facades\DB::rollBack();
             }
+            \Illuminate\Support\Facades\Log::error('History Update Error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine() . "\n" . $e->getTraceAsString());
             return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
     }

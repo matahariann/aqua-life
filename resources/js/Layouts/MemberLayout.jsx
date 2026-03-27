@@ -16,7 +16,7 @@ const MemberLayout = ({ children }) => {
             <div className="flex h-screen bg-gray-50 overflow-hidden">
                 <MemberSidebar handleLogout={() => setShowLogoutModal(true)} />
                 <main className="flex-1 md:ml-64 flex flex-col h-screen overflow-hidden">
-                    <div className="flex-1 px-6 pb-6">
+                    <div className="flex-1 pb-6">
                         {children}
                     </div>
                 </main>
