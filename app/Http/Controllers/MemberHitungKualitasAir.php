@@ -68,6 +68,9 @@ class MemberHitungKualitasAir extends Controller
             // Biotic Families
             'families' => 'nullable|array',
             'families.*.id_family' => 'exists:biotic_families,id',
+            'families.*.name' => 'nullable|string',
+            'families.*.abundance' => 'nullable|numeric',
+            'families.*.taxa_indicator' => 'nullable|numeric',
         ]);
 
         $isPreview = $request->query('is_preview') == 1 || $request->input('is_preview') == true;

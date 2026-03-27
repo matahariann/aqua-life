@@ -95,7 +95,7 @@ export default function ResultView({
                         onClick={() => window.print()}
                         className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-lg flex items-center gap-2"
                     >
-                        <FaPrint /> Cetak Laporan
+                        <FaPrint /> Cetak
                     </button>
                 ) : (
                     <>
@@ -116,7 +116,7 @@ export default function ResultView({
                             onClick={() => window.print()}
                             className="px-6 py-3 bg-gray-600 text-white rounded-xl font-bold hover:bg-gray-700 transition shadow-lg flex items-center gap-2"
                         >
-                            <FaPrint /> Cetak Laporan
+                            <FaPrint /> Cetak
                         </button>
                     </>
                 )}
