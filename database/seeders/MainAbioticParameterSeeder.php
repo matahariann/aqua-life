@@ -111,9 +111,9 @@ class MainAbioticParameterSeeder extends Seeder
             | AMONIA (mg/L)
             |--------------------------------------------------------------------------
             */
-            ['id' => 38, 'name' => 'Amonia', 'initial_value' => 0.00, 'final_value' => 0.02, 'weight' => 3.00, 'id_geo_zone' => null, 'id_type_water' => null, 'created_at' => now(), 'updated_at' => now()],
-            ['id' => 39, 'name' => 'Amonia', 'initial_value' => 0.03, 'final_value' => 0.05, 'weight' => 2.00, 'id_geo_zone' => null, 'id_type_water' => null, 'created_at' => now(), 'updated_at' => now()],
-            ['id' => 40, 'name' => 'Amonia', 'initial_value' => 0.06, 'final_value' => 999.00, 'weight' => 1.00, 'id_geo_zone' => null, 'id_type_water' => null, 'created_at' => now(), 'updated_at' => now()],
+            // ['id' => 38, 'name' => 'Amonia', 'initial_value' => 0.00, 'final_value' => 0.02, 'weight' => 3.00, 'id_geo_zone' => null, 'id_type_water' => null, 'created_at' => now(), 'updated_at' => now()],
+            // ['id' => 39, 'name' => 'Amonia', 'initial_value' => 0.03, 'final_value' => 0.05, 'weight' => 2.00, 'id_geo_zone' => null, 'id_type_water' => null, 'created_at' => now(), 'updated_at' => now()],
+            // ['id' => 40, 'name' => 'Amonia', 'initial_value' => 0.06, 'final_value' => 999.00, 'weight' => 1.00, 'id_geo_zone' => null, 'id_type_water' => null, 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }

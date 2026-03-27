@@ -31,13 +31,14 @@ class BioticIndexParameterSeeder extends Seeder
             ['id' => 9, 'name' => 'Diversity', 'initial_value' => 3.00, 'final_value' => 4.00, 'weight' => 10],
 
             // 4. Total Abundance
-            ['id' => 10, 'name' => 'Total Abundance', 'initial_value' => 500, 'final_value' => 999, 'weight' => 6],
-            ['id' => 11, 'name' => 'Total Abundance', 'initial_value' => 1000, 'final_value' => 999999, 'weight' => 10],
+            ['id' => 10, 'name' => 'Total Abundance', 'initial_value' => 0, 'final_value' => 499, 'weight' => 3],
+            ['id' => 11, 'name' => 'Total Abundance', 'initial_value' => 500, 'final_value' => 999, 'weight' => 6],
+            ['id' => 12, 'name' => 'Total Abundance', 'initial_value' => 1000, 'final_value' => 999999, 'weight' => 10],
 
             // 5. Number of Species
-            ['id' => 12, 'name' => 'Number of Species', 'initial_value' => 0, 'final_value' => 49, 'weight' => 3],
-            ['id' => 13, 'name' => 'Number of Species', 'initial_value' => 50, 'final_value' => 99, 'weight' => 6],
-            ['id' => 14, 'name' => 'Number of Species', 'initial_value' => 100, 'final_value' => 9999, 'weight' => 10],
+            ['id' => 13, 'name' => 'Number of Species', 'initial_value' => 0, 'final_value' => 49, 'weight' => 3],
+            ['id' => 14, 'name' => 'Number of Species', 'initial_value' => 50, 'final_value' => 99, 'weight' => 6],
+            ['id' => 15, 'name' => 'Number of Species', 'initial_value' => 100, 'final_value' => 9999, 'weight' => 10],
         ]);
     }
 }

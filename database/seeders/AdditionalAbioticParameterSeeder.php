@@ -52,7 +52,7 @@ DB::table('additional_abiotic_parameters')->insert([
             |--------------------------------------------------------------------------
             */
             ['id'=> 14, 'name' => 'Clay', 'initial_value' => 0.00,  'final_value' => 4.99,  'weight' => 1.00, 'created_at' => now(), 'updated_at' => now()],
-            ['id'=> 15, 'name' => 'Clay', 'initial_value' => 5.00,  'final_value' => 4.99,  'weight' => 1.50, 'created_at' => now(), 'updated_at' => now()],
+            ['id'=> 15, 'name' => 'Clay', 'initial_value' => 5.00,  'final_value' => 9.99,  'weight' => 1.50, 'created_at' => now(), 'updated_at' => now()],
             ['id'=> 16, 'name' => 'Clay', 'initial_value' => 10.00, 'final_value' => 20.00, 'weight' => 2.00, 'created_at' => now(), 'updated_at' => now()],
 
             /*

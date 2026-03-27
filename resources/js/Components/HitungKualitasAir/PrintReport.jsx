@@ -21,7 +21,6 @@ export default function PrintReport({
         { name: 'Salinitas', key: 'salinity', value: data.salinity },
         { name: 'NH3', key: 'nh3', value: data.nh3 },
         { name: 'NH2', key: 'nh2', value: data.nh2 },
-        { name: 'Ammonia', key: 'ammonia', value: data.ammonia },
     ];
 
     const abioticAdditionalParams = [

@@ -23,7 +23,6 @@ export default function ResultView({
         { name: 'Salinitas', key: 'salinity', value: data.salinity },
         { name: 'NH3', key: 'nh3', value: data.nh3 },
         { name: 'NH2', key: 'nh2', value: data.nh2 },
-        { name: 'Ammonia', key: 'ammonia', value: data.ammonia },
     ];
 
     const abioticAdditionalParams = [
@@ -196,7 +195,7 @@ export default function ResultView({
                     )}
 
                     {result && (
-                        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl shadow-sm border border-blue-100 p-8 text-center h-full flex flex-col justify-center">
+                        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl shadow-sm border border-blue-100 px-8 py-3 text-center h-full flex flex-col justify-center">
                             <h3 className="text-lg font-bold text-gray-700 mb-2">Skor Kualitas Air</h3>
                             <div className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600 drop-shadow-sm mb-4">
                                 {result.value}

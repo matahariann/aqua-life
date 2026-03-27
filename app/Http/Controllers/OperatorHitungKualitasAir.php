@@ -44,7 +44,6 @@ class OperatorHitungKualitasAir extends Controller
             'salinity' => 'nullable|numeric',
             'nh3' => 'nullable|numeric',
             'nh2' => 'nullable|numeric',
-            'ammonia' => 'nullable|numeric',
 
             // Additional Abiotic
             'conductivity' => 'nullable|numeric',
@@ -98,7 +97,6 @@ class OperatorHitungKualitasAir extends Controller
                     'salinity' => $validated['salinity'] ?? null,
                     'nh3' => $validated['nh3'] ?? null,
                     'nh2' => $validated['nh2'] ?? null,
-                    'ammonia' => $validated['ammonia'] ?? null,
                 ]);
 
             // Save Additional Abiotic & Bio Index Data (Snapshot)
@@ -149,7 +147,6 @@ class OperatorHitungKualitasAir extends Controller
                 'salinity' => ['val' => $validated['salinity'] ?? null, 'geo' => null, 'water' => $validated['id_type_water'] ?? null],
                 'nh3' => ['val' => $validated['nh3'] ?? null, 'geo' => null, 'water' => null],
                 'nh2' => ['val' => $validated['nh2'] ?? null, 'geo' => null, 'water' => null],
-                'ammonia' => ['val' => $validated['ammonia'] ?? null, 'geo' => null, 'water' => null],
             ];
 
             foreach ($mainParams as $name => $data) {
@@ -161,7 +158,6 @@ class OperatorHitungKualitasAir extends Controller
                     'salinity' => 'Salinity',
                     'nh3' => 'NH3',
                     'nh2' => 'NH2',
-                    'ammonia' => 'Amonia',
                     'temperature' => 'Temperature',
                     default => ucfirst($name),
                 };
@@ -241,10 +237,22 @@ class OperatorHitungKualitasAir extends Controller
             if (!empty($validated['families'])) {
                 foreach ($validated['families'] as $fam) {
                     if (empty($fam['id_family'])) continue;
+
                     $familyObj = \App\Models\BioticFamily::find($fam['id_family']);
                     if ($familyObj) {
-                        $totalScore += $familyObj->weight;
-                        $maxTotalScore += $familyObj->weight; // Max weight is its own weight
+                        $abundance = $fam['abundance'] ?? 1;
+                        $taxa = $fam['taxa_indicator'] ?? 1;
+
+                        $normalized = log($abundance + 1);
+
+                        $totalScore += $familyObj->weight * $taxa * $normalized;
+
+                        $maxAbundance = 1000;
+                        $maxNormalized = log($maxAbundance + 1);
+
+                        $maxTaxa = 10;
+
+                        $maxTotalScore += $familyObj->weight * $maxTaxa * $maxNormalized;
                     }
                 }
             }
@@ -305,7 +313,6 @@ class OperatorHitungKualitasAir extends Controller
                         'salinity' => $validated['salinity'] ?? null,
                         'nh3' => $validated['nh3'] ?? null,
                         'nh2' => $validated['nh2'] ?? null,
-                        'ammonia' => $validated['ammonia'] ?? null,
                     ]);
                     
                     \App\Models\StationIndexAdditional::create([

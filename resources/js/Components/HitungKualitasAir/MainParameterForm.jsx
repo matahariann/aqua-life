@@ -142,7 +142,6 @@ export default function MainParameterForm({ data, setData, bioticFamilies, error
                         { label: "pH", name: "ph", placeholder: "Range: 0 - 14"},
                         { label: "NH3 (mg/L)", name: "nh3", placeholder: "Min: 0"},
                         { label: "NH2 (mg/L)", name: "nh2", placeholder: "Min: 0"},
-                        { label: "Ammonia (mg/L)", name: "ammonia", placeholder: "Min: 0"},
                     ].map((field) => (
                         <div key={field.name}>
                             <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>

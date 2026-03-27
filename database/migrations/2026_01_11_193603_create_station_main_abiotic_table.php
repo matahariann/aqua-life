@@ -19,7 +19,7 @@ return new class extends Migration
             $table->float('ph')->nullable();
             $table->float('nh3')->nullable();
             $table->float('nh2')->nullable();
-            $table->float('ammonia')->nullable();
+            // $table->float('ammonia')->nullable();
             $table->unsignedBigInteger('id_user');
             $table->unsignedBigInteger('id_station');
             $table->timestamps();
