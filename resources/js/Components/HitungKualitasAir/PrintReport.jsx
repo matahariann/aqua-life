@@ -1,4 +1,5 @@
 import React from "react";
+import { getAbioticStatus, getBioticIndexStatus, getAdditionalAbioticStatus } from "@/Utils/evaluationLogic";
 
 export default function PrintReport({ 
     data, 
@@ -9,6 +10,40 @@ export default function PrintReport({
     currentStep 
 }) {
     if (!result || currentStep !== 4) return null;
+
+    const geoZoneName = geoZones?.find(z => z.id == data.id_geo_zone)?.name || '-';
+    const waterTypeName = waterTypes?.find(w => w.id == data.id_type_water)?.name || '-';
+
+    const abioticMainParams = [
+        { name: 'pH', key: 'ph', value: data.ph },
+        { name: 'Suhu', key: 'temperature', value: data.temperature },
+        { name: 'DO', key: 'dissolved_oxygen', value: data.dissolved_oxygen },
+        { name: 'Salinitas', key: 'salinity', value: data.salinity },
+        { name: 'NH3', key: 'nh3', value: data.nh3 },
+        { name: 'NH2', key: 'nh2', value: data.nh2 },
+        { name: 'Ammonia', key: 'ammonia', value: data.ammonia },
+    ];
+
+    const abioticAdditionalParams = [
+        { name: 'Conductivity', key: 'conductivity', value: data.conductivity },
+        { name: 'Ratio C/N', key: 'ratio_cn', value: data.ratio_cn },
+        { name: 'Turbidity', key: 'turbidity', value: data.turbidity },
+        { name: 'Clay', key: 'clay', value: data.clay },
+        { name: 'Sand', key: 'sand', value: data.sand },
+        { name: 'Silt', key: 'silt', value: data.silt },
+        { name: 'Coarse Sediment', key: 'coarse_sediment', value: data.coarse_sediment },
+        { name: 'Total Organic Dissolved', key: 'total_organic_dissolved', value: data.total_organic_dissolved },
+        { name: 'Total Organic Substrate', key: 'total_organic_substrate', value: data.total_organic_substrate },
+        { name: 'Macrozoobenthos Density', key: 'macrozoobenthos_density', value: data.macrozoobenthos_density },
+    ];
+
+    const bioticIndexParams = [
+        { name: 'Similarity', key: 'similarity', value: data.similarity },
+        { name: 'Dominance', key: 'dominance', value: data.dominance },
+        { name: 'Diversity', key: 'diversity', value: data.diversity },
+        { name: 'Total Abundance', key: 'total_abundance', value: data.total_abundance },
+        { name: 'Number of Species', key: 'number_of_species', value: data.number_of_species },
+    ];
 
     return (
         <div id="print-section" className="hidden print:block w-full bg-white text-black text-sm p-4 h-full min-h-screen">
@@ -24,8 +59,8 @@ export default function PrintReport({
                     <p><span className="font-semibold inline-block w-32">Nama Stasiun</span>: {data.name || '-'}</p>
                 </div>
                 <div className="text-right">
-                    <p className="mb-1"><span className="font-semibold">Zona Geografis:</span> {geoZones.find(z => z.id == data.id_geo_zone)?.name || '-'}</p>
-                    <p><span className="font-semibold">Tipe Air:</span> {waterTypes.find(w => w.id == data.id_type_water)?.name || '-'}</p>
+                    <p className="mb-1"><span className="font-semibold">Zona Geografis:</span> {geoZoneName}</p>
+                    <p><span className="font-semibold">Tipe Air:</span> {waterTypeName}</p>
                 </div>
             </div>
 
@@ -34,73 +69,43 @@ export default function PrintReport({
                 <table className="w-full border-collapse border border-gray-800 text-sm">
                     <thead>
                         <tr className="bg-gray-200">
-                            <th className="border border-gray-800 p-2 text-left">Parameter Utama</th>
+                            <th className="border border-gray-800 p-2 text-left">Parameter</th>
                             <th className="border border-gray-800 p-2 text-center w-24">Nilai</th>
-                            <th className="border border-gray-800 p-2 text-left">Parameter Tambahan</th>
-                            <th className="border border-gray-800 p-2 text-center w-28">Nilai</th>
+                            <th className="border border-gray-800 p-2 text-center w-24">Bobot</th>
+                            <th className="border border-gray-800 p-2 text-center w-32">Status/Kelimpahan</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td className="border border-gray-800 p-2">pH</td>
-                            <td className="border border-gray-800 p-2 text-center">{data.ph}</td>
-                            <td className="border border-gray-800 p-2">Conductivity</td>
-                            <td className="border border-gray-800 p-2 text-center">{data.conductivity}</td>
+                            <td colSpan="4" className="border border-gray-800 p-2 bg-gray-50 font-bold">1. Parameter Utama</td>
                         </tr>
+                        {abioticMainParams.map(param => {
+                            if(param.value === "" || param.value === null) return null;
+                            const { status, bobot } = getAbioticStatus(param.name, param.value, waterTypeName, geoZoneName);
+                            return (
+                                <tr key={param.key}>
+                                    <td className="border border-gray-800 p-2">{param.name}</td>
+                                    <td className="border border-gray-800 p-2 text-center">{param.value}</td>
+                                    <td className="border border-gray-800 p-2 text-center">{bobot}</td>
+                                    <td className="border border-gray-800 p-2 text-center">{status}</td>
+                                </tr>
+                            );
+                        })}
                         <tr>
-                            <td className="border border-gray-800 p-2">Suhu (°C)</td>
-                            <td className="border border-gray-800 p-2 text-center">{data.temperature}</td>
-                            <td className="border border-gray-800 p-2">Ratio C/N</td>
-                            <td className="border border-gray-800 p-2 text-center">{data.ratio_cn}</td>
+                            <td colSpan="4" className="border border-gray-800 p-2 bg-gray-50 font-bold">2. Parameter Tambahan</td>
                         </tr>
-                        <tr>
-                            <td className="border border-gray-800 p-2">DO (mg/L)</td>
-                            <td className="border border-gray-800 p-2 text-center">{data.dissolved_oxygen}</td>
-                            <td className="border border-gray-800 p-2">Turbidity</td>
-                            <td className="border border-gray-800 p-2 text-center">{data.turbidity}</td>
-                        </tr>
-                        <tr>
-                            <td className="border border-gray-800 p-2">Salinitas (ppt)</td>
-                            <td className="border border-gray-800 p-2 text-center">{data.salinity}</td>
-                            <td className="border border-gray-800 p-2">Clay (%)</td>
-                            <td className="border border-gray-800 p-2 text-center">{data.clay}</td>
-                        </tr>
-                        <tr>
-                            <td className="border border-gray-800 p-2">NH3 (mg/L)</td>
-                            <td className="border border-gray-800 p-2 text-center">{data.nh3}</td>
-                            <td className="border border-gray-800 p-2">Sand (%)</td>
-                            <td className="border border-gray-800 p-2 text-center">{data.sand}</td>
-                        </tr>
-                        <tr>
-                            <td className="border border-gray-800 p-2">NH2 (mg/L)</td>
-                            <td className="border border-gray-800 p-2 text-center">{data.nh2}</td>
-                            <td className="border border-gray-800 p-2">Silt (%)</td>
-                            <td className="border border-gray-800 p-2 text-center">{data.silt}</td>
-                        </tr>
-                        <tr>
-                            <td className="border border-gray-800 p-2">Ammonia (mg/L)</td>
-                            <td className="border border-gray-800 p-2 text-center">{data.ammonia}</td>
-                            <td className="border border-gray-800 p-2">Coarse Sediment</td>
-                            <td className="border border-gray-800 p-2 text-center">{data.coarse_sediment}</td>
-                        </tr>
-                        <tr>
-                            <td className="border border-gray-800 p-2 bg-gray-50"></td>
-                            <td className="border border-gray-800 p-2 bg-gray-50 text-center"></td>
-                            <td className="border border-gray-800 p-2">Total Org. Dissolved</td>
-                            <td className="border border-gray-800 p-2 text-center">{data.total_organic_dissolved}</td>
-                        </tr>
-                        <tr>
-                            <td className="border border-gray-800 p-2 bg-gray-50"></td>
-                            <td className="border border-gray-800 p-2 bg-gray-50 text-center"></td>
-                            <td className="border border-gray-800 p-2">Total Org. Substrate</td>
-                            <td className="border border-gray-800 p-2 text-center">{data.total_organic_substrate}</td>
-                        </tr>
-                        <tr>
-                            <td className="border border-gray-800 p-2 bg-gray-50"></td>
-                            <td className="border border-gray-800 p-2 bg-gray-50 text-center"></td>
-                            <td className="border border-gray-800 p-2">Macrozoobenthos Den.</td>
-                            <td className="border border-gray-800 p-2 text-center">{data.macrozoobenthos_density}</td>
-                        </tr>
+                        {abioticAdditionalParams.map(param => {
+                            if(param.value === "" || param.value === null) return null;
+                            const { status, bobot } = getAdditionalAbioticStatus(param.name, param.value);
+                            return (
+                                <tr key={param.key}>
+                                    <td className="border border-gray-800 p-2">{param.name}</td>
+                                    <td className="border border-gray-800 p-2 text-center">{param.value}</td>
+                                    <td className="border border-gray-800 p-2 text-center">{bobot}</td>
+                                    <td className="border border-gray-800 p-2 text-center">{status}</td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>
@@ -111,50 +116,54 @@ export default function PrintReport({
                     <table className="w-full border-collapse border border-gray-800 text-sm">
                         <thead>
                             <tr className="bg-gray-200">
-                                <th className="border border-gray-800 p-2 text-left" colSpan="2">Indeks Ekologi</th>
+                                <th className="border border-gray-800 p-2 text-left">Indeks Ekologi</th>
+                                <th className="border border-gray-800 p-2 text-center w-20">Nilai</th>
+                                <th className="border border-gray-800 p-2 text-center w-20">Bobot</th>
+                                <th className="border border-gray-800 p-2 text-center w-24">Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td className="border border-gray-800 p-2">Similarity</td>
-                                <td className="border border-gray-800 p-2 text-center w-24">{data.similarity}</td>
-                            </tr>
-                            <tr>
-                                <td className="border border-gray-800 p-2">Dominance</td>
-                                <td className="border border-gray-800 p-2 text-center w-24">{data.dominance}</td>
-                            </tr>
-                            <tr>
-                                <td className="border border-gray-800 p-2">Diversity</td>
-                                <td className="border border-gray-800 p-2 text-center w-24">{data.diversity}</td>
-                            </tr>
-                            <tr>
-                                <td className="border border-gray-800 p-2">Total Abundance</td>
-                                <td className="border border-gray-800 p-2 text-center w-24">{data.total_abundance}</td>
-                            </tr>
-                            <tr>
-                                <td className="border border-gray-800 p-2">Number of Species</td>
-                                <td className="border border-gray-800 p-2 text-center w-24">{data.number_of_species}</td>
-                            </tr>
+                            {bioticIndexParams.map(param => {
+                                if(param.value === "" || param.value === null) return null;
+                                const { status, bobot } = getBioticIndexStatus(param.name, param.value);
+                                return (
+                                    <tr key={param.key}>
+                                        <td className="border border-gray-800 p-2">{param.name}</td>
+                                        <td className="border border-gray-800 p-2 text-center">{param.value}</td>
+                                        <td className="border border-gray-800 p-2 text-center">{bobot}</td>
+                                        <td className="border border-gray-800 p-2 text-center">{status}</td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
 
                     <table className="w-full border-collapse border border-gray-800 text-sm">
                         <thead>
                             <tr className="bg-gray-200">
-                                <th className="border border-gray-800 p-2 text-left">Spesies Family ({data.families.length})</th>
+                                <th className="border border-gray-800 p-2 text-left">Species/Genus</th>
+                                <th className="border border-gray-800 p-2 text-left">Family</th>
+                                <th className="border border-gray-800 p-2 text-center w-20">Bobot</th>
                                 <th className="border border-gray-800 p-2 text-center w-24">Kelimpahan</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {data.families.map((fam, idx) => (
-                                <tr key={idx}>
-                                    <td className="border border-gray-800 p-2">{bioticFamilies.find(f => f.id == fam.id_family)?.name || fam.name}</td>
-                                    <td className="border border-gray-800 p-2 text-center">{fam.abundance}</td>
-                                </tr>
-                            ))}
+                            {data.families.map((fam, idx) => {
+                                if(!fam.id_family) return null;
+                                const familyName = bioticFamilies?.find(f => f.id == fam.id_family)?.name || fam.name;
+                                const speciesName = fam.name || '-';
+                                return (
+                                    <tr key={idx}>
+                                        <td className="border border-gray-800 p-2 italic">{speciesName}</td>
+                                        <td className="border border-gray-800 p-2">{familyName}</td>
+                                        <td className="border border-gray-800 p-2 text-center">-</td>
+                                        <td className="border border-gray-800 p-2 text-center">{fam.abundance}</td>
+                                    </tr>
+                                );
+                            })}
                             {data.families.length === 0 && (
                                 <tr>
-                                    <td className="border border-gray-800 p-2 text-center italic text-gray-500" colSpan="2">Tidak ada data</td>
+                                    <td className="border border-gray-800 p-2 text-center italic text-gray-500" colSpan="4">Tidak ada data</td>
                                 </tr>
                             )}
                         </tbody>

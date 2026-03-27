@@ -245,7 +245,9 @@ export default function OperatorHitungKualitasAir({ geoZones, waterTypes, biotic
                     <ResultView 
                         data={data} 
                         result={result} 
-                        bioticFamilies={bioticFamilies} 
+                        geoZones={geoZones}
+waterTypes={waterTypes}
+bioticFamilies={bioticFamilies} 
                         prevStep={isHistoryView ? () => window.history.back() : prevStep} 
                         handleSave={handleSave} 
                         processing={processing}

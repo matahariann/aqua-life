@@ -78,7 +78,9 @@ export default function MemberHistoryResult({ auth, result, data, geoZones, wate
                             <ResultView 
                                 data={data} 
                                 result={result} 
-                                bioticFamilies={bioticFamilies} 
+                                geoZones={geoZones}
+waterTypes={waterTypes}
+bioticFamilies={bioticFamilies} 
                                 prevStep={() => window.history.back()} 
                                 handleSave={() => {}} 
                                 processing={false}

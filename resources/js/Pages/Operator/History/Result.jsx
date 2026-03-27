@@ -78,7 +78,9 @@ export default function OperatorHistoryResult({ auth, result, data, geoZones, wa
                             <ResultView 
                                 data={data} 
                                 result={result} 
-                                bioticFamilies={bioticFamilies} 
+                                geoZones={geoZones}
+waterTypes={waterTypes}
+bioticFamilies={bioticFamilies} 
                                 prevStep={() => window.history.back()} 
                                 handleSave={() => {}} 
                                 processing={false}

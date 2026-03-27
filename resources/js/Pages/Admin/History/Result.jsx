@@ -78,7 +78,9 @@ export default function AdminHistoryResult({ auth, result, data, geoZones, water
                             <ResultView 
                                 data={data} 
                                 result={result} 
-                                bioticFamilies={bioticFamilies} 
+                                geoZones={geoZones}
+waterTypes={waterTypes}
+bioticFamilies={bioticFamilies} 
                                 prevStep={() => window.history.back()} 
                                 handleSave={() => {}} 
                                 processing={false}

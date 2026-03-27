@@ -245,7 +245,9 @@ export default function AdminHitungKualitasAir({ geoZones, waterTypes, bioticFam
                     <ResultView 
                         data={data} 
                         result={result} 
-                        bioticFamilies={bioticFamilies} 
+                        geoZones={geoZones}
+waterTypes={waterTypes}
+bioticFamilies={bioticFamilies} 
                         prevStep={isHistoryView ? () => window.history.back() : prevStep} 
                         handleSave={handleSave} 
                         processing={processing}

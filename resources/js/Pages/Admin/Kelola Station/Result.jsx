@@ -78,7 +78,9 @@ export default function AdminKelolaStationResult({ auth, result, data, geoZones,
                             <ResultView 
                                 data={data} 
                                 result={result} 
-                                bioticFamilies={bioticFamilies} 
+                                geoZones={geoZones}
+waterTypes={waterTypes}
+bioticFamilies={bioticFamilies} 
                                 prevStep={() => window.history.back()} 
                                 handleSave={() => {}} 
                                 processing={false}

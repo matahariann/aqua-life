@@ -1,67 +1,172 @@
 import React from "react";
 import { FaVial, FaFlask, FaInfoCircle, FaCheck, FaArrowLeft, FaSave, FaPrint } from "react-icons/fa";
+import { getAbioticStatus, getBioticIndexStatus, getAdditionalAbioticStatus } from "@/Utils/evaluationLogic";
 
 export default function ResultView({ 
     data, 
     result, 
+    geoZones,
+    waterTypes,
     bioticFamilies, 
     prevStep, 
     handleSave, 
     processing,
     isHistoryView = false 
 }) {
+    const geoZoneName = geoZones?.find(z => z.id == data.id_geo_zone)?.name || '-';
+    const waterTypeName = waterTypes?.find(w => w.id == data.id_type_water)?.name || '-';
+
+    const abioticMainParams = [
+        { name: 'pH', key: 'ph', value: data.ph },
+        { name: 'Suhu', key: 'temperature', value: data.temperature },
+        { name: 'DO', key: 'dissolved_oxygen', value: data.dissolved_oxygen },
+        { name: 'Salinitas', key: 'salinity', value: data.salinity },
+        { name: 'NH3', key: 'nh3', value: data.nh3 },
+        { name: 'NH2', key: 'nh2', value: data.nh2 },
+        { name: 'Ammonia', key: 'ammonia', value: data.ammonia },
+    ];
+
+    const abioticAdditionalParams = [
+        { name: 'Conductivity', key: 'conductivity', value: data.conductivity },
+        { name: 'Ratio C/N', key: 'ratio_cn', value: data.ratio_cn },
+        { name: 'Turbidity', key: 'turbidity', value: data.turbidity },
+        { name: 'Clay', key: 'clay', value: data.clay },
+        { name: 'Sand', key: 'sand', value: data.sand },
+        { name: 'Silt', key: 'silt', value: data.silt },
+        { name: 'Coarse Sediment', key: 'coarse_sediment', value: data.coarse_sediment },
+        { name: 'Total Organic Dissolved', key: 'total_organic_dissolved', value: data.total_organic_dissolved },
+        { name: 'Total Organic Substrate', key: 'total_organic_substrate', value: data.total_organic_substrate },
+        { name: 'Macrozoobenthos Density', key: 'macrozoobenthos_density', value: data.macrozoobenthos_density },
+    ];
+
+    const bioticIndexParams = [
+        { name: 'Similarity', key: 'similarity', value: data.similarity },
+        { name: 'Dominance', key: 'dominance', value: data.dominance },
+        { name: 'Diversity', key: 'diversity', value: data.diversity },
+        { name: 'Total Abundance', key: 'total_abundance', value: data.total_abundance },
+        { name: 'Number of Species', key: 'number_of_species', value: data.number_of_species },
+    ];
+
     return (
         <div className="animate-fade-in-up py-4">
             <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
                 <h3 className="text-xl font-bold border-b pb-2 mb-4 flex items-center gap-2">
                     <FaVial className="text-emerald-500" /> Ringkasan Parameter Abiotik
                 </h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 text-sm mb-8 bg-gray-50 p-4 rounded-lg">
-                    {/* Main Abiotic */}
-                    <div><span className="text-gray-500 block">pH</span><span className="font-semibold">{data.ph}</span></div>
-                    <div><span className="text-gray-500 block">Suhu</span><span className="font-semibold">{data.temperature} °C</span></div>
-                    <div><span className="text-gray-500 block">DO</span><span className="font-semibold">{data.dissolved_oxygen} mg/L</span></div>
-                    <div><span className="text-gray-500 block">Salinitas</span><span className="font-semibold">{data.salinity} ppt</span></div>
-                    <div><span className="text-gray-500 block">NH3</span><span className="font-semibold">{data.nh3} mg/L</span></div>
-                    <div><span className="text-gray-500 block">NH2</span><span className="font-semibold">{data.nh2} mg/L</span></div>
-                    <div><span className="text-gray-500 block">Ammonia</span><span className="font-semibold">{data.ammonia} mg/L</span></div>
-                    {/* Additional Abiotic */}
-                    <div><span className="text-gray-500 block">Conductivity</span><span className="font-semibold">{data.conductivity}</span></div>
-                    <div><span className="text-gray-500 block">Ratio C/N</span><span className="font-semibold">{data.ratio_cn}</span></div>
-                    <div><span className="text-gray-500 block">Turbidity</span><span className="font-semibold">{data.turbidity}</span></div>
-                    <div><span className="text-gray-500 block">Clay</span><span className="font-semibold">{data.clay} %</span></div>
-                    <div><span className="text-gray-500 block">Sand</span><span className="font-semibold">{data.sand} %</span></div>
-                    <div><span className="text-gray-500 block">Silt</span><span className="font-semibold">{data.silt} %</span></div>
-                    <div><span className="text-gray-500 block">Coarse Sed.</span><span className="font-semibold">{data.coarse_sediment}</span></div>
-                    <div><span className="text-gray-500 block">Total Org. Dissolved</span><span className="font-semibold">{data.total_organic_dissolved}</span></div>
-                    <div><span className="text-gray-500 block">Total Org. Substrate</span><span className="font-semibold">{data.total_organic_substrate}</span></div>
-                    <div><span className="text-gray-500 block">Macrozoobenthos Den.</span><span className="font-semibold">{data.macrozoobenthos_density}</span></div>
+                <div className="overflow-x-auto mb-8 bg-white rounded-lg shadow-sm border border-gray-200">
+                    <table className="w-full text-sm text-left">
+                        <thead className="bg-gray-50 text-gray-700 font-semibold border-b">
+                            <tr>
+                                <th className="px-4 py-3">Parameter</th>
+                                <th className="px-4 py-3 text-center">Nilai</th>
+                                <th className="px-4 py-3 text-center">Bobot</th>
+                                <th className="px-4 py-3 text-center">Status/Kelimpahan</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            <tr>
+                                <td colSpan="4" className="px-4 py-2 bg-gray-50 font-semibold text-gray-600">A. Parameter Abiotik Utama</td>
+                            </tr>
+                            {abioticMainParams.map(param => {
+                                if(param.value === "" || param.value === null) return null;
+                                const { status, bobot } = getAbioticStatus(param.name, param.value, waterTypeName, geoZoneName);
+                                return (
+                                    <tr key={param.key} className="hover:bg-gray-50">
+                                        <td className="px-4 py-2">{param.name}</td>
+                                        <td className="px-4 py-2 text-center">{param.value}</td>
+                                        <td className="px-4 py-2 text-center font-medium">{bobot}</td>
+                                        <td className="px-4 py-2 text-center">
+                                            <span className={`px-2 py-1 rounded text-xs font-semibold ${status === 'Normal' ? 'bg-emerald-100 text-emerald-800' : status === 'Mendekati' ? 'bg-yellow-100 text-yellow-800' : status === 'Jauh Dari Normal' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
+                                                {status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                            <tr>
+                                <td colSpan="4" className="px-4 py-2 bg-gray-50 font-semibold text-gray-600">C. Parameter Abiotik Tambahan</td>
+                            </tr>
+                            {abioticAdditionalParams.map(param => {
+                                if(param.value === "" || param.value === null) return null;
+                                const { status, bobot } = getAdditionalAbioticStatus(param.name, param.value);
+                                return (
+                                    <tr key={param.key} className="hover:bg-gray-50">
+                                        <td className="px-4 py-2">{param.name}</td>
+                                        <td className="px-4 py-2 text-center">{param.value}</td>
+                                        <td className="px-4 py-2 text-center font-medium">{bobot}</td>
+                                        <td className="px-4 py-2 text-center">
+                                            <span className={`px-2 py-1 rounded text-xs font-semibold ${status === 'Normal' ? 'bg-emerald-100 text-emerald-800' : status === 'Mendekati' ? 'bg-yellow-100 text-yellow-800' : status === 'Jauh Dari Normal' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
+                                                {status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
                 </div>
 
                 <h3 className="text-xl font-bold border-b pb-2 mb-4 flex items-center gap-2">
                     <FaFlask className="text-blue-500" /> Ringkasan Parameter Biotik
                 </h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 text-sm mb-4 bg-gray-50 p-4 rounded-lg">
-                    {/* Biotic Index */}
-                    <div><span className="text-gray-500 block">Similarity</span><span className="font-semibold">{data.similarity}</span></div>
-                    <div><span className="text-gray-500 block">Dominance</span><span className="font-semibold">{data.dominance}</span></div>
-                    <div><span className="text-gray-500 block">Diversity</span><span className="font-semibold">{data.diversity}</span></div>
-                    <div><span className="text-gray-500 block">Total Abundance</span><span className="font-semibold">{data.total_abundance}</span></div>
-                    <div><span className="text-gray-500 block">Number of Species</span><span className="font-semibold">{data.number_of_species}</span></div>
+                <div className="overflow-x-auto mb-4 bg-white rounded-lg shadow-sm border border-gray-200">
+                    <table className="w-full text-sm text-left">
+                        <thead className="bg-gray-50 text-gray-700 font-semibold border-b">
+                            <tr>
+                                <th className="px-4 py-3">B. Parameter Indeks Biotik</th>
+                                <th className="px-4 py-3 text-center">Nilai</th>
+                                <th className="px-4 py-3 text-center">Bobot</th>
+                                <th className="px-4 py-3 text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {bioticIndexParams.map(param => {
+                                if(param.value === "" || param.value === null) return null;
+                                const { status, bobot } = getBioticIndexStatus(param.name, param.value);
+                                return (
+                                    <tr key={param.key} className="hover:bg-gray-50">
+                                        <td className="px-4 py-2">{param.name}</td>
+                                        <td className="px-4 py-2 text-center">{param.value}</td>
+                                        <td className="px-4 py-2 text-center font-medium">{bobot}</td>
+                                        <td className="px-4 py-2 text-center">
+                                            <span className={`px-2 py-1 rounded text-xs font-semibold ${status === 'Normal' ? 'bg-emerald-100 text-emerald-800' : status === 'Mendekati' ? 'bg-yellow-100 text-yellow-800' : status === 'Jauh Dari Normal' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
+                                                {status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
                 </div>
                 
                 {data.families.length > 0 && (
-                    <div className="mt-4">
-                        <span className="text-gray-500 font-medium block mb-2 text-sm">Spesies Family ({data.families.length}):</span>
-                        <div className="flex flex-wrap gap-2">
-                            {data.families.map((fam, idx) => (
-                                fam.id_family && (
-                                <span key={idx} className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">
-                                    {bioticFamilies.find(f => f.id == fam.id_family)?.name || fam.name} (Kelimpahan: {fam.abundance})
-                                </span>
-                                )
-                            ))}
-                        </div>
+                    <div className="overflow-x-auto mb-4 bg-white rounded-lg shadow-sm border border-gray-200">
+                        <table className="w-full text-sm text-left">
+                            <thead className="bg-gray-50 text-gray-700 font-semibold border-b">
+                                <tr>
+                                    <th className="px-4 py-3">Species/Genus</th>
+                                    <th className="px-4 py-3">Family</th>
+                                    <th className="px-4 py-3 text-center">Bobot</th>
+                                    <th className="px-4 py-3 text-center">Status/Kelimpahan</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                                {data.families.map((fam, idx) => {
+                                    if(!fam.id_family) return null;
+                                    const familyName = bioticFamilies?.find(f => f.id == fam.id_family)?.name || fam.name;
+                                    const speciesName = fam.name || '-';
+                                    return (
+                                        <tr key={idx} className="hover:bg-gray-50">
+                                            <td className="px-4 py-2 italic">{speciesName}</td>
+                                            <td className="px-4 py-2">{familyName}</td>
+                                            <td className="px-4 py-2 text-center font-medium">-</td>
+                                            <td className="px-4 py-2 text-center">{fam.abundance}</td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
                     </div>
                 )}
             </div>

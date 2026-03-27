@@ -246,7 +246,9 @@ export default function AdminKelolaStationEdit({ geoZones, waterTypes, bioticFam
                     <ResultView 
                         data={data} 
                         result={result} 
-                        bioticFamilies={bioticFamilies} 
+                        geoZones={geoZones}
+waterTypes={waterTypes}
+bioticFamilies={bioticFamilies} 
                         prevStep={prevStep} 
                         handleSave={handleSave} 
                         processing={processing}
