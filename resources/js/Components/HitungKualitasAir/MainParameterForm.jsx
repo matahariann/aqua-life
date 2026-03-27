@@ -136,13 +136,13 @@ export default function MainParameterForm({ data, setData, bioticFamilies, error
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                      {[
-                        { label: "Salinity (ppt)", name: "salinity" },
-                        { label: "Temperature (°C)", name: "temperature" },
-                        { label: "Dissolved Oxygen (mg/L)", name: "dissolved_oxygen" },
-                        { label: "pH", name: "ph" },
-                        { label: "NH3 (mg/L)", name: "nh3" },
-                        { label: "NH2 (mg/L)", name: "nh2" },
-                        { label: "Ammonia (mg/L)", name: "ammonia" },
+                        { label: "Salinity (ppt)", name: "salinity", placeholder: "Min: 0"},
+                        { label: "Temperature (°C)", name: "temperature", placeholder: "Range: 0 - 100"},
+                        { label: "Dissolved Oxygen (mg/L)", name: "dissolved_oxygen", placeholder: "Range: 0 - 13"},
+                        { label: "pH", name: "ph", placeholder: "Range: 0 - 14"},
+                        { label: "NH3 (mg/L)", name: "nh3", placeholder: "Min: 0"},
+                        { label: "NH2 (mg/L)", name: "nh2", placeholder: "Min: 0"},
+                        { label: "Ammonia (mg/L)", name: "ammonia", placeholder: "Min: 0"},
                     ].map((field) => (
                         <div key={field.name}>
                             <label className="block text-sm font-medium text-gray-700 mb-1">{field.label} <span className="text-red-500">*</span></label>
@@ -151,6 +151,7 @@ export default function MainParameterForm({ data, setData, bioticFamilies, error
                                 value={data[field.name]}
                                 onChange={(e) => setData(field.name, e.target.value)}
                                 className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none ${errors[field.name] ? 'border-red-500 bg-red-50' : ''}`}
+                                placeholder={field.placeholder}
                             />
                             {errors[field.name] && <p className="text-red-500 text-xs mt-1">{errors[field.name]}</p>}
                         </div>
