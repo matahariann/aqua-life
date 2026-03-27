@@ -64,72 +64,53 @@ export default function PrintReport({
                 </div>
             </div>
 
-            <div className="mb-8">
-                <h3 className="font-bold text-lg mb-3 bg-gray-100 p-2 border-l-4 border-gray-800">A. Parameter Abiotik</h3>
-                <table className="w-full border-collapse border border-gray-800 text-sm">
-                    <thead>
-                        <tr className="bg-gray-200">
-                            <th className="border border-gray-800 p-2 text-left">Parameter</th>
-                            <th className="border border-gray-800 p-2 text-center w-24">Nilai</th>
-                            <th className="border border-gray-800 p-2 text-center w-24">Bobot</th>
-                            <th className="border border-gray-800 p-2 text-center w-32">Status/Kelimpahan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colSpan="4" className="border border-gray-800 p-2 bg-gray-50 font-bold">1. Parameter Utama</td>
-                        </tr>
-                        {abioticMainParams.map(param => {
-                            if(param.value === "" || param.value === null) return null;
-                            const { status, bobot } = getAbioticStatus(param.name, param.value, waterTypeName, geoZoneName);
-                            return (
-                                <tr key={param.key}>
-                                    <td className="border border-gray-800 p-2">{param.name}</td>
-                                    <td className="border border-gray-800 p-2 text-center">{param.value}</td>
-                                    <td className="border border-gray-800 p-2 text-center">{bobot}</td>
-                                    <td className="border border-gray-800 p-2 text-center">{status}</td>
-                                </tr>
-                            );
-                        })}
-                        <tr>
-                            <td colSpan="4" className="border border-gray-800 p-2 bg-gray-50 font-bold">2. Parameter Tambahan</td>
-                        </tr>
-                        {abioticAdditionalParams.map(param => {
-                            if(param.value === "" || param.value === null) return null;
-                            const { status, bobot } = getAdditionalAbioticStatus(param.name, param.value);
-                            return (
-                                <tr key={param.key}>
-                                    <td className="border border-gray-800 p-2">{param.name}</td>
-                                    <td className="border border-gray-800 p-2 text-center">{param.value}</td>
-                                    <td className="border border-gray-800 p-2 text-center">{bobot}</td>
-                                    <td className="border border-gray-800 p-2 text-center">{status}</td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
-
-            <div className="mb-10">
-                <h3 className="font-bold text-lg mb-3 bg-gray-100 p-2 border-l-4 border-gray-800">B. Parameter Biotik & Indeks</h3>
-                <div className="grid grid-cols-2 gap-6 mb-4 items-start">
+            <div className="grid grid-cols-2 gap-8 mb-8 items-start">
+                {/* Kolom Kiri: Abiotik */}
+                <div className="w-full">
+                    <h3 className="font-bold text-lg mb-3 bg-gray-100 p-2 border-l-4 border-gray-800">A. Parameter Abiotik</h3>
                     <table className="w-full border-collapse border border-gray-800 text-sm">
                         <thead>
                             <tr className="bg-gray-200">
-                                <th className="border border-gray-800 p-2 text-left">Indeks Ekologi</th>
+                                <th className="border border-gray-800 p-2 text-left">Parameter</th>
                                 <th className="border border-gray-800 p-2 text-center w-20">Nilai</th>
-                                <th className="border border-gray-800 p-2 text-center w-20">Bobot</th>
+                                <th className="border border-gray-800 p-2 text-center w-16">Bobot</th>
                                 <th className="border border-gray-800 p-2 text-center w-24">Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {bioticIndexParams.map(param => {
-                                if(param.value === "" || param.value === null) return null;
-                                const { status, bobot } = getBioticIndexStatus(param.name, param.value);
+                            <tr>
+                                <td colSpan="4" className="border border-gray-800 p-2 bg-gray-50 font-bold">1. Parameter Utama</td>
+                            </tr>
+                            {abioticMainParams.map(param => {
+                                const isEmpty = param.value === "" || param.value === null;
+                                const displayValue = isEmpty ? "-" : param.value;
+                                const { status, bobot } = isEmpty 
+                                    ? { status: 'Normal', bobot: '-' } 
+                                    : getAbioticStatus(param.name, param.value, waterTypeName, geoZoneName);
+                                
                                 return (
                                     <tr key={param.key}>
                                         <td className="border border-gray-800 p-2">{param.name}</td>
-                                        <td className="border border-gray-800 p-2 text-center">{param.value}</td>
+                                        <td className="border border-gray-800 p-2 text-center">{displayValue}</td>
+                                        <td className="border border-gray-800 p-2 text-center">{bobot}</td>
+                                        <td className="border border-gray-800 p-2 text-center">{status}</td>
+                                    </tr>
+                                );
+                            })}
+                            <tr>
+                                <td colSpan="4" className="border border-gray-800 p-2 bg-gray-50 font-bold">2. Parameter Tambahan</td>
+                            </tr>
+                            {abioticAdditionalParams.map(param => {
+                                const isEmpty = param.value === "" || param.value === null;
+                                const displayValue = isEmpty ? "-" : param.value;
+                                const { status, bobot } = isEmpty 
+                                    ? { status: 'Normal', bobot: '-' } 
+                                    : getAdditionalAbioticStatus(param.name, param.value);
+                                
+                                return (
+                                    <tr key={param.key}>
+                                        <td className="border border-gray-800 p-2">{param.name}</td>
+                                        <td className="border border-gray-800 p-2 text-center">{displayValue}</td>
                                         <td className="border border-gray-800 p-2 text-center">{bobot}</td>
                                         <td className="border border-gray-800 p-2 text-center">{status}</td>
                                     </tr>
@@ -137,60 +118,94 @@ export default function PrintReport({
                             })}
                         </tbody>
                     </table>
-
-                    <table className="w-full border-collapse border border-gray-800 text-sm">
-                        <thead>
-                            <tr className="bg-gray-200">
-                                <th className="border border-gray-800 p-2 text-left">Species/Genus</th>
-                                <th className="border border-gray-800 p-2 text-left">Family</th>
-                                <th className="border border-gray-800 p-2 text-center w-20">Bobot</th>
-                                <th className="border border-gray-800 p-2 text-center w-24">Kelimpahan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data.families.map((fam, idx) => {
-                                if(!fam.id_family) return null;
-                                const familyName = bioticFamilies?.find(f => f.id == fam.id_family)?.name || fam.name;
-                                const speciesName = fam.name || '-';
-                                return (
-                                    <tr key={idx}>
-                                        <td className="border border-gray-800 p-2 italic">{speciesName}</td>
-                                        <td className="border border-gray-800 p-2">{familyName}</td>
-                                        <td className="border border-gray-800 p-2 text-center">-</td>
-                                        <td className="border border-gray-800 p-2 text-center">{fam.abundance}</td>
-                                    </tr>
-                                );
-                            })}
-                            {data.families.length === 0 && (
-                                <tr>
-                                    <td className="border border-gray-800 p-2 text-center italic text-gray-500" colSpan="4">Tidak ada data</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
                 </div>
-            </div>
 
-            <div className="mb-8 break-inside-avoid shadow-sm">
-                <h3 className="font-bold text-lg mb-0 bg-blue-50 p-3 border-l-4 border-t border-r border-gray-800 text-blue-900">C. Hasil Evaluasi Kualitas Air</h3>
-                <div className="border border-gray-800 p-6 bg-gray-50">
-                    <div className="flex justify-between items-center border-b border-gray-300 pb-5 mb-5">
-                        <div className="w-1/2 text-center border-r border-gray-300">
-                            <p className="text-gray-600 font-semibold mb-1 uppercase text-xs tracking-wider">Total Skor WSM</p>
-                            <p className="text-4xl font-black text-blue-700">{result.value}</p>
-                        </div>
-                        <div className="w-1/2 text-center">
-                            <p className="text-gray-600 font-semibold mb-1 uppercase text-xs tracking-wider">Status Kualitas Air</p>
-                            <p className="text-2xl font-bold text-gray-800">{result.status}</p>
-                        </div>
-                    </div>
-                    <div className="mb-4">
-                        <h4 className="font-bold text-gray-800 mb-1">Kesimpulan:</h4>
-                        <p className="text-gray-700 text-sm leading-relaxed text-justify">{result.conclusion}</p>
-                    </div>
+                {/* Kolom Kanan: Biotik */}
+                <div className="w-full flex flex-col gap-6">
                     <div>
-                        <h4 className="font-bold text-gray-800 mb-1">Rekomendasi:</h4>
-                        <p className="text-gray-700 text-sm leading-relaxed text-justify">{result.recommendation}</p>
+                        <h3 className="font-bold text-lg mb-3 bg-gray-100 p-2 border-l-4 border-gray-800">B. Parameter Biotik & Indeks</h3>
+                        <table className="w-full border-collapse border border-gray-800 text-sm">
+                            <thead>
+                                <tr className="bg-gray-200">
+                                    <th className="border border-gray-800 p-2 text-left">Indeks Ekologi</th>
+                                    <th className="border border-gray-800 p-2 text-center w-20">Nilai</th>
+                                    <th className="border border-gray-800 p-2 text-center w-16">Bobot</th>
+                                    <th className="border border-gray-800 p-2 text-center w-24">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {bioticIndexParams.map(param => {
+                                    const isEmpty = param.value === "" || param.value === null;
+                                    const displayValue = isEmpty ? "-" : param.value;
+                                    const { status, bobot } = isEmpty 
+                                        ? { status: 'Normal', bobot: '-' } 
+                                        : getBioticIndexStatus(param.name, param.value);
+                                        
+                                    return (
+                                        <tr key={param.key}>
+                                            <td className="border border-gray-800 p-2">{param.name}</td>
+                                            <td className="border border-gray-800 p-2 text-center">{displayValue}</td>
+                                            <td className="border border-gray-800 p-2 text-center">{bobot}</td>
+                                            <td className="border border-gray-800 p-2 text-center">{status}</td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {data.families.length > 0 && (
+                        <div>
+                            <table className="w-full border-collapse border border-gray-800 text-sm">
+                                <thead>
+                                    <tr className="bg-gray-200">
+                                        <th className="border border-gray-800 p-2 text-left">Species/Genus</th>
+                                        <th className="border border-gray-800 p-2 text-left">Family</th>
+                                        <th className="border border-gray-800 p-2 text-center w-16">Bobot</th>
+                                        <th className="border border-gray-800 p-2 text-center w-24">Kelimpahan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {data.families.map((fam, idx) => {
+                                        if(!fam.id_family) return null;
+                                        const familyName = bioticFamilies?.find(f => f.id == fam.id_family)?.name || fam.name;
+                                        const speciesName = fam.name || '-';
+                                        return (
+                                            <tr key={idx}>
+                                                <td className="border border-gray-800 p-2 italic">{speciesName}</td>
+                                                <td className="border border-gray-800 p-2">{familyName}</td>
+                                                <td className="border border-gray-800 p-2 text-center">-</td>
+                                                <td className="border border-gray-800 p-2 text-center">{fam.abundance}</td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+
+                    <div className="break-inside-avoid shadow-sm h-full flex flex-col mt-2">
+                        <h3 className="font-bold text-lg mb-0 bg-blue-50 p-3 border-l-4 border-t border-r border-gray-800 text-blue-900">C. Hasil Evaluasi Kualitas Air</h3>
+                        <div className="border border-gray-800 p-6 bg-gray-50 flex-1 flex flex-col justify-center">
+                            <div className="flex justify-between items-center border-b border-gray-300 pb-5 mb-5">
+                                <div className="w-1/2 text-center border-r border-gray-300">
+                                    <p className="text-gray-600 font-semibold mb-1 uppercase text-xs tracking-wider">Total Skor WSM</p>
+                                    <p className="text-4xl font-black text-blue-700">{result.value}</p>
+                                </div>
+                                <div className="w-1/2 text-center">
+                                    <p className="text-gray-600 font-semibold mb-1 uppercase text-xs tracking-wider">Status Kualitas Air</p>
+                                    <p className="text-xl font-bold text-gray-800">{result.status}</p>
+                                </div>
+                            </div>
+                            <div className="mb-4">
+                                <h4 className="font-bold text-gray-800 mb-1">Kesimpulan:</h4>
+                                <p className="text-gray-700 text-sm leading-relaxed text-justify">{result.conclusion}</p>
+                            </div>
+                            <div>
+                                <h4 className="font-bold text-gray-800 mb-1">Rekomendasi:</h4>
+                                <p className="text-gray-700 text-sm leading-relaxed text-justify">{result.recommendation}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

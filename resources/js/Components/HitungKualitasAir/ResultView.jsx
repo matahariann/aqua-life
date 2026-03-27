@@ -49,150 +49,176 @@ export default function ResultView({
 
     return (
         <div className="animate-fade-in-up py-4">
-            <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
-                <h3 className="text-xl font-bold border-b pb-2 mb-4 flex items-center gap-2">
-                    <FaVial className="text-emerald-500" /> Ringkasan Parameter Abiotik
-                </h3>
-                <div className="overflow-x-auto mb-8 bg-white rounded-lg shadow-sm border border-gray-200">
-                    <table className="w-full text-sm text-left">
-                        <thead className="bg-gray-50 text-gray-700 font-semibold border-b">
-                            <tr>
-                                <th className="px-4 py-3">Parameter</th>
-                                <th className="px-4 py-3 text-center">Nilai</th>
-                                <th className="px-4 py-3 text-center">Bobot</th>
-                                <th className="px-4 py-3 text-center">Status/Kelimpahan</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                            <tr>
-                                <td colSpan="4" className="px-4 py-2 bg-gray-50 font-semibold text-gray-600">A. Parameter Abiotik Utama</td>
-                            </tr>
-                            {abioticMainParams.map(param => {
-                                if(param.value === "" || param.value === null) return null;
-                                const { status, bobot } = getAbioticStatus(param.name, param.value, waterTypeName, geoZoneName);
-                                return (
-                                    <tr key={param.key} className="hover:bg-gray-50">
-                                        <td className="px-4 py-2">{param.name}</td>
-                                        <td className="px-4 py-2 text-center">{param.value}</td>
-                                        <td className="px-4 py-2 text-center font-medium">{bobot}</td>
-                                        <td className="px-4 py-2 text-center">
-                                            <span className={`px-2 py-1 rounded text-xs font-semibold ${status === 'Normal' ? 'bg-emerald-100 text-emerald-800' : status === 'Mendekati' ? 'bg-yellow-100 text-yellow-800' : status === 'Jauh Dari Normal' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
-                                                {status}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                            <tr>
-                                <td colSpan="4" className="px-4 py-2 bg-gray-50 font-semibold text-gray-600">C. Parameter Abiotik Tambahan</td>
-                            </tr>
-                            {abioticAdditionalParams.map(param => {
-                                if(param.value === "" || param.value === null) return null;
-                                const { status, bobot } = getAdditionalAbioticStatus(param.name, param.value);
-                                return (
-                                    <tr key={param.key} className="hover:bg-gray-50">
-                                        <td className="px-4 py-2">{param.name}</td>
-                                        <td className="px-4 py-2 text-center">{param.value}</td>
-                                        <td className="px-4 py-2 text-center font-medium">{bobot}</td>
-                                        <td className="px-4 py-2 text-center">
-                                            <span className={`px-2 py-1 rounded text-xs font-semibold ${status === 'Normal' ? 'bg-emerald-100 text-emerald-800' : status === 'Mendekati' ? 'bg-yellow-100 text-yellow-800' : status === 'Jauh Dari Normal' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
-                                                {status}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                </div>
-
-                <h3 className="text-xl font-bold border-b pb-2 mb-4 flex items-center gap-2">
-                    <FaFlask className="text-blue-500" /> Ringkasan Parameter Biotik
-                </h3>
-                <div className="overflow-x-auto mb-4 bg-white rounded-lg shadow-sm border border-gray-200">
-                    <table className="w-full text-sm text-left">
-                        <thead className="bg-gray-50 text-gray-700 font-semibold border-b">
-                            <tr>
-                                <th className="px-4 py-3">B. Parameter Indeks Biotik</th>
-                                <th className="px-4 py-3 text-center">Nilai</th>
-                                <th className="px-4 py-3 text-center">Bobot</th>
-                                <th className="px-4 py-3 text-center">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                            {bioticIndexParams.map(param => {
-                                if(param.value === "" || param.value === null) return null;
-                                const { status, bobot } = getBioticIndexStatus(param.name, param.value);
-                                return (
-                                    <tr key={param.key} className="hover:bg-gray-50">
-                                        <td className="px-4 py-2">{param.name}</td>
-                                        <td className="px-4 py-2 text-center">{param.value}</td>
-                                        <td className="px-4 py-2 text-center font-medium">{bobot}</td>
-                                        <td className="px-4 py-2 text-center">
-                                            <span className={`px-2 py-1 rounded text-xs font-semibold ${status === 'Normal' ? 'bg-emerald-100 text-emerald-800' : status === 'Mendekati' ? 'bg-yellow-100 text-yellow-800' : status === 'Jauh Dari Normal' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
-                                                {status}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 items-start">
                 
-                {data.families.length > 0 && (
-                    <div className="overflow-x-auto mb-4 bg-white rounded-lg shadow-sm border border-gray-200">
+                {/* Kolom Kiri: Abiotik */}
+                <div className="bg-white rounded-xl shadow-sm border p-6 flex flex-col gap-4">
+                    <h3 className="text-xl font-bold border-b pb-2 flex items-center gap-2">
+                        <FaVial className="text-emerald-500" /> Ringkasan Parameter Abiotik
+                    </h3>
+                    <div className="overflow-x-auto bg-white rounded-lg shadow-sm border border-gray-200">
                         <table className="w-full text-sm text-left">
                             <thead className="bg-gray-50 text-gray-700 font-semibold border-b">
                                 <tr>
-                                    <th className="px-4 py-3">Species/Genus</th>
-                                    <th className="px-4 py-3">Family</th>
+                                    <th className="px-4 py-3">Parameter</th>
+                                    <th className="px-4 py-3 text-center">Nilai</th>
                                     <th className="px-4 py-3 text-center">Bobot</th>
-                                    <th className="px-4 py-3 text-center">Status/Kelimpahan</th>
+                                    <th className="px-4 py-3 text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
-                                {data.families.map((fam, idx) => {
-                                    if(!fam.id_family) return null;
-                                    const familyName = bioticFamilies?.find(f => f.id == fam.id_family)?.name || fam.name;
-                                    const speciesName = fam.name || '-';
+                                <tr>
+                                    <td colSpan="4" className="px-4 py-2 bg-gray-50 font-semibold text-gray-600">A. Parameter Abiotik Utama</td>
+                                </tr>
+                                {abioticMainParams.map(param => {
+                                    const isEmpty = param.value === "" || param.value === null;
+                                    const displayValue = isEmpty ? "-" : param.value;
+                                    const { status, bobot } = isEmpty 
+                                        ? { status: 'Normal', bobot: '-' } 
+                                        : getAbioticStatus(param.name, param.value, waterTypeName, geoZoneName);
+                                    
                                     return (
-                                        <tr key={idx} className="hover:bg-gray-50">
-                                            <td className="px-4 py-2 italic">{speciesName}</td>
-                                            <td className="px-4 py-2">{familyName}</td>
-                                            <td className="px-4 py-2 text-center font-medium">-</td>
-                                            <td className="px-4 py-2 text-center">{fam.abundance}</td>
+                                        <tr key={param.key} className="hover:bg-gray-50">
+                                            <td className="px-4 py-2">{param.name}</td>
+                                            <td className="px-4 py-2 text-center">{displayValue}</td>
+                                            <td className="px-4 py-2 text-center font-medium">{bobot}</td>
+                                            <td className="px-4 py-2 text-center">
+                                                <span className={`px-2 py-1 rounded text-xs font-semibold ${status === 'Normal' ? 'bg-emerald-100 text-emerald-800' : status === 'Mendekati' ? 'bg-yellow-100 text-yellow-800' : status === 'Jauh Dari Normal' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
+                                                    {status}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                                <tr>
+                                    <td colSpan="4" className="px-4 py-2 bg-gray-50 font-semibold text-gray-600">C. Parameter Abiotik Tambahan</td>
+                                </tr>
+                                {abioticAdditionalParams.map(param => {
+                                    const isEmpty = param.value === "" || param.value === null;
+                                    const displayValue = isEmpty ? "-" : param.value;
+                                    const { status, bobot } = isEmpty 
+                                        ? { status: 'Normal', bobot: '-' } 
+                                        : getAdditionalAbioticStatus(param.name, param.value);
+                                        
+                                    return (
+                                        <tr key={param.key} className="hover:bg-gray-50">
+                                            <td className="px-4 py-2">{param.name}</td>
+                                            <td className="px-4 py-2 text-center">{displayValue}</td>
+                                            <td className="px-4 py-2 text-center font-medium">{bobot}</td>
+                                            <td className="px-4 py-2 text-center">
+                                                <span className={`px-2 py-1 rounded text-xs font-semibold ${status === 'Normal' ? 'bg-emerald-100 text-emerald-800' : status === 'Mendekati' ? 'bg-yellow-100 text-yellow-800' : status === 'Jauh Dari Normal' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
+                                                    {status}
+                                                </span>
+                                            </td>
                                         </tr>
                                     );
                                 })}
                             </tbody>
                         </table>
                     </div>
-                )}
-            </div>
-
-            {result && (
-                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl shadow-sm border border-blue-100 p-8 mb-8 text-center">
-                    <h3 className="text-lg font-bold text-gray-700 mb-2">Skor Kualitas Air</h3>
-                    <div className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600 drop-shadow-sm mb-4">
-                        {result.value}
-                    </div>
-                    <div className="inline-block px-6 py-2 rounded-full text-lg font-bold bg-white text-blue-700 shadow-sm border border-blue-200 mb-6">
-                        Status: {result.status}
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-                        <div className="bg-white p-5 rounded-xl shadow-sm border border-blue-50">
-                            <h4 className="font-bold text-gray-800 mb-2 flex items-center gap-2"><FaInfoCircle className="text-blue-500"/> Kesimpulan</h4>
-                            <p className="text-gray-600 text-sm leading-relaxed">{result.conclusion}</p>
-                        </div>
-                        <div className="bg-white p-5 rounded-xl shadow-sm border border-blue-50">
-                            <h4 className="font-bold text-gray-800 mb-2 flex items-center gap-2"><FaCheck className="text-emerald-500"/> Rekomendasi</h4>
-                            <p className="text-gray-600 text-sm leading-relaxed">{result.recommendation}</p>
-                        </div>
-                    </div>
                 </div>
-            )}
+
+                {/* Kolom Kanan: Biotik */}
+                <div className="flex flex-col gap-6">
+                    <div className="bg-white rounded-xl shadow-sm border p-6">
+                        <h3 className="text-xl font-bold border-b pb-2 mb-4 flex items-center gap-2">
+                            <FaFlask className="text-blue-500" /> Ringkasan Parameter Biotik
+                        </h3>
+                        <div className="overflow-x-auto bg-white rounded-lg shadow-sm border border-gray-200">
+                            <table className="w-full text-sm text-left">
+                                <thead className="bg-gray-50 text-gray-700 font-semibold border-b">
+                                    <tr>
+                                        <th className="px-4 py-3">B. Indeks Biotik</th>
+                                        <th className="px-4 py-3 text-center">Nilai</th>
+                                        <th className="px-4 py-3 text-center">Bobot</th>
+                                        <th className="px-4 py-3 text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                    {bioticIndexParams.map(param => {
+                                        const isEmpty = param.value === "" || param.value === null;
+                                        const displayValue = isEmpty ? "-" : param.value;
+                                        const { status, bobot } = isEmpty 
+                                            ? { status: 'Normal', bobot: '-' } 
+                                            : getBioticIndexStatus(param.name, param.value);
+                                            
+                                        return (
+                                            <tr key={param.key} className="hover:bg-gray-50">
+                                                <td className="px-4 py-2">{param.name}</td>
+                                                <td className="px-4 py-2 text-center">{displayValue}</td>
+                                                <td className="px-4 py-2 text-center font-medium">{bobot}</td>
+                                                <td className="px-4 py-2 text-center">
+                                                    <span className={`px-2 py-1 rounded text-xs font-semibold ${status === 'Normal' ? 'bg-emerald-100 text-emerald-800' : status === 'Mendekati' ? 'bg-yellow-100 text-yellow-800' : status === 'Jauh Dari Normal' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
+                                                        {status}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    {data.families.length > 0 && (
+                        <div className="bg-white rounded-xl shadow-sm border p-6">
+                            <h3 className="text-xl font-bold border-b pb-2 mb-4 flex items-center gap-2">
+                                <FaFlask className="text-blue-500" /> Spesies Family
+                            </h3>
+                            <div className="overflow-x-auto bg-white rounded-lg shadow-sm border border-gray-200">
+                                <table className="w-full text-sm text-left">
+                                    <thead className="bg-gray-50 text-gray-700 font-semibold border-b">
+                                        <tr>
+                                            <th className="px-4 py-3">Species/Genus</th>
+                                            <th className="px-4 py-3">Family</th>
+                                            <th className="px-4 py-3 text-center">Bobot</th>
+                                            <th className="px-4 py-3 text-center">Kelimpahan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {data.families.map((fam, idx) => {
+                                            if(!fam.id_family) return null;
+                                            const familyName = bioticFamilies?.find(f => f.id == fam.id_family)?.name || fam.name;
+                                            const speciesName = fam.name || '-';
+                                            return (
+                                                <tr key={idx} className="hover:bg-gray-50">
+                                                    <td className="px-4 py-2 italic">{speciesName}</td>
+                                                    <td className="px-4 py-2">{familyName}</td>
+                                                    <td className="px-4 py-2 text-center font-medium">-</td>
+                                                    <td className="px-4 py-2 text-center">{fam.abundance}</td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
+
+                    {result && (
+                        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl shadow-sm border border-blue-100 p-8 text-center h-full flex flex-col justify-center">
+                            <h3 className="text-lg font-bold text-gray-700 mb-2">Skor Kualitas Air</h3>
+                            <div className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600 drop-shadow-sm mb-4">
+                                {result.value}
+                            </div>
+                            <div className="inline-block px-6 py-2 rounded-full text-lg font-bold bg-white text-blue-700 shadow-sm border border-blue-200 mb-6 mx-auto">
+                                Status: {result.status}
+                            </div>
+        
+                            <div className="grid grid-cols-1 gap-2 text-left">
+                                <div className="bg-white p-5 rounded-xl shadow-sm border border-blue-50">
+                                    <h4 className="font-bold text-gray-800 mb-2 flex items-center gap-2"><FaInfoCircle className="text-blue-500"/> Kesimpulan</h4>
+                                    <p className="text-gray-600 text-sm leading-relaxed">{result.conclusion}</p>
+                                </div>
+                                <div className="bg-white p-5 rounded-xl shadow-sm border border-blue-50">
+                                    <h4 className="font-bold text-gray-800 mb-2 flex items-center gap-2"><FaCheck className="text-emerald-500"/> Rekomendasi</h4>
+                                    <p className="text-gray-600 text-sm leading-relaxed">{result.recommendation}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
             
             <div className="flex justify-center flex-wrap gap-4 mt-8">
                 {isHistoryView ? (
