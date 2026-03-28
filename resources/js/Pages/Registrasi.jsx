@@ -58,7 +58,7 @@ export default function Registrasi() {
 
     return (
         <>
-            <Toaster position="top-center" richColors />
+            <Toaster className="mt-[60px] md:mt-0" position="top-center" richColors />
             <div className="min-h-screen bg-gradient-to-br from-blue-600 via-cyan-500 to-teal-400 flex items-center justify-center p-4 relative overflow-hidden">
                 {/* Animated Wave Background */}
                 <div className="absolute inset-0 overflow-hidden">
@@ -520,3 +520,4 @@ export default function Registrasi() {
         </>
     );
 }
+

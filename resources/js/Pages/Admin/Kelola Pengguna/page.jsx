@@ -269,7 +269,7 @@ export default function AdminKelolaPengguna({ auth, users }) {
 
     return (
         <AdminLayout>
-            <Toaster
+            <Toaster className="mt-[60px] md:mt-0"
                 position="top-right"
                 expand={true}
                 richColors
@@ -592,3 +592,4 @@ export default function AdminKelolaPengguna({ auth, users }) {
         </AdminLayout>
     );
 }
+

@@ -300,7 +300,7 @@ export default function MemberPembayaran({ auth, payments }) {
 
     return (
         <MemberLayout>
-            <Toaster position="top-right" richColors />
+            <Toaster className="mt-[60px] md:mt-0" position="top-right" richColors />
             
             <main className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6 md:p-10">
                 <div className="max-w-6xl mx-auto space-y-8">
@@ -552,3 +552,4 @@ export default function MemberPembayaran({ auth, payments }) {
         </MemberLayout>
     );
 }
+

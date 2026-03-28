@@ -283,7 +283,7 @@ bioticFamilies={bioticFamilies}
                 currentStep={currentStep} 
             />
 
-            <Toaster position="top-center" expand={true} richColors />
+            <Toaster className="mt-[60px] md:mt-0" position="top-center" expand={true} richColors />
             <main className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-100 p-6 flex items-center justify-center print:hidden">
                 <div className="w-full max-w-7xl mx-auto">
                      <div className="bg-white rounded-2xl shadow-xl overflow-hidden h-[95vh] flex flex-col">
@@ -367,3 +367,4 @@ bioticFamilies={bioticFamilies}
         </MemberLayout>
     );
 }
+

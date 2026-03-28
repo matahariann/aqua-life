@@ -131,7 +131,7 @@ export default function Login() {
 
     return (
         <>
-            <Toaster
+            <Toaster className="mt-[60px] md:mt-0"
                 position="top-right"
                 expand={true}
                 richColors
@@ -470,3 +470,4 @@ export default function Login() {
         </>
     );
 }
+
