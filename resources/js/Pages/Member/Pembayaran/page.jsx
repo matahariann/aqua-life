@@ -377,7 +377,7 @@ export default function MemberPembayaran({ auth, payments }) {
                                 <FaHistory className="text-blue-500 opacity-80" />
                                 Riwayat Pembayaran
                             </h2>
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
                                 <label className="text-sm font-semibold text-gray-500">Tampilkan:</label>
                                 <select 
                                     value={perPage} 
@@ -419,7 +419,7 @@ export default function MemberPembayaran({ auth, payments }) {
                                                     )}
                                                 </td>
                                                 <td className="px-6 py-4 text-sm">
-                                                    <div className="flex items-center gap-2">
+                                                    <div className="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
                                                         {getStatusText(payment.status)}
                                                     </div>
                                                 </td>
@@ -427,7 +427,7 @@ export default function MemberPembayaran({ auth, payments }) {
                                                     {formatDate(payment.created_at)}
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-800">
-                                                    <div className="flex items-center gap-2">
+                                                    <div className="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
                                                         {payment.status?.toLowerCase() === "pending" && (
                                                             <button
                                                                 type="button"
@@ -460,12 +460,12 @@ export default function MemberPembayaran({ auth, payments }) {
                         </div>
 
                         {/* Pagination */}
-                        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                            <div className="text-sm text-gray-600">
+                        <div className="px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row items-center md:justify-between gap-4">
+                            <div className="text-sm text-gray-600 text-center w-full md:w-auto">
                                 Halaman {payments.current_page} dari {payments.last_page}
                             </div>
 
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
                                 <button
                                     onClick={() => handlePageChange(payments.prev_page_url)}
                                     disabled={!payments.prev_page_url}
@@ -479,7 +479,7 @@ export default function MemberPembayaran({ auth, payments }) {
                                     Prev
                                 </button>
 
-                                <div className="flex items-center gap-1">
+                                <div className="flex flex-wrap items-center justify-center gap-1">
                                     {renderPageNumbers().map((page, idx) => {
                                         if (page === "...") {
                                             return (
@@ -552,5 +552,6 @@ export default function MemberPembayaran({ auth, payments }) {
         </MemberLayout>
     );
 }
+
 
 

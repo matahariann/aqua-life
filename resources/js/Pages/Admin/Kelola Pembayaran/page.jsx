@@ -193,7 +193,7 @@ export default function AdminKelolaPembayaran({ payments }) {
                                 </select>
                                 <span className="text-sm text-gray-700">data per halaman</span>
                             </div>
-                            <div className="text-sm text-gray-600">
+                            <div className="text-sm text-gray-600 text-center w-full md:w-auto">
                                 Menampilkan {payments?.from || 0} - {payments?.to || 0} dari {payments?.total || 0} data
                             </div>
                         </div>
@@ -243,12 +243,12 @@ export default function AdminKelolaPembayaran({ payments }) {
                                 </tbody>
                             </table>
                         </div>
-                        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                                <div className="text-sm text-gray-600">
+                        <div className="px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row items-center md:justify-between gap-4">
+                                <div className="text-sm text-gray-600 text-center w-full md:w-auto">
                                     Halaman {payments.current_page} dari {payments.last_page}
                                 </div>
 
-                                <div className="flex items-center gap-2">
+                                <div className="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
                                     <button
                                         onClick={() => handlePageChange(payments.prev_page_url)}
                                         disabled={!payments.prev_page_url}
@@ -262,7 +262,7 @@ export default function AdminKelolaPembayaran({ payments }) {
                                         Prev
                                     </button>
 
-                                    <div className="flex items-center gap-1">
+                                    <div className="flex flex-wrap items-center justify-center gap-1">
                                         {renderPageNumbers().map((page, idx) => {
                                             if (page === "...") {
                                                 return (
@@ -319,5 +319,6 @@ export default function AdminKelolaPembayaran({ payments }) {
         </AdminLayout>
     );
 }
+
 
 

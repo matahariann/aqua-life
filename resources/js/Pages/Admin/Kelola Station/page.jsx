@@ -125,7 +125,7 @@ export default function AdminKelolaStation({ histories }) {
                                 </select>
                                 <span className="text-sm text-gray-700">data per halaman</span>
                             </div>
-                            <div className="text-sm text-gray-600">
+                            <div className="text-sm text-gray-600 text-center w-full md:w-auto">
                                 Menampilkan {histories?.from || 0} - {histories?.to || 0} dari {histories?.total || 0} data
                             </div>
                         </div>
@@ -218,11 +218,11 @@ export default function AdminKelolaStation({ histories }) {
 
                         {/* Pagination */}
                         <div className="px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-                            <div className="text-sm text-gray-600">
+                            <div className="text-sm text-gray-600 text-center w-full md:w-auto">
                                 Halaman {histories?.current_page || 0} dari {histories?.last_page || 0}
                             </div>
 
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
                                 <button
                                     onClick={() => handlePageChange(histories?.prev_page_url)}
                                     disabled={!histories?.prev_page_url}
@@ -284,3 +284,4 @@ export default function AdminKelolaStation({ histories }) {
         </AdminLayout>
     );
 }
+

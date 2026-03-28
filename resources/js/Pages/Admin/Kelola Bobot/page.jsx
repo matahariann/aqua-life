@@ -967,7 +967,7 @@ export default function AdminKelolaBobot({
                                         data per halaman
                                     </span>
                                 </div>
-                                <div className="text-sm text-gray-600">
+                                <div className="text-sm text-gray-600 text-center w-full md:w-auto">
                                     Menampilkan{" "}
                                     {mainAbioticParameters?.from || 0} -{" "}
                                     {mainAbioticParameters?.to || 0} dari{" "}
@@ -1100,8 +1100,8 @@ export default function AdminKelolaBobot({
                                 </table>
                             </div>
 
-                            <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                                    <div className="text-sm text-gray-600">
+                            <div className="px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row items-center md:justify-between gap-4">
+                                    <div className="text-sm text-gray-600 text-center w-full md:w-auto">
                                         Halaman{" "}
                                         {
                                             mainAbioticParameters.current_page
@@ -1109,7 +1109,7 @@ export default function AdminKelolaBobot({
                                         dari {mainAbioticParameters.last_page}
                                     </div>
 
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
                                         <button
                                             onClick={() =>
                                                 handlePageChangeMain(
@@ -1129,7 +1129,7 @@ export default function AdminKelolaBobot({
                                             Prev
                                         </button>
 
-                                        <div className="flex items-center gap-1">
+                                        <div className="flex flex-wrap items-center justify-center gap-1">
                                             {renderPageNumbersMain().map(
                                                 (page, index) => {
                                                     if (page === "...") {
@@ -1197,7 +1197,7 @@ export default function AdminKelolaBobot({
                             {tab === "additional-abiotic" && (
                                 <>
                                     <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
                                             <label className="text-sm text-gray-700 font-medium">
                                                 Tampilkan:
                                             </label>
@@ -1220,7 +1220,7 @@ export default function AdminKelolaBobot({
                                                 data per halaman
                                             </span>
                                         </div>
-                                        <div className="text-sm text-gray-600">
+                                        <div className="text-sm text-gray-600 text-center w-full md:w-auto">
                                             Menampilkan{" "}
                                             {additionalAbioticParameters?.from ||
                                                 0}{" "}
@@ -1351,8 +1351,8 @@ export default function AdminKelolaBobot({
                                         </table>
                                     </div>
 
-                                    <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                                            <div className="text-sm text-gray-600">
+                                    <div className="px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row items-center md:justify-between gap-4">
+                                            <div className="text-sm text-gray-600 text-center w-full md:w-auto">
                                                 Halaman{" "}
                                                 {
                                                     additionalAbioticParameters.current_page
@@ -1363,7 +1363,7 @@ export default function AdminKelolaBobot({
                                                 }
                                             </div>
 
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
                                                 <button
                                                     onClick={() =>
                                                         handlePageChangeAdditional(
@@ -1383,7 +1383,7 @@ export default function AdminKelolaBobot({
                                                     Prev
                                                 </button>
 
-                                                <div className="flex items-center gap-1">
+                                                <div className="flex flex-wrap items-center justify-center gap-1">
                                                     {renderPageNumbersAdditional().map(
                                                         (page, index) => {
                                                             if (
@@ -1449,7 +1449,7 @@ export default function AdminKelolaBobot({
                             {tab === "index-biotic" && (
                                 <>
                                     <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
                                             <label className="text-sm text-gray-700 font-medium">
                                                 Tampilkan:
                                             </label>
@@ -1472,7 +1472,7 @@ export default function AdminKelolaBobot({
                                                 data per halaman
                                             </span>
                                         </div>
-                                        <div className="text-sm text-gray-600">
+                                        <div className="text-sm text-gray-600 text-center w-full md:w-auto">
                                             Menampilkan{" "}
                                             {bioticIndexParameters?.from ||
                                                 0}{" "}
@@ -1603,8 +1603,8 @@ export default function AdminKelolaBobot({
                                         </table>
                                     </div>
 
-                                    <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                                            <div className="text-sm text-gray-600">
+                                    <div className="px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row items-center md:justify-between gap-4">
+                                            <div className="text-sm text-gray-600 text-center w-full md:w-auto">
                                                 Halaman{" "}
                                                 {
                                                     bioticIndexParameters.current_page
@@ -1615,7 +1615,7 @@ export default function AdminKelolaBobot({
                                                 }
                                             </div>
 
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
                                                 <button
                                                     onClick={() =>
                                                         handlePageChangeBiotic(
@@ -1635,7 +1635,7 @@ export default function AdminKelolaBobot({
                                                     Prev
                                                 </button>
 
-                                                <div className="flex items-center gap-1">
+                                                <div className="flex flex-wrap items-center justify-center gap-1">
                                                     {renderPageNumbersBiotic().map(
                                                         (page, index) => {
                                                             if (
@@ -1701,7 +1701,7 @@ export default function AdminKelolaBobot({
                             {tab === "family-biotic" && (
                                 <>
                                     <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
                                             <label className="text-sm text-gray-700 font-medium">
                                                 Tampilkan:
                                             </label>
@@ -1724,7 +1724,7 @@ export default function AdminKelolaBobot({
                                                 data per halaman
                                             </span>
                                         </div>
-                                        <div className="text-sm text-gray-600">
+                                        <div className="text-sm text-gray-600 text-center w-full md:w-auto">
                                             Menampilkan{" "}
                                             {bioticFamilies?.from || 0} -{" "}
                                             {bioticFamilies?.to || 0} dari{" "}
@@ -1828,14 +1828,14 @@ export default function AdminKelolaBobot({
                                         </table>
                                     </div>
 
-                                    <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                                            <div className="text-sm text-gray-600">
+                                    <div className="px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row items-center md:justify-between gap-4">
+                                            <div className="text-sm text-gray-600 text-center w-full md:w-auto">
                                                 Halaman{" "}
                                                 {bioticFamilies.current_page}{" "}
                                                 dari {bioticFamilies.last_page}
                                             </div>
 
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
                                                 <button
                                                     onClick={() =>
                                                         handlePageChangeFamily(
@@ -1855,7 +1855,7 @@ export default function AdminKelolaBobot({
                                                     Prev
                                                 </button>
 
-                                                <div className="flex items-center gap-1">
+                                                <div className="flex flex-wrap items-center justify-center gap-1">
                                                     {renderPageNumbersFamily().map(
                                                         (page, index) => {
                                                             if (page === "...") {
@@ -2064,5 +2064,6 @@ export default function AdminKelolaBobot({
         </AdminLayout>
     );
 }
+
 
 

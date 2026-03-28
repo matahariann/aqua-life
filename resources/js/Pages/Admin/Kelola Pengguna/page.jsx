@@ -325,7 +325,7 @@ export default function AdminKelolaPengguna({ auth, users }) {
                                     data per halaman
                                 </span>
                             </div>
-                            <div className="text-sm text-gray-600">
+                            <div className="text-sm text-gray-600 text-center w-full md:w-auto">
                                 Menampilkan {users.from || 0} - {users.to || 0}{" "}
                                 dari {users.total} data
                             </div>
@@ -468,13 +468,13 @@ export default function AdminKelolaPengguna({ auth, users }) {
                                 </tbody>
                             </table>
                         </div>
-                            <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                                <div className="text-sm text-gray-600">
+                            <div className="px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row items-center md:justify-between gap-4">
+                                <div className="text-sm text-gray-600 text-center w-full md:w-auto">
                                     Halaman {users.current_page} dari{" "}
                                     {users.last_page}
                                 </div>
 
-                                <div className="flex items-center gap-2">
+                                <div className="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
                                     {/* Previous Button */}
                                     <button
                                         onClick={() =>
@@ -494,7 +494,7 @@ export default function AdminKelolaPengguna({ auth, users }) {
                                     </button>
 
                                     {/* Page Numbers */}
-                                    <div className="flex items-center gap-1">
+                                    <div className="flex flex-wrap items-center justify-center gap-1">
                                         {renderPageNumbers().map(
                                             (page, index) => {
                                                 if (page === "...") {
@@ -587,5 +587,6 @@ export default function AdminKelolaPengguna({ auth, users }) {
         </AdminLayout>
     );
 }
+
 
 
