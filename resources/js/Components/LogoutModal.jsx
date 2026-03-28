@@ -34,9 +34,9 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
                 </button>
 
                 {/* Content */}
-                <div className="p-10 pt-12 text-center">
+                <div className="p-6 pt-8 md:p-10 md:pt-12 text-center">
                     {/* Animated Icon Container with Glassmorphism */}
-                    <div className="relative mx-auto w-24 h-24 mb-8">
+                    <div className="relative mx-auto w-20 h-20 md:w-24 md:h-24 mb-6 md:mb-8">
                         {/* Outer Glow Rings */}
                         <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-emerald-400/20 rounded-full blur-xl animate-pulse-slow"></div>
                         <div className="absolute inset-2 bg-gradient-to-br from-cyan-400/30 to-blue-400/30 rounded-full blur-lg animate-pulse-slower"></div>
@@ -44,7 +44,7 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
                         {/* Glass Circle */}
                         <div className="absolute inset-3 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 rounded-full flex items-center justify-center shadow-2xl animate-icon-float border-4 border-white/30">
                             <div className="absolute inset-0 bg-white/20 rounded-full backdrop-blur-sm"></div>
-                            <RiLogoutCircleLine className="text-white text-5xl relative z-10 drop-shadow-lg" />
+                            <RiLogoutCircleLine className="text-white text-4xl md:text-5xl relative z-10 drop-shadow-lg" />
                         </div>
 
                         {/* Rotating Ring */}
@@ -52,12 +52,12 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
                     </div>
 
                     {/* Title with Gradient */}
-                    <h3 className="text-3xl font-bold text-white mb-4 tracking-tight drop-shadow-lg">
+                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 tracking-tight drop-shadow-lg">
                         Konfirmasi Logout
                     </h3>
 
                     {/* Description */}
-                    <p className="text-white/90 text-base leading-relaxed mb-10 px-4 drop-shadow-md">
+                    <p className="text-white/90 text-sm md:text-base leading-relaxed mb-6 md:mb-10 px-4 drop-shadow-md">
                         Apakah Anda yakin ingin keluar dari aplikasi?
                     </p>
 
@@ -65,13 +65,13 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
                     <div className="flex gap-4">
                         <button
                             onClick={onClose}
-                            className="flex-1 bg-white/20 backdrop-blur-md border-2 border-white/40 text-white font-semibold py-4 px-6 rounded-xl hover:bg-white/30 hover:border-white/60 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+                            className="flex-1 bg-white/20 backdrop-blur-md border-2 border-white/40 text-white font-semibold py-3 px-4 md:py-4 md:px-6 rounded-xl text-sm md:text-base hover:bg-white/30 hover:border-white/60 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
                         >
                             Batal
                         </button>
                         <button
                             onClick={onConfirm}
-                            className="flex-1 bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white font-semibold py-4 px-6 rounded-xl hover:from-blue-700 hover:via-cyan-600 hover:to-emerald-600 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group border border-white/20"
+                            className="flex-1 bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white font-semibold py-3 px-4 md:py-4 md:px-6 rounded-xl text-sm md:text-base hover:from-blue-700 hover:via-cyan-600 hover:to-emerald-600 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group border border-white/20"
                         >
                             <span className="relative z-10 flex items-center justify-center gap-2">
                                 Ya, Logout

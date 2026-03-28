@@ -31,18 +31,18 @@ export default function DeleteBioticIndexModal({
                     <X className="text-xl text-white group-hover:rotate-90 transition-all duration-300 drop-shadow-lg" />
                 </button>
 
-                <div className="p-10 pt-12 text-center">
-                    <div className="relative mx-auto w-24 h-24 mb-8">
+                <div className="p-6 pt-8 md:p-10 md:pt-12 text-center">
+                    <div className="relative mx-auto w-20 h-20 md:w-24 md:h-24 mb-6 md:mb-8">
                         <div className="absolute inset-0 bg-gradient-to-br from-red-400/20 to-red-500/20 rounded-full blur-xl animate-pulse-slow"></div>
                         <div className="absolute inset-2 bg-gradient-to-br from-red-400/30 to-red-500/30 rounded-full blur-lg animate-pulse-slower"></div>
                         <div className="absolute inset-3 bg-gradient-to-br from-red-500 via-red-600 to-red-700 rounded-full flex items-center justify-center shadow-2xl animate-icon-float border-4 border-white/30">
                             <div className="absolute inset-0 bg-white/20 rounded-full backdrop-blur-sm"></div>
-                            <Trash2 className="text-white text-5xl relative z-10 drop-shadow-lg" />
+                            <Trash2 className="text-white text-4xl md:text-5xl relative z-10 drop-shadow-lg" />
                         </div>
                         <div className="absolute inset-0 rounded-full border-2 border-dashed border-red-300/40 animate-spin-slow"></div>
                     </div>
 
-                    <h3 className="text-3xl font-bold text-white mb-4 tracking-tight drop-shadow-lg">
+                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 tracking-tight drop-shadow-lg">
                         Konfirmasi Hapus
                     </h3>
 
@@ -60,14 +60,14 @@ export default function DeleteBioticIndexModal({
                         <button
                             onClick={onClose}
                             disabled={processing}
-                            className="flex-1 bg-white/20 backdrop-blur-md border-2 border-white/40 text-white font-semibold py-4 px-6 rounded-xl hover:bg-white/30 hover:border-white/60 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                            className="flex-1 bg-white/20 backdrop-blur-md border-2 border-white/40 text-white font-semibold py-3 px-4 md:py-4 md:px-6 rounded-xl text-sm md:text-base hover:bg-white/30 hover:border-white/60 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                         >
                             Batal
                         </button>
                         <button
                             onClick={onConfirm}
                             disabled={processing}
-                            className="flex-1 bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-red-700 hover:via-red-600 hover:to-red-700 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group border border-white/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                            className="flex-1 bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white font-semibold py-3 px-4 md:py-4 md:px-6 rounded-xl text-sm md:text-base hover:from-red-700 hover:via-red-600 hover:to-red-700 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group border border-white/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                         >
                             <span className="relative z-10 flex items-center justify-center gap-2">
                                 {processing ? "Menghapus..." : "Ya, Hapus"}
