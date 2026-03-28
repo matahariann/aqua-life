@@ -866,12 +866,7 @@ export default function OperatorKelolaBobot({
 
     return (
         <OperatorLayout>
-            <Toaster className="mt-[60px] md:mt-0"
-                position="top-right"
-                expand={true}
-                richColors
-                closeButton
-            />
+            <Toaster className="mt-[60px] md:mt-0" position="top-center" expand={true} richColors />
             <main className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-100 p-6">
                 <div className="max-w-7xl mx-auto">
                     <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
@@ -2062,4 +2057,5 @@ export default function OperatorKelolaBobot({
         </OperatorLayout>
     );
 }
+
 
