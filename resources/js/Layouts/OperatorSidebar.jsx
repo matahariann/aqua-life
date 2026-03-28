@@ -5,7 +5,7 @@ import { MdPayment, MdOutlinePinDrop, MdOutlineHistory } from "react-icons/md";
 import { AiOutlineExperiment } from "react-icons/ai";
 import { TbLogout } from "react-icons/tb";
 
-const OperatorSidebar = ({ handleLogout }) => {
+const OperatorSidebar = ({ handleLogout, isOpen, setIsOpen }) => {
     const { auth } = usePage().props;
     const { url } = usePage();
 
@@ -29,10 +29,19 @@ const OperatorSidebar = ({ handleLogout }) => {
     ];
 
     return (
-        <aside
-            className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
-            aria-label="Sidebar"
-        >
+        <>
+            {/* Mobile Overlay */}
+            {isOpen && (
+                <div 
+                    className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 md:hidden transition-opacity"
+                    onClick={() => setIsOpen(false)}
+                />
+            )}
+            
+            <aside
+                className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform duration-300 md:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
+                aria-label="Sidebar"
+            >
             <div className="h-full bg-gradient-to-br from-blue-600 via-cyan-500 to-emerald-500 border-r border-white/10 relative overflow-hidden shadow-2xl">
                 {/* Animated Background Pattern */}
                 <div className="absolute inset-0 opacity-20">
@@ -140,6 +149,7 @@ const OperatorSidebar = ({ handleLogout }) => {
                 </div>
             </div>
         </aside>
+        </>
     );
 };
 
