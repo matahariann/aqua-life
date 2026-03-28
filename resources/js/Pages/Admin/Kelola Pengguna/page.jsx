@@ -295,10 +295,11 @@ export default function AdminKelolaPengguna({ auth, users }) {
                             </div>
                             <button
                                 onClick={() => setShowAddModal(true)}
-                                className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105 ring-2 ring-white/30"
+                                className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105 ring-2 ring-white/30"
+                                title="Tambah Pengguna"
                             >
                                 <Plus className="w-5 h-5" />
-                                Tambah Pengguna
+                                <span className="hidden sm:inline">Tambah Pengguna</span>
                             </button>
                         </div>
                     </div>
@@ -339,28 +340,28 @@ export default function AdminKelolaPengguna({ auth, users }) {
                             <table className="w-full">
                                 <thead className="bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500 text-white relative sticky top-0 z-10">
                                     <tr>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">
+                                        <th className="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap">
                                             No
                                         </th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">
+                                        <th className="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap">
                                             Nama
                                         </th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">
+                                        <th className="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap">
                                             Email
                                         </th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">
+                                        <th className="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap">
                                             Role
                                         </th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">
+                                        <th className="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap">
                                             Membership
                                         </th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">
+                                        <th className="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap">
                                             Mulai Membership
                                         </th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">
+                                        <th className="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap">
                                             Berakhir Membership
                                         </th>
-                                        <th className="px-6 py-4 text-center text-sm font-semibold">
+                                        <th className="px-6 py-4 text-center text-sm font-semibold whitespace-nowrap">
                                             Aksi
                                         </th>
                                     </tr>
@@ -412,7 +413,7 @@ export default function AdminKelolaPengguna({ auth, users }) {
                                                     </td>
                                                     <td className="px-6 py-4 text-sm">
                                                         <span
-                                                            className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                                            className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
                                                                 user.is_membership
                                                                     ? "bg-green-100 text-green-800"
                                                                     : "bg-red-100 text-red-800"
@@ -423,10 +424,10 @@ export default function AdminKelolaPengguna({ auth, users }) {
                                                                 : "Tidak Aktif"}
                                                         </span>
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm text-gray-700">
+                                                    <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
                                                         {formatDate(user.membership_start_at)}
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm text-gray-700">
+                                                    <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
                                                         {formatDate(user.membership_end_at)}
                                                     </td>
                                                     <td className="px-6 py-4 text-sm">

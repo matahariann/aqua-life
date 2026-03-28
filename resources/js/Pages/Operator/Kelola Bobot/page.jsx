@@ -18,13 +18,6 @@ import AddFamilyBioticModal from "@/Components/AddFamilyBioticModal";
 import EditFamilyBioticModal from "@/Components/EditFamilyBioticModal";
 import DeleteFamilyBioticModal from "@/Components/DeleteFamilyBioticModal";
 
-
-
-
-
-
-
-
 export default function OperatorKelolaBobot({
     mainAbioticParameters,
     additionalAbioticParameters,
@@ -986,10 +979,11 @@ export default function OperatorKelolaBobot({
                                 </h2>
                                 <button
                                     onClick={() => setShowAddModal(true)}
-                                    className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105 ring-2 ring-white/30"
+                                    className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105 ring-2 ring-white/30"
+                                    title="Tambah Data"
                                 >
                                     <Plus className="w-5 h-5" />
-                                    Tambah Data
+                                    <span className="hidden sm:inline">Tambah Data</span>
                                 </button>
                             </div>
 
@@ -1247,10 +1241,11 @@ export default function OperatorKelolaBobot({
                                                 setShowAddAdditionalModal(true);
                                                 setAddAdditionalErrors({});
                                             }}
-                                            className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105 ring-2 ring-white/30"
+                                            className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105 ring-2 ring-white/30"
+                                            title="Tambah Data"
                                         >
                                             <Plus className="w-5 h-5" />
-                                            Tambah Data
+                                            <span className="hidden sm:inline">Tambah Data</span>
                                         </button>
                                     </div>
 
@@ -1498,10 +1493,11 @@ export default function OperatorKelolaBobot({
                                                 setShowAddBioticModal(true);
                                                 setAddBioticErrors({});
                                             }}
-                                            className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105 ring-2 ring-white/30"
+                                            className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105 ring-2 ring-white/30"
+                                            title="Tambah Data"
                                         >
                                             <Plus className="w-5 h-5" />
-                                            Tambah Data
+                                            <span className="hidden sm:inline">Tambah Data</span>
                                         </button>
                                     </div>
 
@@ -1743,10 +1739,11 @@ export default function OperatorKelolaBobot({
                                                 setShowAddFamilyModal(true);
                                                 setAddFamilyErrors({});
                                             }}
-                                            className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105 ring-2 ring-white/30"
+                                            className="group flex items-center gap-2 bg-gradient-to-br from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-105 ring-2 ring-white/30"
+                                            title="Tambah Data"
                                         >
                                             <Plus className="w-5 h-5" />
-                                            Tambah Data
+                                            <span className="hidden sm:inline">Tambah Data</span>
                                         </button>
                                     </div>
 
