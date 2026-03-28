@@ -321,21 +321,21 @@ export default function MemberPembayaran({ auth, payments }) {
                         </div>
                         
                         <div className="flex flex-col sm:flex-row items-center gap-4 z-10">
-                            <div className="px-6 py-3 bg-gray-50 rounded-2xl border border-gray-200 shadow-sm flex items-center gap-3">
-                                <span className="text-sm font-semibold text-gray-600">Status Saat Ini:</span>
+                            <div className="px-5 sm:px-6 py-3 bg-gray-50 rounded-2xl border border-gray-200 shadow-sm flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-center sm:text-left w-full sm:w-auto">
+                                <span className="text-sm font-semibold text-gray-600 whitespace-nowrap">Status Saat Ini:</span>
                                 {isMembershipActive ? (
-                                    <div className="flex flex-row items-center gap-3">
-                                        <span className="flex items-center gap-2 text-green-600 font-bold bg-green-100/50 px-3 py-1 rounded-lg">
+                                    <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
+                                        <span className="flex items-center gap-2 text-green-600 font-bold bg-green-100/50 px-3 py-1 rounded-lg whitespace-nowrap">
                                             <FaCheckCircle /> Aktif
                                         </span>
                                         {auth.user.membership_start_at && auth.user.membership_end_at && (
-                                            <div className="text-sm text-gray-700 font-semibold bg-gray-100/80 px-3 py-1 rounded-lg border border-gray-200">
+                                            <div className="text-sm text-gray-700 font-semibold bg-gray-100/80 px-3 py-1 rounded-lg border border-gray-200 whitespace-nowrap">
                                                 {formatDate(auth.user.membership_start_at)} <span className="text-gray-400 mx-1">-</span> {formatDate(auth.user.membership_end_at)}
                                             </div>
                                         )}
                                     </div>
                                 ) : (
-                                    <span className="flex items-center gap-2 text-red-600 font-bold bg-red-100/50 px-3 py-1 rounded-lg">
+                                    <span className="flex items-center gap-2 text-red-600 font-bold bg-red-100/50 px-3 py-1 rounded-lg whitespace-nowrap">
                                         <FaTimesCircle /> Tidak Aktif
                                     </span>
                                 )}
