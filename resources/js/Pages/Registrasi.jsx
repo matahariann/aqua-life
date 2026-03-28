@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Fish, Eye, EyeOff, Mail, Lock, User, ArrowRight } from "lucide-react";
-import { router } from "@inertiajs/react";
+import { Fish, Eye, EyeOff, Mail, Lock, User, ArrowRight, ArrowLeft } from "lucide-react";
+import { router, Link } from "@inertiajs/react";
 import { toast, Toaster } from "sonner";
 
 export default function Registrasi() {
@@ -114,6 +114,15 @@ export default function Registrasi() {
                             />
                         </path>
                     </svg>
+
+                    {/* Back Button */}
+                    <Link
+                        href="/"
+                        className="absolute top-6 left-6 z-50 flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-full text-white font-medium transition-all duration-300 hover:scale-105 shadow-lg"
+                    >
+                        <ArrowLeft className="w-5 h-5" />
+                        <span className="hidden sm:inline">Kembali ke Beranda</span>
+                    </Link>
 
                     {/* Floating Bubbles */}
                     <div
