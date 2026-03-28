@@ -107,8 +107,8 @@ export default function AdminKelolaStation({ histories }) {
                         <div className="bg-gradient-to-r from-cyan-500 to-emerald-500 p-1 rounded-xl shadow-lg ring-4 ring-white/30"></div>
                         
                         {/* Per Page Selector */}
-                        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
+                        <div className="px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div className="flex items-center gap-2 flex-wrap">
                                 <label className="text-sm text-gray-700 font-medium">
                                     Tampilkan:
                                 </label>
