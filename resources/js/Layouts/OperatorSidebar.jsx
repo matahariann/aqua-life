@@ -42,7 +42,7 @@ const OperatorSidebar = ({ handleLogout, isOpen, setIsOpen }) => {
                 className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform duration-300 md:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
                 aria-label="Sidebar"
             >
-            <div className="h-full bg-gradient-to-br from-blue-600 via-cyan-500 to-emerald-500 border-r border-white/10 relative overflow-hidden shadow-2xl">
+            <div className="h-full bg-gradient-to-br from-blue-600 via-cyan-500 to-emerald-500 border-r border-white/10 relative overflow-hidden shadow-2xl pt-[60px] md:pt-0">
                 {/* Animated Background Pattern */}
                 <div className="absolute inset-0 opacity-20">
                     <div className="absolute top-0 left-0 w-full h-full">
@@ -73,7 +73,7 @@ const OperatorSidebar = ({ handleLogout, isOpen, setIsOpen }) => {
                 ></div>
 
                 {/* Logo Section */}
-                <div className="px-6 py-6 border-b border-white/20 bg-white/10 backdrop-blur-md relative z-10">
+                <div className="hidden md:block px-6 py-6 border-b border-white/20 bg-white/10 backdrop-blur-md relative z-10">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg ring-2 ring-white/30">
                             <img
